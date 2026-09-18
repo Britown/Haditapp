@@ -1,0 +1,109 @@
+match_text,category,owner,priority,notes,clean_name
+SODIMAC,Compras hogar,Compartido,1,Incluye Sodimac Mall Plaza,
+NOVAHUS,Compras hogar,Compartido,1,,
+EL DATO FERRETERI,Compras hogar,Compartido,1,,
+LIMPIA FONDOS,Compras hogar,Compartido,1,,
+COMERCIAL SOAR,Compras hogar,Compartido,1,,
+LIBRERIA NACIONAL,Compras hogar,Compartido,1,,
+UNIMARC,Supermercado,Compartido,1,,
+STA ISABEL,Supermercado,Compartido,1,,
+LIDER,Supermercado,Compartido,1,,
+EXPRESS PEDRO FON,Supermercado,Compartido,1,,Lider Express Pedro Fontova
+D COPAS,Supermercado,Compartido,1,,
+PASTELERIA KAISER,Supermercado,Compartido,1,,
+INVERSIONES FADRA,Supermercado,Compartido,1,,
+MARIBERICO,Supermercado,Compartido,1,,
+BENDITO ASADO HUECH,Supermercado,Compartido,1,,
+FULL MARKET SPA,Supermercado,Compartido,1,,
+SHELL,Combustible,Personal,1,,
+CONCESIONARIA VE,Autopistas,Personal,1,,
+C. VERDE,Salud,Confirmar,1,Farmacias,
+SALCOBRAND,Salud,Confirmar,1,Farmacias,
+INTEGRAMEDICA,Salud,Confirmar,1,Consultas y exámenes,
+ENCUADRADO SPA,Salud,Personal,1,,
+MERPAGO MELIMAS,Suscripciones,Compartido,2,Prioridad alta para diferenciar,
+MERCADOPAGO,Mercado Pago,Confirmar,1,,
+MERPAGO,Mercado Pago,Confirmar,1,,
+ZAPPING.TV,Gastos fijos,Compartido,1,,
+MARISEL JILIBERTO,Gastos fijos,Compartido,1,,
+ANDY ARRIAGADA,Gastos fijos,Compartido,1,,
+LUIS MIGUEL CRUCES,Gastos fijos,Compartido,1,,
+KHIPU CLBS B,Gastos fijos,Compartido,1,Monto aprox 130.000,
+PAGO SII,Gastos fijos,Compartido,1,Contribuciones e impuestos,
+CHEQUE DE CANJE,Gastos fijos,Compartido,1,Arriendos o pagos altos,
+AGUAS ANDINAS,Gastos fijos,Compartido,1,,
+ENEL SANTIAGO,Gastos fijos,Compartido,1,,
+METROGAS PAT,Gastos fijos,Compartido,1,,
+GTD MANQUEHUE S.A,Gastos fijos,Compartido,1,,
+CONSORCIO VIDA,Gastos fijos,Compartido,1,,
+CHUCK E CHEESE,Entretenimiento,Compartido,1,,
+PEQUELAND MALL PL,Entretenimiento,Compartido,1,,
+TUU FUN FOR ALL,Entretenimiento,Compartido,1,,
+EMPORIO LA ROSA,Restaurant-café,Compartido,1,,
+VANESSA HERMOSILLA,Vane,Personal,1,,
+TELEFONICA MOVIL,Celular,Personal,1,,
+COMISION ADM. MENSUAL,Gastos Bancarios,Personal,1,Mantención cuenta,
+RAPPI CHILE,Delivery,Compartido,1,,
+PRIME VIDEO,Streaming,Compartido,1,,
+DISNEY PLUS,Streaming,Compartido,1,,
+APPLE.COM/BILL,Suscripciones,Personal,1,,
+GOOGLE *STORAGE,Suscripciones,Personal,1,,
+COPEC ASISTIDO,Combustible,Personal,2,Si monto > 40.000,
+COPEC ASISTIDO,Combustible,Compartido,2,Si monto <= 40.000,
+AMZN Mktp US,Compras online,Personal,1,Amazon,
+LOCAL HUECHURABA,No Identificado,Revisión,1,,
+MABEL VERGARA,No Identificado,Revisión,1,,
+ONECLICK CENCOMALLS,No Identificado,Revisión,1,,
+SP HOZO DESIGN,Lujo,Personal,1,,
+OPENAI,Suscripciones,Personal,1,,
+MERCADOLI,Compras,Revisar,1,,
+SUPERMARK,Suscripciones,Personal,1,,
+FLOW LA PIZKA,Supermercado,Compartido,1,,
+PAN Y AZUCAR LTDA,Supermercado,Compartido,1,,
+VIRTUAL WISECITY,Suscripciones,Personal,1,,
+SERGIO TORRES S,Cortina roller,Personal,1,,
+FARMALOO,Salud,Personal,1,,
+METLIFE SEG,Seguros,Personal,1,,
+JOSSEFA HERBAS,Babysit,Compartido,1,,
+RAPPI CHILE,Delivery,Compartido,1,,
+LA TIENDA DE LULU,Librería,Compartido,1,,
+BAKERY LYNCH,Restaurant-café,Compartido,1,,
+SPID,Minimarket,Personal,1,,
+EXPRESS PEDRO FON,Supermercado,Compartido,1,,Lider Express Pedro Fontova
+MC DONALDS,Gustitos,Compartido,1,,
+MERCADOLIBRE CHI,Ingresos,Personal,1,,
+5 NORTE,Minimarket,Compartido,1,,
+RAPPI PRO,Suscripciones,Personal,1,,Rappi Pro
+HAULMER,Minimarket,Compartido,1,,
+MERCADOLI,Por Revisar,Por Revisar,1,,
+FULLMARKET,Supermercado,Compartido,1,,
+PAGO DE TARJETA,Pago Tarjeta,Personal,1,,
+TIARE GONZALEZ,Mercadería,Compartido,1,,Verdulería
+12/08 Cargo Por Compra En Fullmarket,Supermercado,Compartido,1,Entrenamiento manual,12/08 Cargo Por Compra En Fullmarket
+17/08 Cargo Por Compra En Fullmarket,Supermercado,Compartido,1,Entrenamiento manual,17/08 Cargo Por Compra En Fullmarket
+31/08 Cargo Por Compra En 5 Norte,Minimarket,Compartido,1,Entrenamiento manual,31/08 Cargo Por Compra En 5 Norte
+31/08 Cargo Por Compra En Mc Donalds,Gustitos,Compartido,1,Entrenamiento manual,31/08 Cargo Por Compra En Mc Donalds
+Las Condes 20/08/26 2108 91603468 Merpago*Max Las Condes $6.713 $6.713 01/01 $6.713,Mercado Pago,Confirmar,1,Entrenamiento manual,Las Condes 20/08/26 2108 91603468 Merpago*Max Las Condes $6.713 $6.713 01/01 $6.713
+"Abono Realizado Us$-47,50 Período Facturado Hasta 03/09/2026",Ingresos,Personal,1,Entrenamiento manual,"Abono Realizado Us$-47,50 Período Facturado Hasta 03/09/2026"
+Tuu*Haulmer Agreg,Minimarket,Compartido,1,Entrenamiento manual,Tuu*Haulmer Agreg
+Merpago*Mercadoli,Mercado Pago,Confirmar,1,Entrenamiento manual,Merpago*Mercadoli
+Transf. a Vane,Pago deuda Omita,Personal,1,Entrenamiento manual,Transf. a Vane
+Mercadopago*Elsab,Mercado Pago,Confirmar,1,Entrenamiento manual,Mercadopago*Elsab
+Farmacia Farmaloo,Salud,Personal,1,Entrenamiento manual,Farmacia Farmaloo
+Shell.File 149 P,Combustible,Personal,1,Entrenamiento manual,Shell.File 149 P
+Cargo Por Pago Metlife Seg. Gen Nro.,Seguros,Personal,1,Entrenamiento manual,Cargo Por Pago Metlife Seg. Gen Nro.
+Dl Rappi Chile Ra,Delivery,Compartido,1,Entrenamiento manual,Dl Rappi Chile Ra
+Merpago*Alipaysin,Mercado Pago,Confirmar,1,Entrenamiento manual,Merpago*Alipaysin
+Sta Isabel Huechu,Supermercado,Compartido,1,Entrenamiento manual,Sta Isabel Huechu
+C. Verde P Fontob,Salud,Confirmar,1,Entrenamiento manual,C. Verde P Fontob
+Lider Express Pedro Fontova,Supermercado,Compartido,1,Entrenamiento manual,Lider Express Pedro Fontova
+Mercadopago*Comer,Mercado Pago,Confirmar,1,Entrenamiento manual,Mercadopago*Comer
+Spid Los Leones,Minimarket,Personal,1,Entrenamiento manual,Spid Los Leones
+04911804 Abono Por Transferencia De Vanessa Carolina,Ingresos,Personal,1,Entrenamiento manual,04911804 Abono Por Transferencia De Vanessa Carolina
+"Abono Por Pago Proveedores Via Cca, 38.000,00",Ingresos,Personal,1,Entrenamiento manual,"Abono Por Pago Proveedores Via Cca, 38.000,00"
+42535275 Cargo Por Abono/Pago De Tarjeta De Crédito,Ingresos,Personal,1,Entrenamiento manual,42535275 Cargo Por Abono/Pago De Tarjeta De Crédito
+Cargo Por Abono/Pago De Tarjeta De Crédito,Ingresos,Personal,1,Entrenamiento manual,Cargo Por Abono/Pago De Tarjeta De Crédito
+14274826 Abono Por Transferencia De Vanessa Carolina,Ingresos,Personal,1,Entrenamiento manual,14274826 Abono Por Transferencia De Vanessa Carolina
+"Abono Por Pago Proveedores Via Cca,",Ingresos,Personal,1,Entrenamiento manual,"Abono Por Pago Proveedores Via Cca,"
+"Abono Por Pago Remuneraciones Via Cca,",Ingresos,Personal,1,Entrenamiento manual,"Abono Por Pago Remuneraciones Via Cca,"
+"Abono Realizado Us$-47,50 Período Facturado Hasta 03/09/",Ingresos,Personal,1,Entrenamiento manual,"Abono Realizado Us$-47,50 Período Facturado Hasta 03/09/"

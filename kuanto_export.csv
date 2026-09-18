@@ -1,0 +1,111 @@
+id_tx,fecha,a,m,d,hora,referencia_bancaria,tipo,estado,tipo_registro,signo,moneda,valor_tx_original,valor,valor_clp,valor_balance_clp,producto_tipo,producto_numero,banco_nombre,nota,recurrencia,grupo,categoria,comercio_nombre,comercio_global_nombre
+5265372,2026-08-01,2026,08,01,,"COMISION COMPRA INTERNACIONAL",Cargo,gasto,gasto,-1,CLP,134,134,134,-134,"tarjeta de crédito",9893,"BANCO BICE",,none,Hernanja,Compras,,"Interés compra internacional"
+5265373,2026-08-01,2026,08,01,,"Spotify P452D8934A",Cargo,gasto,gasto,-1,USD,7.27,7.27,6938,-6938,"tarjeta de crédito",9893,"BANCO BICE",,none,Hernanja,Suscripciones,,Spotify
+5265375,2026-08-02,2026,08,02,,"COMISION COMPRA INTERNACIONAL",Cargo,gasto,gasto,-1,CLP,230,230,230,-230,"tarjeta de crédito",9893,"BANCO BICE",,none,Hernanja,Compras,,"Interés compra internacional"
+5265376,2026-08-02,2026,08,02,,"COMISION COMPRA INTERNACIONAL",Cargo,gasto,gasto,-1,CLP,57,57,57,-57,"tarjeta de crédito",9893,"BANCO BICE",,none,Hernanja,Compras,,"Interés compra internacional"
+5265374,2026-08-02,2026,08,02,,"STA ISABEL HUECHURABA SANTIAGO",Cargo,gasto,gasto,-1,CLP,207704,207704,207704,-207704,"tarjeta de crédito",9893,"BANCO BICE",,none,Hernanja,Mercadería,,"Santa Isabel Fontova"
+5265377,2026-08-02,2026,08,02,,"PP*GOOGLE YOUTUBE SUBSCRI",Cargo,gasto,gasto,-1,USD,12.46,12.46,11890,-11890,"tarjeta de crédito",9893,"BANCO BICE",,none,Hernanja,Suscripciones,,
+5265378,2026-08-02,2026,08,02,,APPLE.COM/BILL,Cargo,gasto,gasto,-1,USD,3.12,3.12,2977,-2977,"tarjeta de crédito",9893,"BANCO BICE",,none,Hernanja,Suscripciones,,"Apple Billing (Apps, servicios, etc)"
+5519657,2026-08-03,2026,08,03,,"ALDEAS INFANTILES SOS SANTIAGO",Cargo,pendiente,gasto,-1,CLP,6000,6000,6000,-6000,"tarjeta de crédito",9893,"BANCO BICE",,none,Hernanja,"Donaciones y regalos",,"Aldeas Infantiles SOS"
+5520482,2026-08-03,2026,08,03,,"Cargo por Compra en MERPAGO*MERCADOLI El 02/08/2026 a las 19:40:40.",Cargo,pendiente,gasto,-1,CLP,9476,9476,9476,-9476,cuenta,4710,"BANCO BICE",,none,Hernanja,"Sin categoría",,
+5520480,2026-08-03,2026,08,03,,"Cargo por Costanera Norte Nro. 108977019002. 09:00:19.51",Cargo,pendiente,gasto,-1,CLP,583,583,583,-583,cuenta,4710,"BANCO BICE",,none,Hernanja,"Sin categoría",,
+5520481,2026-08-03,2026,08,03,,"Cargo por Compra en TUU*HAULMER AGREG El 02/08/2026 a las 13:13:33.",Cargo,pendiente,gasto,-1,CLP,3490,3490,3490,-3490,cuenta,4710,"BANCO BICE",,none,Hernanja,Gustitos,,
+5520479,2026-08-03,2026,08,03,,"Cargo por transferencia a Rut 10.897.701-9 Mercado Pago",Transferencia,pendiente,gasto,-1,CLP,100000,100000,100000,-100000,cuenta,4710,"BANCO BICE",,none,Hernanja,"Sin categoría",,
+5520488,2026-08-04,2026,08,04,,"Cargo por Compra en MERCADOPAGO*ELSAB El 04/08/2026 a las 13:59:10.",Cargo,pendiente,gasto,-1,CLP,13500,13500,13500,-13500,cuenta,4710,"BANCO BICE",,none,Hernanja,"Sin categoría",,
+5520483,2026-08-04,2026,08,04,,"Cheque de Canje CASA MATRIZ",Cargo,pendiente,gasto,-1,CLP,472000,472000,472000,-472000,cuenta,4710,"BANCO BICE",,none,Hernanja,Educación,,
+5520485,2026-08-04,2026,08,04,,"Transf. a Hernan Brito Vidal",Transferencia,pendiente,gasto,-1,CLP,976598,976598,976598,-976598,cuenta,4710,"BANCO BICE",,none,Hernanja,Otros,,
+5520484,2026-08-04,2026,08,04,,"Cargo por transferencia a Rut 15.935.026-6 B.Santander",Transferencia,pendiente,gasto,-1,CLP,230000,230000,230000,-230000,cuenta,4710,"BANCO BICE",,none,Hernanja,"Sin categoría",,
+5520487,2026-08-04,2026,08,04,,"Cargo por Compra en TUU*369 BARBER ST El 04/08/2026 a las 13:56:07.",Cargo,pendiente,gasto,-1,CLP,25000,25000,25000,-25000,cuenta,4710,"BANCO BICE",,none,Hernanja,"Sin categoría",,
+5520486,2026-08-04,2026,08,04,,"Transf. de Vanessa Carolina",Transferencia,pendiente,ingreso,1,CLP,352552,352552,352552,352552,cuenta,4710,"BANCO BICE",,none,Hernanja,"Otros ingresos",,
+5265381,2026-08-05,2026,08,05,,"COLEGIO FCO.JAVIER HUEC TASA INT. 2","Pago con tarjeta en cuotas",gasto,gasto,-1,CLP,123630,123630,123630,-123630,"tarjeta de crédito",9893,"BANCO BICE",,none,Hernanja,Educación,,
+5519658,2026-08-05,2026,08,05,,"PAT CONSORCIO GENERALESSANTIAGO",Cargo,pendiente,gasto,-1,CLP,48441,48441,48441,-48441,"tarjeta de crédito",9893,"BANCO BICE",,none,Hernanja,Transporte,,"Seguro auto consorcio"
+5519659,2026-08-05,2026,08,05,,"COLEGIO FCO.JAVIER HUECSANTIAGO",Cargo,pendiente,gasto,-1,CLP,551405,551405,551405,-551405,"tarjeta de crédito",9893,"BANCO BICE",,none,Hernanja,Educación,,
+5265380,2026-08-05,2026,08,05,,"COLEGIO FCO.JAVIER TASA INT. 0","Pago con tarjeta en cuotas",gasto,gasto,-1,CLP,173334,173334,173334,-173334,"tarjeta de crédito",9893,"BANCO BICE",,none,Hernanja,Educación,,
+5520489,2026-08-05,2026,08,05,,"Transf. a Jossefa Herbas Lopez",Transferencia,pendiente,gasto,-1,CLP,54000,54000,54000,-54000,cuenta,4710,"BANCO BICE",,none,Hernanja,"Sin categoría",,
+5265379,2026-08-05,2026,08,05,,"MP *MERCADO LIB TASA INT. 0","Pago con tarjeta en cuotas",gasto,gasto,-1,CLP,26165,26165,26165,-26165,"tarjeta de crédito",9893,"BANCO BICE",,none,Hernanja,Gustitos,,MELI
+5520490,2026-08-06,2026,08,06,,"Cargo por Compra en FARMACIA FARMALOO El 05/08/2026 a las 21:36:22.",Cargo,pendiente,gasto,-1,CLP,34999,34999,34999,-34999,cuenta,4710,"BANCO BICE",,none,Hernanja,"Sin categoría",,
+5520491,2026-08-06,2026,08,06,,"Cargo por Compra en SHELL.FILE 149 P. El 05/08/2026 a las 21:59:50.",Cargo,pendiente,gasto,-1,CLP,55339,55339,55339,-55339,cuenta,4710,"BANCO BICE",,none,Hernanja,"Sin categoría",,
+5519660,2026-08-06,2026,08,06,,"ENEL SANTIAGO",Cargo,pendiente,gasto,-1,CLP,202336,202336,202336,-202336,"tarjeta de crédito",9893,"BANCO BICE",,monthly,Hernanja,"Casa y cuentas",,"Luz Enel"
+5520492,2026-08-07,2026,08,07,,"Cargo por transferencia a Rut 10.897.701-9 Mercado Pago",Transferencia,pendiente,gasto,-1,CLP,106528,106528,106528,-106528,cuenta,4710,"BANCO BICE",,none,Hernanja,"Sin categoría",,
+5520495,2026-08-10,2026,08,10,,"Cargo por Compra en MERPAGO*ALIPAYSIN El 08/08/2026 a las 16:44:21.",Cargo,pendiente,gasto,-1,CLP,9401,9401,9401,-9401,cuenta,4710,"BANCO BICE",,none,Hernanja,"Sin categoría",,
+5520494,2026-08-10,2026,08,10,,"Cargo por Compra en DL RAPPI CHILE RA El 08/08/2026 a las 14:35:20.",Cargo,pendiente,gasto,-1,CLP,35530,35530,35530,-35530,cuenta,4710,"BANCO BICE",,none,Hernanja,"Sin categoría",,
+5520496,2026-08-10,2026,08,10,,"Cargo por Compra en MERPAGO*MERCADOLI El 07/08/2026 a las 22:59:10.",Cargo,pendiente,gasto,-1,CLP,32480,32480,32480,-32480,cuenta,4710,"BANCO BICE",,none,Hernanja,"Sin categoría",,
+5519661,2026-08-10,2026,08,10,,"AUTOPISTA CENTRAL SANTIAGO",Cargo,pendiente,gasto,-1,CLP,2138,2138,2138,-2138,"tarjeta de crédito",9893,"BANCO BICE",,none,Hernanja,Transporte,,"TAG Autopista Central"
+5520493,2026-08-10,2026,08,10,,"Metlife Seg. Gen Nro. 108977010272. 09:00:17.978",Cargo,pendiente,gasto,-1,CLP,1030,1030,1030,-1030,cuenta,4710,"BANCO BICE",,none,Hernanja,"Sin categoría",,
+5519662,2026-08-11,2026,08,11,,"COMISION COMPRA INTERNACIONAL",Cargo,pendiente,gasto,-1,CLP,439,439,439,-439,"tarjeta de crédito",9893,"BANCO BICE",,none,Hernanja,Compras,,"Interés compra internacional"
+5520497,2026-08-11,2026,08,11,,"Abono por Pago Proveedores via CCA",Abono,pendiente,ingreso,1,CLP,38000,38000,38000,38000,cuenta,4710,"BANCO BICE",,none,Hernanja,Reembolsos,,"Bci seguro complementario"
+5519663,2026-08-11,2026,08,11,,"PP*GOOGLE GOOGLE ONE",Cargo,pendiente,gasto,-1,USD,24.93,24.93,23300,-23300,"tarjeta de crédito",9893,"BANCO BICE",,none,Hernanja,Suscripciones,,GooglePro
+5520498,2026-08-12,2026,08,12,,"Cargo por Compra en Fullmarket El 11/08/2026 a las 21:44:08.",Cargo,pendiente,gasto,-1,CLP,12180,12180,12180,-12180,cuenta,4710,"BANCO BICE",,none,Hernanja,"Sin categoría",,
+5519664,2026-08-12,2026,08,12,,"VIRTUAL*WISECITY SANTIAGO",Cargo,pendiente,gasto,-1,CLP,4590,4590,4590,-4590,"tarjeta de crédito",9893,"BANCO BICE",,none,Hernanja,"Casa y cuentas",,"Wise city"
+5520499,2026-08-13,2026,08,13,,"Cargo por Comisión Adm. Mensual Checkcard . Neto $6.128",Cargo,pendiente,gasto,-1,CLP,7292,7292,7292,-7292,cuenta,4710,"BANCO BICE",,none,Hernanja,"Gastos bancarios",,
+5519665,2026-08-15,2026,08,15,,"MONTO CANCELADO","Pago de la tarjeta de crédito","no es ingreso","no es ingreso",1,CLP,908366,908366,,,"tarjeta de crédito",9893,"BANCO BICE",,,,,,
+5519666,2026-08-15,2026,08,15,,"MONTO CANCELADO","Pago de la tarjeta de crédito","no es ingreso","no es ingreso",1,USD,47.5,47.5,,,"tarjeta de crédito",9893,"BANCO BICE",,,,,,
+5520501,2026-08-17,2026,08,17,,"Cargo por abono/pago de tarjeta de crédito terminada en 9893",Cargo,pendiente,gasto,-1,CLP,44078,44078,44078,-44078,cuenta,4710,"BANCO BICE",,none,Hernanja,Compras,,"Pago Tarjeta Credito Bice"
+5520506,2026-08-17,2026,08,17,,"Transf. a Tiare Gonzalez",Transferencia,pendiente,gasto,-1,CLP,32200,32200,32200,-32200,cuenta,4710,"BANCO BICE",,none,Hernanja,Mercadería,,
+5520504,2026-08-17,2026,08,17,,"Transf. de Vanessa Carolina",Transferencia,ingreso,ingreso,1,CLP,555530,555530,555530,555530,cuenta,4710,"BANCO BICE",,none,Hernanja,"Otros ingresos",,
+5520500,2026-08-17,2026,08,17,,"Cargo por abono/pago de tarjeta de crédito terminada en 9893",Cargo,pendiente,gasto,-1,CLP,908366,908366,908366,-908366,cuenta,4710,"BANCO BICE",,none,Hernanja,Compras,,"Pago Tarjeta Credito Bice"
+5520505,2026-08-17,2026,08,17,,"Cargo por Compra en Fullmarket El 15/08/2026 a las 16:00:55.",Cargo,pendiente,gasto,-1,CLP,28610,28610,28610,-28610,cuenta,4710,"BANCO BICE",,none,Hernanja,"Sin categoría",,
+5520503,2026-08-17,2026,08,17,,"Cargo por Compra en COPEC ASISTIDO El 16/08/2026 a las 12:59:06.",Cargo,pendiente,gasto,-1,CLP,5000,5000,5000,-5000,cuenta,4710,"BANCO BICE",,none,Hernanja,Transporte,,
+5520507,2026-08-17,2026,08,17,,"Cargo por Compra en DL RAPPI CHILE RA El 14/08/2026 a las 19:25:57.",Cargo,pendiente,gasto,-1,CLP,18820,18820,18820,-18820,cuenta,4710,"BANCO BICE",,none,Hernanja,"Sin categoría",,
+5520502,2026-08-17,2026,08,17,,"Cargo por Compra en STA ISABEL HUECHU El 16/08/2026 a las 12:41:12.",Cargo,pendiente,gasto,-1,CLP,113099,113099,113099,-113099,cuenta,4710,"BANCO BICE",,none,Hernanja,"Sin categoría",,
+5520508,2026-08-18,2026,08,18,,"Cargo por Compra en Zapping Chile El 18/08/2026 a las 00:26:11.",Cargo,pendiente,gasto,-1,CLP,19900,19900,19900,-19900,cuenta,4710,"BANCO BICE",,none,Hernanja,"Sin categoría",,
+5519667,2026-08-18,2026,08,18,,"IMPUESTO DECRETO LEY 3475 TASA 0.066 %",Cargo,pendiente,gasto,-1,CLP,53,53,53,-53,"tarjeta de crédito",9893,"BANCO BICE",,none,Hernanja,"Gastos bancarios",,"Impuesto DL 3475"
+5519668,2026-08-19,2026,08,19,,"METROGAS PAT SANTIAGO",Cargo,pendiente,gasto,-1,CLP,54481,54481,54481,-54481,"tarjeta de crédito",9893,"BANCO BICE",,monthly,Hernanja,"Casa y cuentas",,Metrogas
+5227164,2026-08-19,2026,08,19,18:07,"Luis Miguel Cruces (luis1991cruces@gmail.com)",Transferencia,gasto,gasto,-1,CLP,18000,18000,18000,-18000,cuenta,4710,"BANCO BICE",,none,Hernanja,Jardín,,
+5520509,2026-08-20,2026,08,20,,"Abono por Pago Proveedores via CCA",Abono,ingreso,ingreso,1,CLP,38000,38000,38000,38000,cuenta,4710,"BANCO BICE",,none,Hernanja,Reembolsos,,"Bci seguro complementario"
+5519669,2026-08-20,2026,08,20,,"CONSORCIO VIDA LAS CONDSANTIAGO",Cargo,pendiente,gasto,-1,CLP,52590,52590,52590,-52590,"tarjeta de crédito",9893,"BANCO BICE",,monthly,Hernanja,"Casa y cuentas",,"APV consorcio"
+5519670,2026-08-20,2026,08,20,,"MERPAGO*MAX LAS CONDES",Cargo,gasto,gasto,-1,CLP,6713,6713,6713,-6713,"tarjeta de crédito",9893,"BANCO BICE",,none,Hernanja,Suscripciones,,Max
+5234202,2026-08-20,2026,08,20,12:57,"Cargo por Compra en C. VERDE P FONTOB El 20/08/2026 a las 12:56:11.",Cargo,gasto,gasto,-1,CLP,26362,26362,26362,-26362,cuenta,5251,"BANCO BICE",,none,Hernanja,"Salud y deportes",,Farmacia
+5243775,2026-08-21,2026,08,21,13:28,"Cargo por Compra en MERCADOPAGO*ELSAB El 21/08/2026 a las 13:24:55.",Cargo,gasto,gasto,-1,CLP,6500,6500,6500,-6500,cuenta,5251,"BANCO BICE",,none,Hernanja,Comida,,
+5520510,2026-08-24,2026,08,24,,"Cargo por Compra en DL RAPPI CHILE RA El 21/08/2026 a las 22:19:07.",Cargo,gasto,gasto,-1,CLP,36300,36300,36300,-36300,cuenta,4710,"BANCO BICE",,none,Hernanja,Comida,,
+5283863,2026-08-24,2026,08,24,23:59,"Vanessa Hermosilla (Vanesa.hermosilla@gmail.com)",Transferencia,gasto,gasto,-1,CLP,175527,175527,175527,-175527,cuenta,4710,"BANCO BICE",,none,Hernanja,"Pago gastos variables",,
+5519671,2026-08-25,2026,08,25,,"GTD MANQUEHUE S.A. SANTIAGO",Cargo,gasto,gasto,-1,CLP,35767,35767,35767,-35767,"tarjeta de crédito",9893,"BANCO BICE",,monthly,Hernanja,"Casa y cuentas",,GTD
+5283865,2026-08-25,2026,08,25,00:01,"Hernanja Mp (hbrito@gmail.com)",Transferencia,"no es gasto","no es gasto",-1,CLP,100000,100000,,,cuenta,4710,"BANCO BICE",,,,,,
+5283866,2026-08-25,2026,08,25,00:01,"Hernan Javier Brito Rodriguez",Transferencia,gasto,devolucion,1,CLP,100000,100000,100000,100000,cuenta,9882,"MERCADO PAGO",,none,Hernanja,Ahorro,,
+5520511,2026-08-26,2026,08,26,,"Cargo por Compra en LA TIENDA DE LULU El 26/08/2026 a las 13:51:43.",Cargo,gasto,gasto,-1,CLP,1190,1190,1190,-1190,cuenta,4710,"BANCO BICE",,none,Hernanja,Educación,,
+5299830,2026-08-26,2026,08,26,13:50,"Cargo por Compra en EXPRESS PEDRO FON El 26/08/2026 a las 13:42:09.",Cargo,gasto,gasto,-1,CLP,57510,57510,57510,-57510,cuenta,5251,"BANCO BICE",,none,Hernanja,Mercadería,,Lider
+5520512,2026-08-28,2026,08,28,,"Cargo por transferencia a Rut 17.766.248-8 B.Estado",Transferencia,gasto,gasto,-1,CLP,27000,27000,27000,-27000,cuenta,4710,"BANCO BICE",,none,Hernanja,Piscina,,
+5519672,2026-08-28,2026,08,28,,"ONECLICK RECURRENTE PCSSANTIAGO",Cargo,gasto,gasto,-1,CLP,16990,16990,16990,-16990,"tarjeta de crédito",9893,"BANCO BICE",,none,Hernanja,"Casa y cuentas",,Entel
+5377560,2026-08-28,2026,08,28,18:11,"Cargo por Compra en SPID LOS LEONES 2 El 28/08/2026 a las 18:09:25.",Cargo,gasto,gasto,-1,CLP,10650,10650,10650,-10650,cuenta,5251,"BANCO BICE",,none,Hernanja,Mercadería,,"OHIO APV"
+5519673,2026-08-29,2026,08,29,,"PAYU *UBER TRIP SANTIAGO",Cargo,gasto,gasto,-1,CLP,11531,11531,11531,-11531,"tarjeta de crédito",9893,"BANCO BICE",,none,Hernanja,Transporte,,"Uber Viajes"
+5519674,2026-08-29,2026,08,29,,"PAYU *UBER TRIP SANTIAGO",Cargo,gasto,gasto,-1,CLP,10700,10700,10700,-10700,"tarjeta de crédito",9893,"BANCO BICE",,none,Hernanja,Transporte,,"Uber Viajes"
+5397776,2026-08-29,2026,08,29,13:06,"Cargo por Compra en MC DONALDS El 29/08/2026 a las 13:04:45.",Cargo,gasto,gasto,-1,CLP,11620,11620,11620,-11620,cuenta,5251,"BANCO BICE",,none,Hernanja,Comida,,McDonald's
+5402282,2026-08-29,2026,08,29,19:00,"Hernan Brito Vidal (hernan.brito.vidal@gmail.com)",Transferencia,gasto,gasto,-1,CLP,130000,130000,130000,-130000,cuenta,4710,"BANCO BICE",,none,Hernanja,Otros,,
+5406461,2026-08-30,2026,08,30,11:40,"Cargo por Compra en BAKERY LYNCH El 30/08/2026 a las 11:39:08.",Cargo,gasto,gasto,-1,CLP,31988,31988,31988,-31988,cuenta,5251,"BANCO BICE",,none,Hernanja,Gustitos,,
+5406570,2026-08-30,2026,08,30,11:55,"Cargo por Compra en Autoservicio de F El 30/08/2026 a las 11:51:57.",Cargo,gasto,gasto,-1,CLP,3590,3590,3590,-3590,cuenta,5251,"BANCO BICE",,none,Hernanja,Mercadería,,
+5406578,2026-08-30,2026,08,30,11:57,"Cargo por Compra en 5 NORTE El 30/08/2026 a las 11:54:51.",Cargo,gasto,gasto,-1,CLP,5370,5370,5370,-5370,cuenta,5251,"BANCO BICE",,none,Hernanja,Mercadería,,
+5407421,2026-08-30,2026,08,30,13:29,"Roberto Fuentes",Transferencia,gasto,gasto,-1,CLP,15000,15000,15000,-15000,cuenta,4710,"BANCO BICE",,none,Hernanja,Gustitos,,"Cinta de capitan"
+5520515,2026-08-31,2026,08,31,,"Cargo por Compra en ARAMCO El 28/08/2026 a las 15:45:14.",Cargo,gasto,gasto,-1,CLP,55035,55035,55035,-55035,cuenta,4710,"BANCO BICE",,none,Hernanja,Transporte,,
+5520516,2026-08-31,2026,08,31,,"Cargo por Compra en DLOCAL *RAPPI PRO El 28/08/2026 a las 19:09:51.",Cargo,gasto,gasto,-1,CLP,3990,3990,3990,-3990,cuenta,4710,"BANCO BICE",,none,Hernanja,Comida,,
+5520514,2026-08-31,2026,08,31,,"Cargo por Compra en MERCADOPAGO*COMER El 30/08/2026 a las 15:18:22.",Cargo,gasto,gasto,-1,CLP,6500,6500,6500,-6500,cuenta,4710,"BANCO BICE",,none,Hernanja,Mercadería,,
+5520517,2026-08-31,2026,08,31,,"Cargo por Compra en MERPAGO*MERCADOLI El 29/08/2026 a las 23:05:55.",Cargo,gasto,gasto,-1,CLP,10016,10016,10016,-10016,cuenta,4710,"BANCO BICE",,none,Hernanja,"Sin categoría",,
+5520513,2026-08-31,2026,08,31,,"Abono por Pago Remuneraciones via CCA",Abono,ingreso,ingreso,1,CLP,3983020,3983020,3983020,3983020,cuenta,4710,"BANCO BICE",,none,Hernanja,"Otros ingresos",,SII
+5519675,2026-08-31,2026,08,31,,"AGUAS ANDINAS SANTIAGO",Cargo,gasto,gasto,-1,CLP,75119,75119,75119,-75119,"tarjeta de crédito",9893,"BANCO BICE",,none,Hernanja,"Casa y cuentas",,"AGUAS ANDINAS"
+5413994,2026-08-31,2026,08,31,08:44,"Khipu CL F (transferencias@khipu.com)",Transferencia,gasto,gasto,-1,CLP,131741,131741,131741,-131741,cuenta,4710,"BANCO BICE",,none,Hernanja,"Gastos comunes",,"GGCC Talca"
+5414024,2026-08-31,2026,08,31,08:47,"Hernan Brito Rodriguez",Transferencia,gasto,devolucion,1,CLP,607189,607189,607189,607189,cuenta,9882,"MERCADO PAGO",,none,Hernanja,Ahorro,,
+5414023,2026-08-31,2026,08,31,08:47,"Hernanja Mp (hbrito@gmail.com)",Transferencia,"no es gasto","no es gasto",-1,CLP,607189,607189,,,cuenta,4710,"BANCO BICE",,,,,,
+5420163,2026-08-31,2026,08,31,15:07,"Cristina Caisaluisa Gracias (macielsosa43@gmail.com)",Transferencia,gasto,gasto,-1,CLP,35000,35000,35000,-35000,cuenta,4710,"BANCO BICE",,none,Hernanja,Aseo,,
+5519677,2026-09-01,2026,09,01,,"Spotify P4652DD2C5",Cargo,gasto,gasto,-1,USD,7.24,7.24,6893,-6893,"tarjeta de crédito",9893,"BANCO BICE",,none,Hernanja,Suscripciones,,Spotify
+5519676,2026-09-01,2026,09,01,,"COMISION COMPRA INTERNACIONAL",Cargo,gasto,gasto,-1,CLP,131,131,131,-131,"tarjeta de crédito",9893,"BANCO BICE",,none,Hernanja,Compras,,"Interés compra internacional"
+5428371,2026-09-01,2026,09,01,08:37,"Santa Isabel",Cargo,gasto,gasto,-1,CLP,9190,9190,9190,-9190,cuenta,5251,"BANCO BICE",,none,Hernanja,Mercadería,,"Santa Isabel"
+5519679,2026-09-02,2026,09,02,,"PP*GOOGLE YOUTUBE SUBSCRI",Cargo,gasto,gasto,-1,USD,12.36,12.36,11811,-11811,"tarjeta de crédito",9893,"BANCO BICE",,none,Hernanja,Suscripciones,,
+5519678,2026-09-02,2026,09,02,,"COMISION COMPRA INTERNACIONAL",Cargo,gasto,gasto,-1,CLP,215,215,215,-215,"tarjeta de crédito",9893,"BANCO BICE",,none,Hernanja,Compras,,"Interés compra internacional"
+5445043,2026-09-02,2026,09,02,08:55,"Solange Correa (scorrea@minicloset.cl)",Transferencia,gasto,gasto,-1,CLP,10920,10920,10920,-10920,cuenta,4710,"BANCO BICE",,none,Hernanja,Educación,,
+5447881,2026-09-02,2026,09,02,13:08,"Solange Correa (scorrea@minicloset.cl)",Transferencia,gasto,gasto,-1,CLP,15280,15280,15280,-15280,cuenta,4710,"BANCO BICE",,none,Hernanja,Educación,,
+5448516,2026-09-02,2026,09,02,14:01,"TUU* 369 Barber Studio Lim",Cargo,gasto,gasto,-1,CLP,15000,15000,15000,-15000,cuenta,5251,"BANCO BICE",,none,Hernanja,Otros,,
+5450687,2026-09-02,2026,09,02,17:00,"La Dulceria",Cargo,gasto,gasto,-1,CLP,11380,11380,11380,-11380,cuenta,5251,"BANCO BICE",,none,Hernanja,Gustitos,,
+5519680,2026-09-03,2026,09,03,,"MP *MERCADO LIB TASA INT. 0.00%","Pago con tarjeta en cuotas",gasto,gasto,-1,CLP,26175,26175,26175,-26175,"tarjeta de crédito",9893,"BANCO BICE",,none,Hernanja,Gustitos,,MELI
+5519682,2026-09-03,2026,09,03,,"INTERESES ROTATIVOS",Cargo,gasto,gasto,-1,CLP,2618,2618,2618,-2618,"tarjeta de crédito",9893,"BANCO BICE",,none,Hernanja,Intereses,,"Banco de Chile"
+5519681,2026-09-03,2026,09,03,,"COLEGIO FCO.JAVIER HUEC TASA INT. 2.86%","Pago con tarjeta en cuotas",gasto,gasto,-1,CLP,123630,123630,123630,-123630,"tarjeta de crédito",9893,"BANCO BICE",,none,Hernanja,Educación,,
+5465353,2026-09-03,2026,09,03,12:04,"Hernan Brito Vidal (hernan.brito.vidal@gmail.com)",Transferencia,gasto,gasto,-1,CLP,977388,977388,977388,-977388,cuenta,4710,"BANCO BICE",,none,Hernanja,Otros,,
+5525155,2026-09-07,2026,09,07,19:46,Fullmarket,Cargo,gasto,gasto,-1,CLP,15812,15812,15812,-15812,cuenta,5251,"BANCO BICE",,none,Hernanja,Mercadería,,
+5525156,2026-09-07,2026,09,07,19:46,Fullmarket,Cargo,gasto,gasto,-1,CLP,15812,15812,15812,-15812,cuenta,5251,"BANCO BICE",,none,Hernanja,Mercadería,,
+5563372,2026-09-09,2026,09,09,08:34,"Tiare Gonzalez (verduleriaelsauce@gmail.com)",Transferencia,gasto,gasto,-1,CLP,35120,35120,35120,-35120,cuenta,4710,"BANCO BICE",,none,Hernanja,Mercadería,,
+5567151,2026-09-09,2026,09,09,13:02,"Pedro Fontova",Cargo,pendiente,gasto,-1,CLP,14740,14740,14740,-14740,cuenta,5251,"BANCO BICE",,none,Hernanja,Mercadería,,"KFC huechuraba"
+5590229,2026-09-10,2026,09,10,13:52,"Pardeshi Tadka Comida",Cargo,pendiente,gasto,-1,CLP,11000,11000,11000,-11000,cuenta,5251,"BANCO BICE",,none,Hernanja,Gustitos,,"Pardeshi tadka comida india"
+5598122,2026-09-10,2026,09,10,20:20,"Carolina Mendoza (jonalgamez43@gmail.com)",Transferencia,pendiente,gasto,-1,CLP,35000,35000,35000,-35000,cuenta,4710,"BANCO BICE",,none,Hernanja,Compras,,
+5606406,2026-09-11,2026,09,11,10:42,"Oftalmologia Autoservi",Cargo,pendiente,gasto,-1,CLP,1663,1663,1663,-1663,cuenta,5251,"BANCO BICE",,none,Hernanja,"Salud y deportes",,
+5606748,2026-09-11,2026,09,11,11:03,Mercadopago*centralparkin,Cargo,pendiente,gasto,-1,CLP,950,950,950,-950,cuenta,5251,"BANCO BICE",,none,Hernanja,Transporte,,Kine
+5607611,2026-09-11,2026,09,11,12:22,Mercadopago*panyazucar,Cargo,pendiente,gasto,-1,CLP,48576,48576,48576,-48576,cuenta,5251,"BANCO BICE",,none,Hernanja,Mercadería,,"Pan y Azúcar"
+5607819,2026-09-11,2026,09,11,12:41,"Bix Sa",Cargo,pendiente,gasto,-1,CLP,10970,10970,10970,-10970,cuenta,5251,"BANCO BICE",,none,Hernanja,"Donaciones y regalos",,"Bix Talca Go Florida"
+5607835,2026-09-11,2026,09,11,12:43,Mercadopago*elsabordetete,Cargo,pendiente,gasto,-1,CLP,32500,32500,32500,-32500,cuenta,5251,"BANCO BICE",,none,Hernanja,Comida,,

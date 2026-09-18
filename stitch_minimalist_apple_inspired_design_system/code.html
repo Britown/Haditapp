@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+
+<html class="h-full bg-[#F5F5F7] text-[#1D1D1F] antialiased" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Hadita — Conciliación Financiera Inteligente</title>
+<!-- Tailwind CSS CDN with forms and container queries -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Inter Font Family for Apple-like clarity -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'SF Pro Text', 'SF Pro Display', 'sans-serif'],
+          },
+          colors: {
+            apple: {
+              canvas: '#F5F5F7',
+              card: '#FFFFFF',
+              border: 'rgba(0, 0, 0, 0.07)',
+              dark: '#1D1D1F',
+              secondary: '#86868B',
+              blue: '#0071E3',
+              'blue-light': '#F0F6FF',
+              purple: '#7C3AED',
+              'purple-light': '#F5F3FF'
+            }
+          },
+          boxShadow: {
+            'apple-sm': '0 2px 8px -1px rgba(0, 0, 0, 0.04), 0 1px 3px -1px rgba(0, 0, 0, 0.02)',
+            'apple-card': '0 4px 24px -2px rgba(0, 0, 0, 0.04), 0 2px 8px -2px rgba(0, 0, 0, 0.02)',
+            'apple-hover': '0 10px 30px -4px rgba(0, 0, 0, 0.08), 0 4px 12px -2px rgba(0, 0, 0, 0.03)',
+          }
+        }
+      }
+    }
+  </script>
+<style data-purpose="custom-layout">
+    /* Micro-typography smoothing and custom scrollbar */
+    body {
+      font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+      -webkit-font-smoothing: antialiased;
+    }
+    
+    /* Subtle sleek scrollbar for items list */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(0, 0, 0, 0.12);
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(0, 0, 0, 0.22);
+    }
+  </style>
+</head>
+<body class="min-h-full flex flex-col font-sans bg-[#F5F5F7] text-[#1D1D1F] pb-16">
+<!-- BEGIN: MainHeader -->
+<header class="w-full pt-10 pb-6 px-4 sm:px-8 max-w-7xl mx-auto flex flex-col items-center">
+<!-- Brand Title -->
+<h1 class="text-3xl sm:text-4xl font-bold tracking-tight text-apple-dark transition-transform hover:scale-[1.01] cursor-pointer">
+      Hadita
+    </h1>
+<!-- Apple-style Segmented Glass Navigation -->
+<nav aria-label="Tabs" class="mt-6 inline-flex p-1 bg-[#E8E8ED] bg-opacity-80 backdrop-blur-md rounded-full shadow-inner border border-black/5">
+<button class="flex items-center gap-2 px-5 py-2 text-xs sm:text-sm font-semibold rounded-full bg-white text-apple-dark shadow-apple-sm transition-all duration-200" type="button">
+<span class="w-2 h-2 rounded-full bg-apple-dark inline-block"></span>
+        Conciliación Fija
+      </button>
+<button class="flex items-center gap-2 px-5 py-2 text-xs sm:text-sm font-medium text-apple-secondary hover:text-apple-dark rounded-full transition-all duration-150" type="button">
+<span class="w-2 h-2 rounded-full border border-gray-400 inline-block"></span>
+        Gastos Variables
+      </button>
+<button class="flex items-center gap-2 px-5 py-2 text-xs sm:text-sm font-medium text-apple-secondary hover:text-apple-dark rounded-full transition-all duration-150" type="button">
+<span class="w-2 h-2 rounded-full border border-gray-400 inline-block"></span>
+        Historial
+      </button>
+</nav>
+</header>
+<!-- END: MainHeader -->
+<!-- BEGIN: MainContent -->
+<main class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-2 flex-grow">
+<!-- Top Filter Bar -->
+<section aria-label="Filtros de Período" class="mb-6 flex flex-wrap gap-4 items-center justify-between">
+<div class="flex flex-wrap items-center gap-3">
+<!-- Selector Mes -->
+<div class="flex items-center bg-white px-3.5 py-1.5 rounded-full border border-black/5 shadow-sm text-xs font-medium text-apple-secondary">
+<span class="mr-2">Mes de Análisis:</span>
+<div class="relative inline-block">
+<select class="appearance-none bg-transparent border-none py-0 pl-1 pr-6 font-semibold text-apple-dark focus:ring-0 cursor-pointer text-xs">
+<option selected="">Agosto</option>
+<option>Septiembre</option>
+<option>Octubre</option>
+</select>
+<svg class="w-3.5 h-3.5 text-gray-500 pointer-events-none absolute right-0 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"></path>
+</svg>
+</div>
+</div>
+<!-- Selector Año -->
+<div class="flex items-center bg-white px-3.5 py-1.5 rounded-full border border-black/5 shadow-sm text-xs font-medium text-apple-secondary">
+<span class="mr-2">Año:</span>
+<div class="relative inline-block">
+<select class="appearance-none bg-transparent border-none py-0 pl-1 pr-6 font-semibold text-apple-dark focus:ring-0 cursor-pointer text-xs">
+<option selected="">2026</option>
+<option>2025</option>
+<option>2024</option>
+</select>
+<svg class="w-3.5 h-3.5 text-gray-500 pointer-events-none absolute right-0 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"></path>
+</svg>
+</div>
+</div>
+</div>
+<div class="hidden sm:flex items-center text-xs text-apple-secondary font-medium gap-1.5">
+<span class="inline-block w-2 h-2 rounded-full bg-emerald-500"></span>
+        Sincronizado con banco
+      </div>
+</section>
+<!-- Two-Column Grid Layout -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+<!-- BEGIN: LeftColumn (Ingesta & Carga) -->
+<section class="lg:col-span-5 bg-white rounded-3xl p-6 sm:p-8 border border-black/5 shadow-apple-card transition-all hover:shadow-apple-hover" data-purpose="import-section">
+<!-- Header Ingesta -->
+<div class="mb-6">
+<span class="text-[11px] font-bold tracking-wider text-apple-secondary uppercase">Importación Asistida</span>
+<h2 class="text-2xl font-bold tracking-tight text-apple-dark mt-1">Ingesta de Cartolas</h2>
+<p class="text-xs sm:text-sm text-apple-secondary mt-1 leading-relaxed">
+            Lectura inteligente con categorización semántica inmediata.
+          </p>
+</div>
+<!-- Drag & Drop Upload Zone -->
+<div class="mb-6">
+<div class="flex items-center justify-between mb-2">
+<span class="text-[11px] font-semibold tracking-wider text-apple-secondary uppercase">Cartola PDF</span>
+<span class="text-[11px] text-gray-400">PDF, XLS, CSV</span>
+</div>
+<div class="relative border-2 border-dashed border-gray-200 rounded-2xl p-6 flex flex-col sm:flex-row items-center justify-between gap-4 bg-[#FAFAFC] hover:bg-[#F5F5F8] transition-colors cursor-pointer group">
+<div class="flex items-center gap-3.5">
+<div class="w-11 h-11 rounded-full bg-white shadow-sm border border-gray-100 flex items-center justify-center text-apple-blue group-hover:scale-105 transition-transform">
+<!-- Cloud Upload Icon -->
+<svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+<div class="text-left">
+<p class="text-xs sm:text-sm font-semibold text-apple-dark">Drag and drop files here</p>
+<p class="text-[11px] text-apple-secondary">Limit 200MB per file</p>
+</div>
+</div>
+<button class="px-4 py-2 bg-white text-xs font-semibold text-apple-dark rounded-full border border-gray-200 shadow-sm hover:bg-gray-50 transition-all" type="button">
+              Browse files
+            </button>
+</div>
+</div>
+<!-- Uploaded Files List -->
+<div class="space-y-2 mb-6" data-purpose="uploaded-files-list">
+<!-- File Chip 1 -->
+<div class="flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-gray-50/80 border border-gray-100 transition-colors hover:bg-gray-100/70">
+<div class="flex items-center gap-2.5 truncate">
+<!-- Document Icon -->
+<svg class="w-4 h-4 text-apple-secondary flex-shrink-0" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+<span class="text-xs font-medium text-apple-dark truncate">Tarjeta de credito.pdf</span>
+<span class="text-[11px] text-apple-secondary flex-shrink-0">149.6KB</span>
+</div>
+<button aria-label="Eliminar archivo" class="text-gray-400 hover:text-apple-dark transition-colors p-1" type="button">
+<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M6 18L18 6M6 6l12 12" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</button>
+</div>
+<!-- File Chip 2 -->
+<div class="flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-gray-50/80 border border-gray-100 transition-colors hover:bg-gray-100/70">
+<div class="flex items-center gap-2.5 truncate">
+<!-- Document Icon -->
+<svg class="w-4 h-4 text-apple-secondary flex-shrink-0" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+<span class="text-xs font-medium text-apple-dark truncate">cuenta corriente.pdf</span>
+<span class="text-[11px] text-apple-secondary flex-shrink-0">92.0KB</span>
+</div>
+<button aria-label="Eliminar archivo" class="text-gray-400 hover:text-apple-dark transition-colors p-1" type="button">
+<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M6 18L18 6M6 6l12 12" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</button>
+</div>
+</div>
+<!-- Raw Text Input Area -->
+<div class="mb-6">
+<label class="block text-[11px] font-semibold tracking-wider text-apple-secondary uppercase mb-2" for="raw-paste">
+            O pega el texto aquí
+          </label>
+<div class="relative rounded-2xl border border-gray-200 bg-[#FAFAFC] focus-within:border-apple-blue focus-within:ring-2 focus-within:ring-apple-blue/20 transition-all overflow-hidden">
+<textarea class="w-full bg-transparent border-0 resize-none text-xs text-apple-dark placeholder-gray-400 p-3.5 focus:ring-0 leading-relaxed font-mono" id="raw-paste" placeholder="Ej: 02/08 AGUAS ANDINAS $75.119
+03/08 ENEL DISTRIBUCION $202.336..." rows="4"></textarea>
+</div>
+</div>
+<!-- Primary Action CTA Button -->
+<button class="w-full py-3.5 px-6 rounded-2xl bg-apple-dark hover:bg-black active:scale-[0.99] text-white text-xs sm:text-sm font-medium tracking-normal flex items-center justify-center gap-2 shadow-lg shadow-black/10 transition-all duration-150" type="button">
+<span>Procesar Gastos Fijos</span>
+<span class="text-xs text-gray-400 font-mono tracking-tight bg-white/10 px-2 py-0.5 rounded-md">Cmd + Enter</span>
+</button>
+<!-- Collapsible Adjustment Accordion -->
+<div class="mt-4 pt-2">
+<details class="group rounded-2xl border border-gray-200/80 bg-white overflow-hidden">
+<summary class="flex items-center justify-between p-4 text-xs font-semibold text-apple-dark cursor-pointer select-none group-hover:text-black">
+<span class="flex items-center gap-2">
+<svg class="w-4 h-4 text-apple-secondary" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+                Ajustes Dinámicos (UF, Dólar, Beneficios)
+              </span>
+<svg class="w-4 h-4 text-apple-secondary transition-transform duration-200 group-open:rotate-180" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</summary>
+<div class="p-4 pt-1 border-t border-gray-100 text-xs text-apple-secondary space-y-2">
+<div class="flex justify-between py-1 border-b border-gray-50">
+<span>UF Referencial:</span>
+<span class="font-medium text-apple-dark">$37.840,12</span>
+</div>
+<div class="flex justify-between py-1 border-b border-gray-50">
+<span>Dólar Observado:</span>
+<span class="font-medium text-apple-dark">$942,50</span>
+</div>
+<div class="flex justify-between py-1">
+<span>Tasa Indexación Automática:</span>
+<span class="font-medium text-emerald-600">Activa (1.00x)</span>
+</div>
+</div>
+</details>
+</div>
+</section>
+<!-- END: LeftColumn -->
+<!-- BEGIN: RightColumn (Desglose Detectado & Balance) -->
+<section class="lg:col-span-7 bg-white rounded-3xl p-6 sm:p-8 border border-black/5 shadow-apple-card space-y-6" data-purpose="breakdown-section">
+<!-- Header Desglose -->
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-gray-100 pb-5">
+<div>
+<span class="text-[11px] font-bold tracking-wider text-apple-secondary uppercase">Balance Consolidado</span>
+<h2 class="text-2xl font-bold tracking-tight text-apple-dark mt-1">Desglose Detectado</h2>
+<p class="text-xs sm:text-sm text-apple-secondary mt-1">
+              Gastos directos e indexados asignados a la cuenta compartida.
+            </p>
+</div>
+<!-- Badge Count -->
+<div class="self-start sm:self-center">
+<span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-gray-100 text-apple-dark border border-black/5">
+              14 gastos reconocidos
+            </span>
+</div>
+</div>
+<!-- Expenses Item List -->
+<div class="space-y-1 divide-y divide-gray-50 max-h-[580px] overflow-y-auto pr-1" data-purpose="expense-list">
+<!-- 1. AGUA -->
+<article class="py-3 flex items-center justify-between hover:bg-gray-50/60 rounded-xl px-2 transition-colors">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-full bg-[#F5F5F7] flex items-center justify-center text-apple-dark flex-shrink-0">
+<!-- Drop Icon -->
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M12 2.69l5.66 5.66a8 8 0 11-11.31 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path>
+</svg>
+</div>
+<div>
+<h3 class="text-xs sm:text-sm font-semibold text-apple-dark">AGUA (Aguas Andinas)</h3>
+<p class="text-[11px] text-apple-secondary">Detectado aut. • N/A</p>
+</div>
+</div>
+<div class="text-right">
+<span class="text-xs sm:text-sm font-semibold text-apple-dark tracking-tight">$ 75.119</span>
+</div>
+</article>
+<!-- 2. LUZ -->
+<article class="py-3 flex items-center justify-between hover:bg-gray-50/60 rounded-xl px-2 transition-colors">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-full bg-[#F5F5F7] flex items-center justify-center text-apple-dark flex-shrink-0">
+<!-- Bolt Icon -->
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M13 10V3L4 14h7v7l9-11h-7z" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path>
+</svg>
+</div>
+<div>
+<h3 class="text-xs sm:text-sm font-semibold text-apple-dark">LUZ (Enel)</h3>
+<p class="text-[11px] text-apple-secondary">Detectado aut. • N/A</p>
+</div>
+</div>
+<div class="text-right">
+<span class="text-xs sm:text-sm font-semibold text-apple-dark tracking-tight">$ 202.336</span>
+</div>
+</article>
+<!-- 3. GAS -->
+<article class="py-3 flex items-center justify-between hover:bg-gray-50/60 rounded-xl px-2 transition-colors">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-full bg-[#F5F5F7] flex items-center justify-center text-apple-dark flex-shrink-0">
+<!-- Flame Icon -->
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343a7.975 7.975 0 012.344 5.657 8 8 0 01-2.343 5.657z" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path>
+</svg>
+</div>
+<div>
+<h3 class="text-xs sm:text-sm font-semibold text-apple-dark">GAS (Metrogas)</h3>
+<p class="text-[11px] text-apple-secondary">Detectado aut. • N/A</p>
+</div>
+</div>
+<div class="text-right">
+<span class="text-xs sm:text-sm font-semibold text-apple-dark tracking-tight">$ 54.481</span>
+</div>
+</article>
+<!-- 4. INTERNET -->
+<article class="py-3 flex items-center justify-between hover:bg-gray-50/60 rounded-xl px-2 transition-colors">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-full bg-[#F5F5F7] flex items-center justify-center text-apple-dark flex-shrink-0">
+<!-- Wifi Icon -->
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.141 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path>
+</svg>
+</div>
+<div>
+<h3 class="text-xs sm:text-sm font-semibold text-apple-dark">INTERNET (GTD)</h3>
+<p class="text-[11px] text-apple-secondary">Detectado aut. • N/A</p>
+</div>
+</div>
+<div class="text-right">
+<span class="text-xs sm:text-sm font-semibold text-apple-dark tracking-tight">$ 35.767</span>
+</div>
+</article>
+<!-- 5. SEGURO CASA -->
+<article class="py-3 flex items-center justify-between hover:bg-gray-50/60 rounded-xl px-2 transition-colors">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-full bg-[#F5F5F7] flex items-center justify-center text-apple-dark flex-shrink-0">
+<!-- Shield Icon -->
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path>
+</svg>
+</div>
+<div>
+<h3 class="text-xs sm:text-sm font-semibold text-apple-dark">SEGURO CASA (Consorcio)</h3>
+<p class="text-[11px] text-apple-secondary">Detectado aut. • N/A</p>
+</div>
+</div>
+<div class="text-right">
+<span class="text-xs sm:text-sm font-semibold text-apple-dark tracking-tight">$ 52.590</span>
+</div>
+</article>
+<!-- 6. ZAPPING -->
+<article class="py-3 flex items-center justify-between hover:bg-gray-50/60 rounded-xl px-2 transition-colors">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-full bg-[#F5F5F7] flex items-center justify-center text-apple-dark flex-shrink-0">
+<!-- TV / Screen Icon -->
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path>
+</svg>
+</div>
+<div>
+<h3 class="text-xs sm:text-sm font-semibold text-apple-dark">ZAPPING</h3>
+<p class="text-[11px] text-apple-secondary">Detectado aut. • 18/08/2026</p>
+</div>
+</div>
+<div class="text-right">
+<span class="text-xs sm:text-sm font-semibold text-apple-dark tracking-tight">$ 19.900</span>
+</div>
+</article>
+<!-- 7. YOUTUBE PREMIUM -->
+<article class="py-3 flex items-center justify-between hover:bg-gray-50/60 rounded-xl px-2 transition-colors">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-full bg-[#F5F5F7] flex items-center justify-center text-apple-dark flex-shrink-0">
+<!-- Play Icon -->
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path>
+<path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path>
+</svg>
+</div>
+<div>
+<h3 class="text-xs sm:text-sm font-semibold text-apple-dark">YOUTUBE PREMIUM</h3>
+<p class="text-[11px] text-apple-secondary">Detectado aut. • N/A</p>
+</div>
+</div>
+<div class="text-right">
+<span class="text-xs sm:text-sm font-semibold text-apple-dark tracking-tight">$ 11.742</span>
+</div>
+</article>
+<!-- 8. SPOTIFY DUO -->
+<article class="py-3 flex items-center justify-between hover:bg-gray-50/60 rounded-xl px-2 transition-colors">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-full bg-[#F5F5F7] flex items-center justify-center text-apple-dark flex-shrink-0">
+<!-- Music Icon -->
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path>
+</svg>
+</div>
+<div>
+<h3 class="text-xs sm:text-sm font-semibold text-apple-dark">SPOTIFY DUO</h3>
+<p class="text-[11px] text-apple-secondary">Detectado aut. • N/A</p>
+</div>
+</div>
+<div class="text-right">
+<span class="text-xs sm:text-sm font-semibold text-apple-dark tracking-tight">$ 6.750</span>
+</div>
+</article>
+<!-- 9. GASTOS COMUNES -->
+<article class="py-3 flex items-center justify-between hover:bg-gray-50/60 rounded-xl px-2 transition-colors">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-full bg-[#F5F5F7] flex items-center justify-center text-apple-dark flex-shrink-0">
+<!-- Building Icon -->
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path>
+</svg>
+</div>
+<div>
+<h3 class="text-xs sm:text-sm font-semibold text-apple-dark">GASTOS COMUNES (Khipu)</h3>
+<p class="text-[11px] text-apple-secondary">Detectado aut. • Detectado aut.</p>
+</div>
+</div>
+<div class="text-right">
+<span class="text-xs sm:text-sm font-semibold text-apple-dark tracking-tight">$ 131.741</span>
+</div>
+</article>
+<!-- 10. PISCINA -->
+<article class="py-3 flex items-center justify-between hover:bg-gray-50/60 rounded-xl px-2 transition-colors">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-full bg-[#F5F5F7] flex items-center justify-center text-apple-dark flex-shrink-0">
+<!-- Water Waves Icon -->
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M3 15a4 4 0 004 4h10a4 4 0 004-4M3 9a4 4 0 014-4h10a4 4 0 014 4" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path>
+</svg>
+</div>
+<div>
+<h3 class="text-xs sm:text-sm font-semibold text-apple-dark">PISCINA (Andy)</h3>
+<p class="text-[11px] text-apple-secondary">Detectado aut. • 28/08/2026</p>
+</div>
+</div>
+<div class="text-right">
+<span class="text-xs sm:text-sm font-semibold text-apple-dark tracking-tight">$ 27.000</span>
+</div>
+</article>
+<!-- 11. MANDARINO -->
+<article class="py-3 flex items-center justify-between hover:bg-gray-50/60 rounded-xl px-2 transition-colors">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-full bg-[#F5F5F7] flex items-center justify-center text-apple-dark flex-shrink-0">
+<!-- Home / Jardín Icon -->
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path>
+</svg>
+</div>
+<div>
+<h3 class="text-xs sm:text-sm font-semibold text-apple-dark">MANDARINO</h3>
+<p class="text-[11px] text-apple-secondary">Detectado aut. • 04/08/2026</p>
+</div>
+</div>
+<div class="text-right">
+<span class="text-xs sm:text-sm font-semibold text-apple-dark tracking-tight">$ 259.400</span>
+</div>
+</article>
+<!-- 12. CSFJ Mensualidad -->
+<article class="py-3 flex items-center justify-between hover:bg-gray-50/60 rounded-xl px-2 transition-colors">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-full bg-[#F5F5F7] flex items-center justify-center text-apple-dark flex-shrink-0">
+<!-- Academic Cap Icon -->
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M12 14l9-5-9-5-9 5 9 5z"></path>
+<path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"></path>
+<path d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path>
+</svg>
+</div>
+<div>
+<h3 class="text-xs sm:text-sm font-semibold text-apple-dark">CSFJ (Mensualidad)</h3>
+<p class="text-[11px] text-apple-secondary">Detectado aut. • N/A</p>
+</div>
+</div>
+<div class="text-right">
+<span class="text-xs sm:text-sm font-semibold text-apple-dark tracking-tight">$ 299.050</span>
+</div>
+</article>
+<!-- 13. CSFJ Jornada Extendida -->
+<article class="py-3 flex items-center justify-between hover:bg-gray-50/60 rounded-xl px-2 transition-colors">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-full bg-[#F5F5F7] flex items-center justify-center text-apple-dark flex-shrink-0">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path>
+</svg>
+</div>
+<div>
+<h3 class="text-xs sm:text-sm font-semibold text-apple-dark">CSFJ (Jornada Extendida)</h3>
+<p class="text-[11px] text-apple-secondary">Detectado aut. • N/A</p>
+</div>
+</div>
+<div class="text-right">
+<span class="text-xs sm:text-sm font-semibold text-apple-dark tracking-tight">$ 123.630</span>
+</div>
+</article>
+<!-- 14. CSFJ Extras -->
+<article class="py-3 flex items-center justify-between hover:bg-gray-50/60 rounded-xl px-2 transition-colors">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-full bg-[#F5F5F7] flex items-center justify-center text-apple-dark flex-shrink-0">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path>
+</svg>
+</div>
+<div>
+<h3 class="text-xs sm:text-sm font-semibold text-apple-dark">CSFJ (Extras/Materiales)</h3>
+<p class="text-[11px] text-apple-secondary">Detectado aut. • N/A</p>
+</div>
+</div>
+<div class="text-right">
+<span class="text-xs sm:text-sm font-semibold text-apple-dark tracking-tight">$ 39.755</span>
+</div>
+</article>
+<!-- 15. Beneficio Empresa (Descuento/Reembolso) -->
+<article class="my-2 p-3.5 rounded-2xl bg-apple-blue-light/70 border border-apple-blue/20 flex items-center justify-between transition-all hover:bg-apple-blue-light">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-full bg-apple-blue text-white flex items-center justify-center flex-shrink-0 shadow-sm">
+<!-- Gift / Benefit Icon -->
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M12 8v13m0-13V4a2 2 0 112 2h-2zm0 0V4a2 2 0 10-2 2h2zm-8 4h16a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2v-6a2 2 0 012-2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+<div>
+<h3 class="text-xs sm:text-sm font-semibold text-apple-blue">Beneficio Empresa</h3>
+<p class="text-[11px] text-apple-blue/80">Reembolso aplicado</p>
+</div>
+</div>
+<div class="text-right">
+<span class="text-xs sm:text-sm font-bold text-apple-blue tracking-tight">-$ 212.600</span>
+</div>
+</article>
+</div>
+<!-- Consolidated Totals Section -->
+<div class="bg-[#FAFAFC] rounded-2xl p-5 sm:p-6 border border-gray-100/90 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4" data-purpose="consolidated-total">
+<div>
+<span class="text-[11px] font-bold tracking-wider text-apple-secondary uppercase block">Consolidado Actual</span>
+<span class="text-base sm:text-lg font-medium text-apple-dark">Total Gastos Fijos Netos</span>
+</div>
+<div class="text-left sm:text-right">
+<div class="flex items-baseline gap-1.5 justify-start sm:justify-end">
+<span class="text-3xl sm:text-4xl font-extrabold tracking-tight text-apple-dark">
+                $ 1.339.261
+              </span>
+<span class="text-xs font-semibold text-apple-secondary">CLP</span>
+</div>
+</div>
+</div>
+<!-- Bi-Parental Allocation Accordion / Card -->
+<div class="pt-2 border-t border-gray-100" data-purpose="bi-parental-split">
+<div class="mb-3">
+<span class="text-[10px] font-bold tracking-wider text-apple-secondary uppercase">Acuerdo Bi-Parental</span>
+<h4 class="text-sm font-bold text-apple-dark">Reparto Proporcional Acordado</h4>
+</div>
+<!-- Apple Minimal Proportional Progress Bar -->
+<div class="w-full h-2.5 bg-gray-100 rounded-full overflow-hidden flex mb-4 shadow-inner">
+<div class="bg-apple-blue h-full transition-all duration-500 rounded-l-full" style="width: 63.77%;" title="Papá: 63.77%"></div>
+<div class="bg-apple-purple h-full transition-all duration-500 rounded-r-full" style="width: 36.23%;" title="Mamá: 36.23%"></div>
+</div>
+<!-- Two Side-by-Side Balance Distribution Cards -->
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+<!-- Papá's Share -->
+<div class="bg-blue-50/50 hover:bg-blue-50 border border-blue-100/80 rounded-2xl p-4 transition-all flex flex-col justify-between">
+<div class="flex items-center justify-between mb-3">
+<div class="flex items-center gap-2">
+<div class="w-7 h-7 rounded-full bg-apple-blue text-white flex items-center justify-center font-bold text-xs">
+                    P
+                  </div>
+<div>
+<span class="text-xs font-semibold text-apple-dark block">Cuota Papá</span>
+</div>
+</div>
+<span class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-apple-blue text-white">
+                  63,77%
+                </span>
+</div>
+<div>
+<p class="text-2xl font-bold tracking-tight text-apple-dark">$ 854.046</p>
+<p class="text-[10px] text-apple-secondary mt-0.5">Asignación automática neta</p>
+</div>
+</div>
+<!-- Mamá's Share -->
+<div class="bg-purple-50/50 hover:bg-purple-50 border border-purple-100/80 rounded-2xl p-4 transition-all flex flex-col justify-between">
+<div class="flex items-center justify-between mb-3">
+<div class="flex items-center gap-2">
+<div class="w-7 h-7 rounded-full bg-apple-purple text-white flex items-center justify-center font-bold text-xs">
+                    M
+                  </div>
+<div>
+<span class="text-xs font-semibold text-apple-dark block">Deuda de Mamá</span>
+</div>
+</div>
+<span class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-apple-purple text-white">
+                  36,23%
+                </span>
+</div>
+<div>
+<p class="text-2xl font-bold tracking-tight text-apple-dark">$ 485.214</p>
+<p class="text-[10px] text-apple-secondary mt-0.5">Por transferir a cuenta origen</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- END: RightColumn -->
+</div>
+</main>
+<!-- END: MainContent -->
+<!-- BEGIN: Footer -->
+<footer class="w-full max-w-7xl mx-auto px-4 sm:px-8 mt-12 text-center text-xs text-apple-secondary flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-gray-200/60 pt-6">
+<p>© 2026 Hadita Financial OS. Interfaz diseñada bajo estándares de accesibilidad y minimalismo suizo-californiano.</p>
+<div class="flex items-center space-x-4 text-xs font-medium">
+<a class="hover:text-apple-dark transition-colors" href="#">Políticas de Privacidad</a>
+<span class="text-gray-300">•</span>
+<a class="hover:text-apple-dark transition-colors" href="#">Seguridad Bancaria</a>
+<span class="text-gray-300">•</span>
+<a class="hover:text-apple-dark transition-colors" href="#">Exportar Informe</a>
+</div>
+</footer>
+<!-- END: Footer -->
+</body></html>
