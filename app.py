@@ -117,12 +117,12 @@ st.markdown("""
     }
     
     /* Hide default radio buttons and style as pills */
-    div[data-testid="stRadioGroup"] {
+    div[data-testid="stRadio"], div[data-testid="stRadioGroup"] {
         display: flex;
         justify-content: flex-start;
         margin-bottom: 20px;
     }
-    div[data-testid="stRadioGroup"] > div {
+    div[data-testid="stRadio"] > div, div[data-testid="stRadioGroup"] > div {
         display: inline-flex !important;
         flex-direction: row !important;
         background: #E8E8ED !important;
@@ -130,7 +130,7 @@ st.markdown("""
         padding: 4px !important;
         gap: 4px !important;
     }
-    div[data-testid="stRadioGroup"] label {
+    div[data-testid="stRadio"] label, div[data-testid="stRadioGroup"] label {
         padding: 8px 20px !important;
         border-radius: 9999px !important;
         background: transparent !important;
@@ -142,16 +142,16 @@ st.markdown("""
         border: none !important;
     }
     /* Streamlit hides the radio input, we target the checked state via aria-checked */
-    div[data-testid="stRadioGroup"] label[data-selected="true"] {
+    div[data-testid="stRadio"] label[data-checked="true"], div[data-testid="stRadioGroup"] label[data-selected="true"] {
         background: #FFFFFF !important;
         color: #1D1D1F !important;
         box-shadow: 0 2px 8px -1px rgba(0, 0, 0, 0.04) !important;
     }
-    div[data-testid="stRadioGroup"] label:hover:not([data-checked="true"]) {
+    div[data-testid="stRadio"] label:hover:not([data-checked="true"]), div[data-testid="stRadioGroup"] label:hover:not([data-selected="true"]) {
         color: #1D1D1F !important;
     }
     /* Hide the circle icon next to radio labels robustly */
-    div[data-testid="stRadioGroup"] label[data-testid="stRadioOption"] > div > div:first-child {
+    div[data-testid="stRadio"] .st-emotion-cache-1n76uvr, div[data-testid="stRadio"] .st-emotion-cache-9hdc3e, div[data-testid="stRadio"] .e1326t814, div[data-testid="stRadioGroup"] label[data-testid="stRadioOption"] > div > div:first-child {
         display: none !important;
     }
     
