@@ -6,6 +6,7 @@ import database
 from config import VALORES_BASE_MES, FACTORES_DIVISION
 from processor_v3 import extract_all_text, process_data
 from utils import format_clp, standardize_date, fetch_indicators
+from sheets_exporter import export_to_sheets
 import streamlit.components.v1 as components
 
 st.set_page_config(page_title="Hadita", page_icon="🪄", layout="wide", initial_sidebar_state="collapsed")
@@ -419,6 +420,17 @@ if page == "Conciliación Fija":
                 st.markdown(re.sub(r'^[ \t]+', '', out, flags=re.MULTILINE), unsafe_allow_html=True)
 
                 st.toast('✨ ¡Cálculo mágico completado con éxito!', icon='🪄')
+                
+                # --- Google Sheets Export ---
+                st.markdown("<br>", unsafe_allow_html=True)
+                if "gcp_service_account" in st.secrets and "google_sheet_url" in st.secrets:
+                    if st.button("Exportar a Google Sheets", type="primary", use_container_width=True):
+                        with st.spinner("Guardando en la nube..."):
+                            if export_to_sheets(resultados):
+                                st.success("¡Exportado correctamente a Google Sheets!")
+                else:
+                    with st.expander("Integrar con Google Sheets"):
+                        st.info("Falta configurar las credenciales de Google. Agrega `gcp_service_account` y `google_sheet_url` a tus secretos de Streamlit (o localmente en `.streamlit/secrets.toml`).")
                 
                 # Alertas de gastos faltantes
                 mandatory = [
