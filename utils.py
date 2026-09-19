@@ -48,3 +48,20 @@ def standardize_date(date_str):
             return f"{day:02d}/{month_idx:02d}"
 
     return date_str
+
+import urllib.request
+import json
+import streamlit as st
+
+@st.cache_data(ttl=3600)
+def fetch_indicators():
+    """Fetch live UF and Dolar from mindicador.cl, with fallbacks."""
+    uf, dolar = 37900.0, 950.0
+    try:
+        req = urllib.request.urlopen('https://mindicador.cl/api', timeout=3)
+        data = json.loads(req.read())
+        uf = data.get("uf", {}).get("valor", uf)
+        dolar = data.get("dolar", {}).get("valor", dolar)
+    except Exception as e:
+        pass
+    return uf, dolar

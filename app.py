@@ -5,7 +5,7 @@ from variables_processor import process_unmatched_to_df
 import database
 from config import VALORES_BASE_MES, FACTORES_DIVISION
 from processor_v3 import extract_all_text, process_data
-from utils import format_clp, standardize_date
+from utils import format_clp, standardize_date, fetch_indicators
 import streamlit.components.v1 as components
 
 st.set_page_config(page_title="Hadita", page_icon="🪄", layout="wide", initial_sidebar_state="collapsed")
@@ -249,9 +249,13 @@ if page == "Conciliación Fija":
         st.markdown("<br>", unsafe_allow_html=True)
         with st.expander("Ajustes Dinámicos (UF, Dólar, Beneficios)", expanded=False):
             c1, c2 = st.columns(2)
+            
+            # Obtener indicadores reales desde la API
+            live_uf, live_dolar = fetch_indicators()
+            
             with c1:
-                valor_uf = st.number_input("Colegio SFJ (UF Base)", value=float(VALORES_BASE_MES.get("valor_uf", 37900.0)), step=10.0)
-                dolar_val = st.number_input("Dólar Observado", value=VALORES_BASE_MES["valor_dolar"], step=10.0)
+                valor_uf = st.number_input("Colegio SFJ (UF Base)", value=float(live_uf), step=10.0)
+                dolar_val = st.number_input("Dólar Observado", value=float(live_dolar), step=10.0)
             with c2:
                 manda_val = st.number_input("Mandarino (CLP)", value=VALORES_BASE_MES["mensualidad_mandarino"], step=1000)
                 beneficio_val = st.number_input("Beneficio Empresa", value=VALORES_BASE_MES["beneficio_empleador_por_hijo"], step=1000)
