@@ -105,7 +105,7 @@ def classify_variable(glosa, monto):
         else:
             return "Por Revisar", "Por Revisar", "Transf. a Vane"
         
-    for rule in RULES:
+    for rule in load_rules():
         match = str(rule.get('match_text', '')).upper()
         if match and match in glosa_upper:
             clean_name = rule.get('clean_name')

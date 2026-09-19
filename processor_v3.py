@@ -212,6 +212,10 @@ def process_data(raw_text, dolar_val, csfj_base, manda_base, beneficio, manda_ma
             line_for_amounts = line.replace(date_match.group(0), '')
         line_for_amounts = re.sub(r'\b\d{1,2}\.\d{3}\.\d{3}-[\dkK]\b', '', line_for_amounts, flags=re.IGNORECASE)
         line_for_amounts = re.sub(r'\b\d{7,8}-[\dkK]\b', '', line_for_amounts, flags=re.IGNORECASE)
+        line_for_amounts = re.sub(r'(?i)Nro\.?\s*\d+', '', line_for_amounts)
+        line_for_amounts = re.sub(r'(?i)N°\s*\d+', '', line_for_amounts)
+        line_for_amounts = re.sub(r'\d{10,}', '', line_for_amounts) # Ignore any pure numbers longer than 9 digits (usually account/invoice numbers)
+
         # Eliminar horas para que no se confundan con montos pequeños en dolares
         line_for_amounts = re.sub(r'\b\d{1,2}:\d{2}(?::\d{2})?\b', '', line_for_amounts)
         

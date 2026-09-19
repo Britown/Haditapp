@@ -470,11 +470,10 @@ elif page == "Gastos Variables":
         df_identificados = df_vars[(df_vars["Categoría"] != "Ingresos") & (df_vars["Categoría"] != "Por Revisar")].reset_index(drop=True)
         
         col_config = {
-            "Categoría": st.column_config.SelectboxColumn(
-                "Categoría",
-                help="Categoría del gasto",
-                width="medium",
-                options=["Supermercado", "Farmacia", "Gustitos", "Delivery", "Salud", "Combustible", "Suscripciones", "Entretenimiento", "Seguros", "Babysit", "Librería", "Minimarket", "Pago cuota casa", "Pago deuda Omita", "Gastos Bancarios", "Pago Tarjeta", "Mercadería", "Compras hogar", "Restaurant-café", "Ingresos", "Mercado Pago", "Por Revisar"]
+            "Categoría": st.column_config.TextColumn(
+                "Categoría (editable)",
+                help="Escribe la categoría que desees",
+                width="medium"
             ),
             "Responsable": st.column_config.SelectboxColumn(
                 "Responsabilidad",
@@ -503,6 +502,8 @@ elif page == "Gastos Variables":
             use_container_width=True,
             key="editor_no_id"
         )
+        if not edited_no_identificados.empty:
+            st.markdown(f"<p style='text-align:right; font-weight:600; font-size:15px; color:#1D1D1F;'>Total Pendientes: $ {format_clp(edited_no_identificados['Monto'].sum())}</p>", unsafe_allow_html=True)
         
         st.subheader("✅ Gastos Identificados")
         st.markdown("Gastos que el sistema ya reconoce. Puedes corregirlos si se equivocó.")
@@ -513,6 +514,8 @@ elif page == "Gastos Variables":
             use_container_width=True,
             key="editor_id"
         )
+        if not edited_identificados.empty:
+            st.markdown(f"<p style='text-align:right; font-weight:600; font-size:15px; color:#1D1D1F;'>Total Identificados: $ {format_clp(edited_identificados['Monto'].sum())}</p>", unsafe_allow_html=True)
         
         st.subheader("💰 Abonos / Ingresos")
         st.markdown("Transferencias recibidas o abonos detectados.")
@@ -523,6 +526,8 @@ elif page == "Gastos Variables":
             use_container_width=True,
             key="editor_ingresos"
         )
+        if not edited_ingresos.empty:
+            st.markdown(f"<p style='text-align:right; font-weight:600; font-size:15px; color:#1D1D1F;'>Total Ingresos: $ {format_clp(edited_ingresos['Monto'].sum())}</p>", unsafe_allow_html=True)
         
         # Combine back into a single dataframe for saving
         import pandas as pd
@@ -558,6 +563,7 @@ elif page == "Gastos Variables":
                         if new_rules:
                             pd.concat([df_rules, pd.DataFrame(new_rules)], ignore_index=True).to_csv("reglas_variables.csv", index=False)
                             st.toast(f"🧠 Se han aprendido {len(new_rules)} nuevas reglas.")
+                        st.rerun()
                     except Exception as e:
                         print("Error guardando reglas:", e)
                         
