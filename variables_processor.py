@@ -74,15 +74,26 @@ def categorize_with_ai(descriptions):
         {json.dumps(descriptions)}
         """
         
-        response = client.models.generate_content(
-            model='gemini-3.5-flash',
-            contents=prompt,
-            config=types.GenerateContentConfig(
-                response_mime_type="application/json",
-            ),
-        )
+        # Intentar con 3.5, si falla por demanda, intentar con 2.5
+        model_names = ['gemini-3.5-flash', 'gemini-2.5-flash', 'gemini-3.5-flash-lite']
+        last_error = None
+        for m_name in model_names:
+            try:
+                response = client.models.generate_content(
+                    model=m_name,
+                    contents=prompt,
+                    config=types.GenerateContentConfig(
+                        response_mime_type="application/json",
+                    ),
+                )
+                return json.loads(response.text)
+            except Exception as e:
+                last_error = e
+                if '503' not in str(e) and '429' not in str(e):
+                    break # if it's not a demand/quota issue, stop trying
         
-        return json.loads(response.text)
+        st.error(f"Error de AI: {last_error}")
+        return {}
     except Exception as e:
         st.error(f"Error de AI: {e}")
         return {}
