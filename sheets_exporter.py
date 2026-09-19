@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 from datetime import datetime
 
-def export_to_sheets(resultados_dict, df_identificados, df_no_identificados, df_ingresos, user_email):
+def export_to_sheets(resultados_dict, df_identificados, df_no_identificados, df_ingresos):
     try:
         import gspread
         from google.oauth2.service_account import Credentials
@@ -54,7 +54,7 @@ def export_to_sheets(resultados_dict, df_identificados, df_no_identificados, df_
         sheet1.format('A1:C1', {'textFormat': {'bold': True}})
         
         def _write_df_to_tab(tab_title, df):
-            sheet = sh.add_worksheet(title=tab_title, rows="100", cols="6")
+            sheet = create_tab(tab_title)
             rows = [["Fecha", "Descripción", "Categoría", "Responsable", "Monto (CLP)"]]
             if df is not None and not df.empty:
                 for _, row in df.iterrows():
