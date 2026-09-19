@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 from datetime import datetime
 
-def export_to_sheets(resultados_dict):
+def export_to_sheets(resultados_dict, sheet_url):
     try:
         import gspread
         from google.oauth2.service_account import Credentials
@@ -26,11 +26,8 @@ def export_to_sheets(resultados_dict):
         creds = Credentials.from_service_account_info(credentials_dict, scopes=scopes)
         client = gspread.authorize(creds)
         
-        # We need the Google Sheet ID or URL from the user. 
-        # For now, let's assume it's in the secrets or we can ask the user in the UI.
-        sheet_url = st.secrets.get("google_sheet_url", "")
         if not sheet_url:
-            st.error("Falta la URL de la planilla (google_sheet_url) en los secretos.")
+            st.error("Por favor, ingresa una URL válida de Google Sheets.")
             return False
             
         sheet = client.open_by_url(sheet_url).sheet1
