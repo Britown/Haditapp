@@ -77,7 +77,7 @@ def _categorize_with_ai_cached(descriptions_tuple):
         """
         
         # Intentar con 3.5, si falla por demanda, intentar con 2.5
-        model_names = ['gemini-3.5-flash', 'gemini-2.5-flash', 'gemini-3.5-flash-lite']
+        model_names = ['gemini-3.5-flash', 'gemini-3.6-flash', 'gemini-3.7-flash', 'gemini-3.8-flash']
         last_error = None
         for m_name in model_names:
             try:
