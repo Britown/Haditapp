@@ -194,6 +194,10 @@ def process_data(raw_text, dolar_val, csfj_base, manda_base, beneficio, manda_ma
             continue
         processed_lines.add(line_upper)
 
+        if "SALDO INICIAL" in line_upper or "SALDO FINAL" in line_upper or "SALDO ANTERIOR" in line_upper or "SALDO NUEVO" in line_upper or "SALDO A FAVOR" in line_upper:
+            continue
+
+
         date_match = re.search(r'\b(\d{2}/\d{2}/\d{4})\b', line)
         if date_match:
             fecha = date_match.group(1)
