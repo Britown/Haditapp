@@ -105,6 +105,21 @@ def categorize_with_ai(descriptions):
 
 def classify_variable(glosa, monto):
     glosa_upper = glosa.upper()
+    for rule in load_rules():
+        match = str(rule.get('match_text', '')).upper()
+        if match and match in glosa_upper:
+            clean_name = rule.get('clean_name')
+            if pd.isna(clean_name): clean_name = None
+            
+            if match in ["COPEC ASISTIDO", "SHELL", "ARAMCO"]:
+                if monto > 40000:
+                    return "Combustible", "Personal", clean_name
+                elif monto < 10000:
+                    return "Combustible", "Personal", clean_name
+                else:
+                    return "Combustible", "Compartido", clean_name
+            return rule.get('category', 'Sin Categorizar'), rule.get('owner', 'Confirmar'), clean_name
+            
     
     if "SUELDO" in glosa_upper or "REMUNERACION" in glosa_upper or "REEMBOLSO" in glosa_upper or "ABONO" in glosa_upper:
         return "Ingresos", "Personal", None
@@ -121,21 +136,6 @@ def classify_variable(glosa, monto):
         else:
             return "Por Revisar", "Por Revisar", "Transf. a Vane"
         
-    for rule in load_rules():
-        match = str(rule.get('match_text', '')).upper()
-        if match and match in glosa_upper:
-            clean_name = rule.get('clean_name')
-            if pd.isna(clean_name): clean_name = None
-            
-            if match in ["COPEC ASISTIDO", "SHELL", "ARAMCO"]:
-                if monto > 40000:
-                    return "Combustible", "Personal", clean_name
-                elif monto < 10000:
-                    return "Combustible", "Personal", clean_name
-                else:
-                    return "Combustible", "Compartido", clean_name
-            return rule.get('category', 'Sin Categorizar'), rule.get('owner', 'Confirmar'), clean_name
-            
     return "Por Revisar", "Por Revisar", None
 
 def process_unmatched_to_df(unmatched_list):
@@ -171,7 +171,8 @@ def process_unmatched_to_df(unmatched_list):
             "Descripción": clean_desc,
             "Categoría": cat,
             "Responsable": owner,
-            "Monto": item["Monto"]
+            "Monto": item["Monto"],
+            "_Original": raw_desc
         })
         
     return pd.DataFrame(processed)

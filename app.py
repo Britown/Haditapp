@@ -465,7 +465,7 @@ elif page == "Gastos Variables":
             df_vars = process_unmatched_to_df(st.session_state.unmatched)
             
         # Split DataFrames
-        df_vars["_Original"] = df_vars["Descripción"]
+        if "_Original" not in df_vars.columns: df_vars["_Original"] = df_vars["Descripción"]
         df_ingresos = df_vars[df_vars["Categoría"] == "Ingresos"].reset_index(drop=True)
         df_no_identificados = df_vars[df_vars["Categoría"] == "Por Revisar"].reset_index(drop=True).copy()
         
