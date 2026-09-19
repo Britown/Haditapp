@@ -2,6 +2,7 @@ import re
 import streamlit as st
 import datetime
 from variables_processor import process_unmatched_to_df
+from gmail_fetcher import fetch_bice_transfers_from_gmail
 import database
 from config import VALORES_BASE_MES, FACTORES_DIVISION
 from processor_v3 import extract_all_text, process_data
@@ -466,7 +467,25 @@ elif page == "Gastos Variables":
         # Split DataFrames
         df_vars["_Original"] = df_vars["Descripción"]
         df_ingresos = df_vars[df_vars["Categoría"] == "Ingresos"].reset_index(drop=True)
-        df_no_identificados = df_vars[df_vars["Categoría"] == "Por Revisar"].reset_index(drop=True)
+        df_no_identificados = df_vars[df_vars["Categoría"] == "Por Revisar"].reset_index(drop=True).copy()
+        
+        # [GMAIL LOGIC] - Solo para los no identificados
+        try:
+            bice_data = fetch_bice_transfers_from_gmail()
+            if bice_data:
+                for i, row in df_no_identificados.iterrows():
+                    try:
+                        m = int(row["Monto"])
+                        if m in bice_data:
+                            match = bice_data[m][0]
+                            if match["nombre"] or match["mensaje"]:
+                                added = f"✉️ {match['nombre']} ({match['mensaje']})"
+                                # Prepend
+                                df_no_identificados.at[i, "Descripción"] = added + " | " + str(row["Descripción"])
+                    except:
+                        pass
+        except Exception as e:
+            print("Error en Gmail:", e)
         df_identificados = df_vars[(df_vars["Categoría"] != "Ingresos") & (df_vars["Categoría"] != "Por Revisar")].reset_index(drop=True)
         
         col_config = {
