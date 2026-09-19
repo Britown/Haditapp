@@ -563,17 +563,34 @@ elif page == "Gastos Variables":
         if not edited_no_identificados.empty:
             st.markdown(f"<p style='text-align:right; font-weight:600; font-size:15px; color:#1D1D1F;'>Total Pendientes: $ {format_clp(edited_no_identificados['Monto'].sum())}</p>", unsafe_allow_html=True)
         
-        st.subheader("✅ Gastos Identificados")
-        st.markdown("Gastos que el sistema ya reconoce. Puedes corregirlos si se equivocó.")
-        edited_identificados = st.data_editor(
-            df_identificados,
+        st.subheader("✅ Gastos Identificados (Compartidos)")
+        st.markdown("Gastos que el sistema reconoce como responsabilidad Compartida.")
+        df_identificados_comp = df_identificados[df_identificados["Responsable"] == "Compartido"].reset_index(drop=True)
+        edited_comp = st.data_editor(
+            df_identificados_comp,
             column_config=col_config,
             hide_index=True,
             use_container_width=True,
-            key="editor_id"
+            key="editor_id_comp"
         )
-        if not edited_identificados.empty:
-            st.markdown(f"<p style='text-align:right; font-weight:600; font-size:15px; color:#1D1D1F;'>Total Identificados: $ {format_clp(edited_identificados['Monto'].sum())}</p>", unsafe_allow_html=True)
+        if not edited_comp.empty:
+            st.markdown(f"<p style='text-align:right; font-weight:600; font-size:15px; color:#1D1D1F;'>Total Compartidos: $ {format_clp(edited_comp['Monto'].sum())}</p>", unsafe_allow_html=True)
+            
+        st.subheader("✅ Gastos Identificados (Personales / Otros)")
+        st.markdown("Gastos que el sistema reconoce como responsabilidad Personal u otra.")
+        df_identificados_pers = df_identificados[df_identificados["Responsable"] != "Compartido"].reset_index(drop=True)
+        edited_pers = st.data_editor(
+            df_identificados_pers,
+            column_config=col_config,
+            hide_index=True,
+            use_container_width=True,
+            key="editor_id_pers"
+        )
+        if not edited_pers.empty:
+            st.markdown(f"<p style='text-align:right; font-weight:600; font-size:15px; color:#1D1D1F;'>Total Personales: $ {format_clp(edited_pers['Monto'].sum())}</p>", unsafe_allow_html=True)
+            
+        import pandas as pd
+        edited_identificados = pd.concat([edited_comp, edited_pers], ignore_index=True)
         
         st.subheader("💰 Abonos / Ingresos")
         st.markdown("Transferencias recibidas o abonos detectados.")
