@@ -370,8 +370,8 @@ def process_data(raw_text, dolar_val, csfj_base, manda_base, beneficio, manda_ma
                     if monto_val in bice_data:
                         match = bice_data[monto_val][0]
                         if match["nombre"] or match["mensaje"]:
-                            added_desc = f" | [GMAIL] Destinatario: {match['nombre']} - Mensaje: {match['mensaje']}"
-                            item["Descripción"] = item["Descripción"] + added_desc
+                            added_desc = f"✉️ {match['nombre']} ({match['mensaje']})"
+                            item["Descripción"] = added_desc + " | " + item["Descripción"]
         except Exception as e:
             pass
             
