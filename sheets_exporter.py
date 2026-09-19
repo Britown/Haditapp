@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 from datetime import datetime
 
-def export_to_sheets(resultados_dict, sheet_url):
+def export_to_sheets(resultados_dict, user_email):
     try:
         import gspread
         from google.oauth2.service_account import Credentials
@@ -26,23 +26,36 @@ def export_to_sheets(resultados_dict, sheet_url):
         creds = Credentials.from_service_account_info(credentials_dict, scopes=scopes)
         client = gspread.authorize(creds)
         
-        if not sheet_url:
-            st.error("Por favor, ingresa una URL válida de Google Sheets.")
+        if not sheet_url or "@" not in sheet_url:
+            st.error("Por favor, ingresa un correo electrónico válido.")
             return False
             
-        sheet = client.open_by_url(sheet_url).sheet1
+        user_email = sheet_url.strip()
         
-        # Prepare data: Date, Name, Amount
+        # Create a new spreadsheet
+        title = f"Haditapp - Gastos {datetime.now().strftime('%d %b %Y %H:%M')}"
+        sh = client.create(title)
+        
+        # Share it with the user so they can see it in their Google Drive
+        sh.share(user_email, perm_type='user', role='writer')
+        
+        sheet = sh.sheet1
+        
+        # Prepare data headers and rows
+        rows = [["Fecha de Exportación", "Ítem de Gasto", "Monto Detectado (CLP)"]]
         now_str = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
         
-        rows = []
         for k, v in resultados_dict.items():
             if v > 0:
                 rows.append([now_str, k, v])
                 
         # Append rows
         sheet.append_rows(rows)
-        return True
+        
+        # Format header
+        sheet.format('A1:C1', {'textFormat': {'bold': True}})
+        
+        return sh.url
         
     except Exception as e:
         st.error(f"Error al exportar a Google Sheets: {e}")
