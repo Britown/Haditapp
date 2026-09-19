@@ -277,7 +277,7 @@ def process_data(raw_text, dolar_val, csfj_base, manda_base, beneficio, manda_ma
             if resultados["ZAPPING"] == 0: resultados["ZAPPING"] = get_best_amount(amounts, "ZAPPING", fecha, line_for_amounts)
         elif "AMAZON" in line_upper or "PRIME VIDEO" in line_upper:
             if resultados["AMAZON PRIME"] == 0: resultados["AMAZON PRIME"] = get_best_amount(amounts, "AMAZON PRIME", fecha, line_for_amounts)
-        elif "MAX" in line_upper and ("HBO" in line_upper or "MP*MAX" in line_upper):
+        elif "MAX" in line_upper and ("HBO" in line_upper or "MP*MAX" in line_upper or "MERPAGO*MAX" in line_upper):
             if resultados["HBO MAX"] == 0: resultados["HBO MAX"] = get_best_amount(amounts, "HBO MAX", fecha, line_for_amounts)
         elif "YOUTUBE" in line_upper:
             if resultados["YOUTUBE PREMIUM"] == 0: resultados["YOUTUBE PREMIUM"] = get_best_amount(amounts, "YOUTUBE PREMIUM", fecha, line_for_amounts)
