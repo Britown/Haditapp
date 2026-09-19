@@ -1,6 +1,10 @@
 import pdfplumber
 import pandas as pd
 import re
+try:
+    from gmail_fetcher import fetch_bice_transfers_from_gmail
+except ImportError:
+    fetch_bice_transfers_from_gmail = None
 
 _DOLAR_CACHE = {}
 _API_FAILED = False
@@ -356,6 +360,21 @@ def process_data(raw_text, dolar_val, csfj_base, manda_base, beneficio, manda_ma
                 resultados["GASTOS COMUNES (Khipu)"] = amt
                 fechas["GASTOS COMUNES (Khipu)"] = "Detectado aut."
                 
+
+    if fetch_bice_transfers_from_gmail:
+        try:
+            bice_data = fetch_bice_transfers_from_gmail()
+            if bice_data:
+                for item in unmatched:
+                    monto_val = int(item["Monto"])
+                    if monto_val in bice_data:
+                        match = bice_data[monto_val][0]
+                        if match["nombre"] or match["mensaje"]:
+                            added_desc = f" | [GMAIL] Destinatario: {match['nombre']} - Mensaje: {match['mensaje']}"
+                            item["Descripción"] = item["Descripción"] + added_desc
+        except Exception as e:
+            pass
+            
     return resultados, fechas, unmatched
 
 
