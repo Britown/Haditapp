@@ -7,7 +7,7 @@ from bs4 import BeautifulSoup
 import streamlit as st
 
 @st.cache_data(ttl=3600)
-def fetch_bice_transfers_from_gmail():
+def fetch_bice_transfers_from_gmail(month_str=None):
     """
     Fetches Bank BICE transfer emails, parses amount, name, and message.
     Returns a dictionary mapping: monto_int -> list of { nombre, mensaje, fecha_op }
@@ -59,6 +59,25 @@ def fetch_bice_transfers_from_gmail():
                         soup = BeautifulSoup(body, 'html.parser')
                         text = soup.get_text(separator=' ')
                         text = re.sub(r'\s+', ' ', text)
+                        if month_str:
+                            meses_map = {
+                                "enero": ["ene", "jan"], "febrero": ["feb", "feb"], "marzo": ["mar", "mar"],
+                                "abril": ["abr", "apr"], "mayo": ["may", "may"], "junio": ["jun", "jun"],
+                                "julio": ["jul", "jul"], "agosto": ["ago", "aug"], "septiembre": ["sep", "sep"],
+                                "octubre": ["oct", "oct"], "noviembre": ["nov", "nov"], "diciembre": ["dic", "dec"]
+                            }
+                            parts = month_str.lower().split()
+                            if len(parts) == 2:
+                                mes, ano = parts[0], parts[1]
+                                if mes in meses_map:
+                                    valid = False
+                                    for short_m in meses_map[mes]:
+                                        if f"{short_m} {ano}" in text.lower():
+                                            valid = True
+                                            break
+                                    if not valid:
+                                        continue
+
                         
                         monto_match = re.search(r'Monto \$([\d\.]+)', text)
                         if not monto_match:

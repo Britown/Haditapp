@@ -471,7 +471,7 @@ elif page == "Gastos Variables":
         
         # [GMAIL LOGIC] - Solo para los no identificados
         try:
-            bice_data = fetch_bice_transfers_from_gmail()
+            bice_data = fetch_bice_transfers_from_gmail(st.session_state.get('current_month_str'))
             if bice_data:
                 for i, row in df_no_identificados.iterrows():
                     try:
