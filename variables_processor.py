@@ -31,7 +31,9 @@ def clean_fallback(desc):
     
     return desc.strip().title()
 
-def categorize_with_ai(descriptions):
+@st.cache_data
+def _categorize_with_ai_cached(descriptions_tuple):
+    descriptions = list(descriptions_tuple)
     if not descriptions:
         return {}
     
@@ -98,6 +100,9 @@ def categorize_with_ai(descriptions):
         st.error(f"Error de AI: {e}")
         return {}
 
+def categorize_with_ai(descriptions):
+    return _categorize_with_ai_cached(tuple(descriptions))
+
 def classify_variable(glosa, monto):
     glosa_upper = glosa.upper()
     
@@ -137,7 +142,7 @@ def process_unmatched_to_df(unmatched_list):
     processed = []
     
     # Send ALL unmatched to AI so we get a clean description for everything
-    unique_descs = list(set([item["Descripción"] for item in unmatched_list]))
+    unique_descs = sorted(list(set([item["Descripción"] for item in unmatched_list])))
     ai_results = categorize_with_ai(unique_descs)
     
     for item in unmatched_list:
