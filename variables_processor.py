@@ -75,7 +75,7 @@ def categorize_with_ai(descriptions):
         """
         
         response = client.models.generate_content(
-            model='gemini-1.5-flash',
+            model='gemini-3.5-flash',
             contents=prompt,
             config=types.GenerateContentConfig(
                 response_mime_type="application/json",
@@ -84,7 +84,6 @@ def categorize_with_ai(descriptions):
         
         return json.loads(response.text)
     except Exception as e:
-        import streamlit as st
         st.error(f"Error de AI: {e}")
         return {}
 
