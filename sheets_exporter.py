@@ -26,11 +26,11 @@ def export_to_sheets(resultados_dict, df_identificados, df_no_identificados, df_
         creds = Credentials.from_service_account_info(credentials_dict, scopes=scopes)
         client = gspread.authorize(creds)
         
-        if not sheet_url or "@" not in sheet_url:
+        if not user_email or "@" not in user_email:
             st.error("Por favor, ingresa un correo electrónico válido.")
             return False
             
-        user_email = sheet_url.strip()
+        
         
         # Create a new spreadsheet
         title = f"Haditapp - Gastos {datetime.now().strftime('%d %b %Y %H:%M')}"
