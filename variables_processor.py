@@ -84,7 +84,8 @@ def categorize_with_ai(descriptions):
         
         return json.loads(response.text)
     except Exception as e:
-        print(f"Error AI: {e}")
+        import streamlit as st
+        st.error(f"Error de AI: {e}")
         return {}
 
 def classify_variable(glosa, monto):
