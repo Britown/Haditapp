@@ -49,7 +49,7 @@ def extract_text_from_excel(file, is_csv=False):
             df = pd.read_csv(file, sep=None, engine='python')
         else:
             df = pd.read_excel(file)
-        return df.to_string(index=False, header=False)
+        return df.to_string(index=False, header=False, na_rep="")
     except Exception as e:
         print(f"Error procesando tabla: {e}")
         return "" 
