@@ -314,8 +314,10 @@ if page == "Conciliación Fija":
                 
                 for k, v in resultados.items():
                     pill_html = ""
+                    original_amount_html = ""
                     if beneficio_val > 0 and ("CSFJ" in k.upper() or "MANDARINO" in k.upper()):
                         pill_html = f'''<div style="background: #e8f5e9; color: #1b5e20; padding: 2px 6px; border-radius: 4px; font-size: 10px; margin-top: 4px; display: inline-block; font-weight: 600; border: 1px solid #c8e6c9;">Beneficio empresa -$ {format_clp(beneficio_val)}</div>'''
+                        original_amount_html = f'''<div style="font-size: 11px; color: #86868B; text-decoration: line-through; margin-top: 2px; text-align: right;">$ {format_clp(v + beneficio_val)}</div>'''
                     
                     out += f"""
                     <article style="display: flex; justify-content: space-between; align-items: center; padding: 12px 8px; border-bottom: 1px solid rgba(0,0,0,0.03);">
@@ -329,7 +331,10 @@ if page == "Conciliación Fija":
                                 {pill_html}
                             </div>
                         </div>
-                        <span style="font-size: 14px; font-weight: 600; color: #1D1D1F; letter-spacing: -0.01em;">$ {format_clp(v)}</span>
+                        <div style="display: flex; flex-direction: column; align-items: flex-end;">
+                            <span style="font-size: 14px; font-weight: 600; color: #1D1D1F; letter-spacing: -0.01em;">$ {format_clp(v)}</span>
+                            {original_amount_html}
+                        </div>
                     </article>
                     """
                 
