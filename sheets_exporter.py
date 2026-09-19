@@ -11,13 +11,17 @@ def export_to_sheets(resultados_dict, df_identificados, df_no_identificados, df_
         return False
 
     try:
-        # Load credentials from Streamlit secrets
         if "gcp_service_account" not in st.secrets:
-            st.error("No se encontraron las credenciales de Google (gcp_service_account) en los secretos de Streamlit.")
+            st.error("No se encontraron credenciales en st.secrets.")
             return False
             
         credentials_dict = dict(st.secrets["gcp_service_account"])
+        master_url = credentials_dict.get("master_sheet_url")
         
+        if not master_url:
+            st.error("No se encontró 'master_sheet_url' en los secretos.")
+            return False
+            
         scopes = [
             "https://www.googleapis.com/auth/spreadsheets",
             "https://www.googleapis.com/auth/drive"
@@ -26,35 +30,31 @@ def export_to_sheets(resultados_dict, df_identificados, df_no_identificados, df_
         creds = Credentials.from_service_account_info(credentials_dict, scopes=scopes)
         client = gspread.authorize(creds)
         
-        if not user_email or "@" not in user_email:
-            st.error("Por favor, ingresa un correo electrónico válido.")
-            return False
-            
+        # Open existing spreadsheet
+        sh = client.open_by_url(master_url)
         
+        suffix = f" {datetime.now().strftime('%d/%m %H:%M')}"
         
-        # Create a new spreadsheet
-        title = f"Haditapp - Gastos {datetime.now().strftime('%d %b %Y %H:%M')}"
-        sh = client.create(title)
-        
-        # Share it with the user so they can see it in their Google Drive
-        sh.share(user_email, perm_type='user', role='writer')
-        
-        # Sheet 1: Gastos Fijos
-        sheet1 = sh.sheet1
-        sheet1.update_title("Gastos Fijos")
-        
+        def create_tab(name, cols=6):
+            full_name = f"{name}{suffix}"
+            try:
+                return sh.add_worksheet(title=full_name, rows=100, cols=cols)
+            except:
+                # If there's a name collision
+                return sh.add_worksheet(title=f"{full_name} {datetime.now().strftime('%S')}", rows=100, cols=cols)
+
+        # Fijos
+        sheet1 = create_tab("Fijos", cols=3)
         rows1 = [["Fecha de Exportación", "Ítem Fijo", "Monto Detectado (CLP)"]]
         now_str = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
-        
         for k, v in resultados_dict.items():
             if v > 0:
                 rows1.append([now_str, k, v])
-                
         sheet1.append_rows(rows1)
         sheet1.format('A1:C1', {'textFormat': {'bold': True}})
         
         def _write_df_to_tab(tab_title, df):
-            sheet = create_tab(tab_title)
+            sheet = create_tab(tab_title, cols=6)
             rows = [["Fecha", "Descripción", "Categoría", "Responsable", "Monto (CLP)"]]
             if df is not None and not df.empty:
                 for _, row in df.iterrows():
@@ -68,7 +68,6 @@ def export_to_sheets(resultados_dict, df_identificados, df_no_identificados, df_
             sheet.append_rows(rows)
             sheet.format('A1:E1', {'textFormat': {'bold': True}})
 
-        # Pestañas adicionales
         _write_df_to_tab("Identificados", df_identificados)
         _write_df_to_tab("Por Revisar", df_no_identificados)
         _write_df_to_tab("Ingresos", df_ingresos)
