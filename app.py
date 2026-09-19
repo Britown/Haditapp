@@ -667,7 +667,7 @@ elif page == "Historial":
         col_space1, col_exp, col_space2 = st.columns([1, 2, 1])
         with col_exp:
             if "gcp_service_account" in st.secrets:
-                sheet_input_email = st.text_input("Ingresa tu correo de Gmail para enviarte el archivo:", placeholder="tu.correo@gmail.com")
+                sheet_input_email = st.text_input("Ingresa tu correo de Gmail para enviarte el archivo:", value="hbrito@gmail.com", placeholder="tu.correo@gmail.com")
                 
                 if st.button("Crear Excel en Google Drive", type="primary", use_container_width=True, disabled=not sheet_input_email.strip()):
                     with st.spinner("Creando archivo en la nube..."):
