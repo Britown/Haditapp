@@ -188,7 +188,7 @@ def process_data(raw_text, dolar_val, csfj_base, manda_base, beneficio, manda_ma
     unmatched = []
     processed_lines = set()
     
-    for line in lines:
+    for i, line in enumerate(lines):
         line_upper = line.upper().strip()
         if not line_upper or line_upper in processed_lines:
             continue
@@ -316,6 +316,19 @@ def process_data(raw_text, dolar_val, csfj_base, manda_base, beneficio, manda_ma
             best_val = get_best_amount(amounts, "UNMATCHED", fecha, line_for_amounts)
             if best_val > 0:
                 clean_glosa = " ".join(line.split())
+                
+                # Lookahead to catch orphaned text (like recipient names) on the next 1-2 lines
+                if "Transferencia" in line or "Cargo" in line:
+                    for next_idx in range(i + 1, min(i + 3, len(lines))):
+                        next_line = lines[next_idx].strip()
+                        if not next_line: continue
+                        # Stop if the next line looks like a new transaction (has a date)
+                        if re.search(r'\d{2}/\d{2}(?:/\d{4})?', next_line): break
+                        # Stop if it has a large number that looks like a new amount
+                        if re.search(r'\d{1,2}\.\d{3}', next_line): break
+                        
+                        clean_glosa += " - " + " ".join(next_line.split())
+                
                 unmatched.append({
                     "Fecha": fecha,
                     "Descripción": clean_glosa,
