@@ -285,6 +285,45 @@ if page == "Conciliación Fija":
                 with open("raw_dump.txt", "w", encoding="utf-8") as fd:
                     fd.write(raw_text)
                 st.session_state.unmatched = unmatched
+                
+                # DATE WARNING LOGIC
+                from datetime import datetime, timedelta
+                import calendar
+                meses_lista = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"]
+                target_month = meses_lista.index(sel_mes) + 1
+                target_year = int(sel_ano)
+                _, last_day = calendar.monthrange(target_year, target_month)
+                start_date = datetime(target_year, target_month, 1) - timedelta(days=5)
+                end_date = datetime(target_year, target_month, last_day) + timedelta(days=5)
+                
+                fixed_inside_month = False
+                out_of_bounds_count = 0
+                
+                # Check fixed expenses
+                for k, v in fechas.items():
+                    if not v or v == "N/A": continue
+                    try:
+                        dt = datetime.strptime(v, "%d/%m/%Y")
+                        if dt.month == target_month and dt.year == target_year:
+                            fixed_inside_month = True
+                        if not (start_date <= dt <= end_date):
+                            out_of_bounds_count += 1
+                    except:
+                        pass
+                        
+                # Check unmatched
+                for item in unmatched:
+                    v = item.get("Fecha")
+                    if not v or v == "N/A": continue
+                    try:
+                        dt = datetime.strptime(v, "%d/%m/%Y")
+                        if not (start_date <= dt <= end_date):
+                            out_of_bounds_count += 1
+                    except:
+                        pass
+                
+                if out_of_bounds_count > 0 and not fixed_inside_month:
+                    st.warning(f"⚠️ **Advertencia de fechas:** Se encontraron {out_of_bounds_count} gastos fuera del mes seleccionado ({sel_mes} {sel_ano}) por más de 5 días de margen, y no se detectó ningún gasto fijo dentro del mes. Asegúrate de estar subiendo la cartola correcta.")
             
                 total = sum(resultados.values())
                 papa = int(total * FACTORES_DIVISION['PAPA'])
