@@ -215,7 +215,7 @@ st.markdown(re.sub(r'^[ \t]+', '', r'''
     </p>
 </div>
 ''', flags=re.MULTILINE), unsafe_allow_html=True)
-page = st.radio("Navegación", ["Conciliación Fija", "Gastos Variables", "Historial"], horizontal=True, label_visibility="collapsed")
+page = st.radio("Navegación", ["Conciliación Fija", "Gastos Variables", "Pago Cuota Casa", "Historial"], horizontal=True, label_visibility="collapsed")
 st.markdown("<hr style='margin-top: 5px; margin-bottom: 20px;'>", unsafe_allow_html=True)
 
 if page == "Conciliación Fija":
@@ -692,6 +692,68 @@ elif page == "Gastos Variables":
 
     else:
         st.info("No hay gastos variables para mostrar. Primero procesa una cartola en 'Conciliación Fija'.")
+
+elif page == "Pago Cuota Casa":
+    st.header("Pago Cuota Casa")
+    
+    with st.spinner("Consultando valor de UF actualizado..."):
+        live_uf, _ = fetch_indicators()
+    
+    total_clp = round(live_uf * 23.91)
+    hern_clp = round(total_clp * 0.639)
+    vane_clp = total_clp - hern_clp
+    
+    import datetime
+    today_str = datetime.datetime.now().strftime("%d/%m/%Y")
+    
+    st.markdown(f"""
+    <div style="background: #FAFAFC; padding: 24px; border-radius: 16px; border: 1px solid rgba(0,0,0,0.05); margin-bottom: 24px; margin-top: 16px;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 24px;">
+            <div>
+                <span style="font-size: 11px; font-weight: 700; letter-spacing: 0.05em; color: #86868B; text-transform: uppercase;">Monto Total Cuota</span>
+                <h2 style="font-size: 32px; font-weight: 700; color: #1D1D1F; margin: 4px 0 0 0; letter-spacing: -0.02em;">$ {format_clp(total_clp)}</h2>
+            </div>
+            <div style="text-align: right;">
+                <div style="font-size: 13px; color: #86868B; margin-bottom: 4px;">Valor UF hoy ({today_str}): <strong>$ {format_clp(live_uf)}</strong></div>
+                <div style="font-size: 13px; color: #86868B;">Base Cuota: <strong>23,91 UF</strong></div>
+            </div>
+        </div>
+        
+        <div style="height: 1px; background: rgba(0,0,0,0.05); margin: 20px 0;"></div>
+        
+        <h3 style="font-size: 15px; font-weight: 600; color: #1D1D1F; margin-top: 0; margin-bottom: 16px;">Distribución Acordada</h3>
+        
+        <div style="display: flex; gap: 16px; flex-wrap: wrap;">
+            <!-- Hernanja -->
+            <div style="flex: 1; min-width: 250px; background: #FFFFFF; border: 1px solid rgba(0,0,0,0.05); border-radius: 12px; padding: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.02);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <div style="width: 28px; height: 28px; border-radius: 50%; background: #E8F0FE; display: flex; align-items: center; justify-content: center; color: #1A73E8;">
+                            <span class="material-symbols-outlined" style="font-size: 16px;">person</span>
+                        </div>
+                        <span style="font-size: 14px; font-weight: 600; color: #1D1D1F;">Hernanja</span>
+                    </div>
+                    <span style="background: #F5F5F7; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 600; color: #86868B;">63,9%</span>
+                </div>
+                <div style="font-size: 24px; font-weight: 700; color: #1D1D1F; margin-top: 8px;">$ {format_clp(hern_clp)}</div>
+            </div>
+            
+            <!-- Vane -->
+            <div style="flex: 1; min-width: 250px; background: #FFFFFF; border: 1px solid rgba(0,0,0,0.05); border-radius: 12px; padding: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.02);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <div style="width: 28px; height: 28px; border-radius: 50%; background: #FCE8E6; display: flex; align-items: center; justify-content: center; color: #D93025;">
+                            <span class="material-symbols-outlined" style="font-size: 16px;">person</span>
+                        </div>
+                        <span style="font-size: 14px; font-weight: 600; color: #1D1D1F;">Vane</span>
+                    </div>
+                    <span style="background: #F5F5F7; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 600; color: #86868B;">36,1%</span>
+                </div>
+                <div style="font-size: 24px; font-weight: 700; color: #1D1D1F; margin-top: 8px;">$ {format_clp(vane_clp)}</div>
+            </div>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
 
 elif page == "Historial":
     st.header("Historial de Meses")
