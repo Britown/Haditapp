@@ -263,12 +263,12 @@ if page == "Gastos Fijos":
         if st.session_state.periodo_confirmado:
             st.markdown("""
             <style>
-            @keyframes fadeIn {
-                from { opacity: 0; transform: translateY(10px); }
+            @keyframes fadeInDown {
+                from { opacity: 0; transform: translateY(-15px); }
                 to { opacity: 1; transform: translateY(0); }
             }
             div[data-testid="stMarkdownContainer"], div[data-testid="stFileUploader"], div[data-testid="stTextArea"], button[kind="primary"] {
-                animation: fadeIn 0.6s ease-out forwards;
+                animation: fadeInDown 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
             }
             </style>
             """, unsafe_allow_html=True)
@@ -276,7 +276,7 @@ if page == "Gastos Fijos":
             st.markdown(re.sub(r'^[ 	]+', '', r"""
             <div style="margin-bottom: 24px; margin-top: 24px;">
                 <span style="font-size: 11px; font-weight: 700; letter-spacing: 0.05em; color: #86868B; text-transform: uppercase;">Importación Asistida</span>
-                <h2 style="font-size: 24px; font-weight: 700; color: #1D1D1F; margin: 4px 0 0 0; letter-spacing: -0.02em;">Ingesta de Cartolas</h2>
+                <h2 style="font-size: 24px; font-weight: 700; color: #1D1D1F; margin: 4px 0 0 0; letter-spacing: -0.02em;">Ingreso de Cartolas</h2>
                 <p style="font-size: 13px; color: #86868B; margin: 4px 0 0 0;">Lectura inteligente con categorización semántica inmediata.</p>
             </div>
             """, flags=re.MULTILINE), unsafe_allow_html=True)
