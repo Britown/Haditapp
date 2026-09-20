@@ -264,27 +264,27 @@ if page == "Gastos Fijos":
             st.markdown("""
             <style>
             @keyframes fadeInDown {
-                from { opacity: 0; transform: translateY(-15px); }
+                from { opacity: 0; transform: translateY(-10px); }
                 to { opacity: 1; transform: translateY(0); }
             }
-            div[data-testid="stMarkdownContainer"], div[data-testid="stFileUploader"], div[data-testid="stTextArea"], button[kind="primary"] {
-                animation: fadeInDown 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+            .fade-in-title, div[data-testid="stFileUploader"], div[data-testid="stTextArea"], div.stButton > button[kind="primary"] {
+                animation: fadeInDown 1.2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
             }
             </style>
             """, unsafe_allow_html=True)
             
             st.markdown(re.sub(r'^[ 	]+', '', r"""
-            <div style="margin-bottom: 24px; margin-top: 24px;">
+            <div class="fade-in-title" style="margin-bottom: 24px; margin-top: 24px;">
                 <span style="font-size: 11px; font-weight: 700; letter-spacing: 0.05em; color: #86868B; text-transform: uppercase;">Importación Asistida</span>
                 <h2 style="font-size: 24px; font-weight: 700; color: #1D1D1F; margin: 4px 0 0 0; letter-spacing: -0.02em;">Ingreso de Cartolas</h2>
                 <p style="font-size: 13px; color: #86868B; margin: 4px 0 0 0;">Lectura inteligente con categorización semántica inmediata.</p>
             </div>
             """, flags=re.MULTILINE), unsafe_allow_html=True)
         
-            st.markdown("<span style='font-size:11px; font-weight:600; color:#4c4546;'>Cartola PDF</span>", unsafe_allow_html=True)
+            st.markdown("<div class='fade-in-title'><span style='font-size:11px; font-weight:600; color:#4c4546;'>Cartola PDF</span></div>", unsafe_allow_html=True)
             uploaded_files = st.file_uploader("Arrastra tu cartola bancaria", accept_multiple_files=True, label_visibility="collapsed")
             
-            st.markdown("<span style='font-size:11px; font-weight:600; color:#4c4546; margin-top:10px; display:inline-block;'>O pega el texto aquí</span>", unsafe_allow_html=True)
+            st.markdown("<div class='fade-in-title'><span style='font-size:11px; font-weight:600; color:#4c4546; margin-top:10px; display:inline-block;'>O pega el texto aquí</span></div>", unsafe_allow_html=True)
             pasted_text = st.text_area("Pega aquí la cartola", height=120, label_visibility="collapsed")
         
             procesar = st.button("Procesar Cartola Bancaria", type="primary", use_container_width=True)
