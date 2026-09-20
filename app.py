@@ -254,9 +254,9 @@ if page == "Gastos Fijos":
                 with st.popover("⚙️", help="Ajustes Dinámicos"):
                     live_uf, live_dolar = fetch_indicators()
                     valor_uf = st.number_input("Colegio SFJ (UF Base)", value=float(live_uf), step=10.0, help="Este es el valor actual de 1 UF. Se multiplicará automáticamente por la cuota mensual del colegio (ej. 13.5 UF) para calcular el monto final a pagar en pesos chilenos.")
-                    dolar_val = st.number_input("Dólar Observado", value=float(live_dolar), step=10.0)
-                    manda_val = st.number_input("Mandarino (CLP)", value=VALORES_BASE_MES["mensualidad_mandarino"], step=1000)
-                    beneficio_val = st.number_input("Beneficio Empresa", value=VALORES_BASE_MES["beneficio_empleador_por_hijo"], step=1000)
+                    dolar_val = st.number_input("Dólar Observado", value=float(live_dolar), step=10.0, help="Valor actual del dólar. Se usa para calcular automáticamente tus suscripciones y compras internacionales en pesos chilenos.")
+                    manda_val = st.number_input("Mandarino (CLP)", value=VALORES_BASE_MES["mensualidad_mandarino"], step=1000, help="Costo de la mensualidad del jardín Mandarino. Puedes modificarlo si este mes hay algún ajuste particular.")
+                    beneficio_val = st.number_input("Beneficio Empresa", value=VALORES_BASE_MES["beneficio_empleador_por_hijo"], step=1000, help="Monto de la bonificación o subsidio de sala cuna/escolaridad que entrega la empresa. Se restará del costo final a pagar.")
                     manda_mat_val = VALORES_BASE_MES.get("jardin_mandarino_materiales", 0)
         
         procesar = False
