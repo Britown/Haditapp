@@ -718,11 +718,8 @@ elif page == "Pago Cuota Casa":
                 <div style="font-size: 13px; color: #86868B;">Base Cuota: <strong>23,91 UF</strong></div>
             </div>
         </div>
-        
         <div style="height: 1px; background: rgba(0,0,0,0.05); margin: 20px 0;"></div>
-        
         <h3 style="font-size: 15px; font-weight: 600; color: #1D1D1F; margin-top: 0; margin-bottom: 16px;">Distribución Acordada</h3>
-        
         <div style="display: flex; gap: 16px; flex-wrap: wrap;">
             <!-- Hernanja -->
             <div style="flex: 1; min-width: 250px; background: #FFFFFF; border: 1px solid rgba(0,0,0,0.05); border-radius: 12px; padding: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.02);">
@@ -737,7 +734,6 @@ elif page == "Pago Cuota Casa":
                 </div>
                 <div style="font-size: 24px; font-weight: 700; color: #1D1D1F; margin-top: 8px;">$ {format_clp(hern_clp)}</div>
             </div>
-            
             <!-- Vane -->
             <div style="flex: 1; min-width: 250px; background: #FFFFFF; border: 1px solid rgba(0,0,0,0.05); border-radius: 12px; padding: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.02);">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
