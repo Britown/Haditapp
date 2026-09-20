@@ -253,7 +253,7 @@ if page == "Gastos Fijos":
             else:
                 with st.popover("⚙️", help="Ajustes Dinámicos"):
                     live_uf, live_dolar = fetch_indicators()
-                    valor_uf = st.number_input("Colegio SFJ (UF Base)", value=float(live_uf), step=10.0)
+                    valor_uf = st.number_input("Colegio SFJ (UF Base)", value=float(live_uf), step=10.0, help="Este es el valor actual de 1 UF. Se multiplicará automáticamente por la cuota mensual del colegio (ej. 13.5 UF) para calcular el monto final a pagar en pesos chilenos.")
                     dolar_val = st.number_input("Dólar Observado", value=float(live_dolar), step=10.0)
                     manda_val = st.number_input("Mandarino (CLP)", value=VALORES_BASE_MES["mensualidad_mandarino"], step=1000)
                     beneficio_val = st.number_input("Beneficio Empresa", value=VALORES_BASE_MES["beneficio_empleador_por_hijo"], step=1000)
