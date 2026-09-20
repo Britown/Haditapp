@@ -245,7 +245,7 @@ if page == "Conciliación Fija":
         st.markdown("<span style='font-size:11px; font-weight:600; color:#4c4546; margin-top:10px; display:inline-block;'>O pega el texto aquí</span>", unsafe_allow_html=True)
         pasted_text = st.text_area("Pega aquí la cartola", height=120, label_visibility="collapsed")
     
-        procesar = st.button("Procesar Gastos Fijos")
+        procesar = st.button("Procesar Cartola Bancaria", type="primary", use_container_width=True)
         
 
         st.markdown("<br>", unsafe_allow_html=True)
