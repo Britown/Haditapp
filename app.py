@@ -551,7 +551,7 @@ elif page == "Gastos Variables":
             "_Original": None
         }
         
-        st.subheader("⚠️ Gastos Pendientes por Entrenar")
+        st.subheader("⚠️ Gastos Pendientes por Entrenar", help="Todo lo que clasifiques y guardes en esta tabla, el sistema intentará aprenderlo como una regla automática para el futuro. Si no estás seguro de algo, déjalo en 'Por Revisar'.")
         st.markdown("Clasifica estos gastos. El sistema aprenderá automáticamente para la próxima vez.")
         edited_no_identificados = st.data_editor(
             df_no_identificados,
