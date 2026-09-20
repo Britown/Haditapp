@@ -215,10 +215,10 @@ st.markdown(re.sub(r'^[ \t]+', '', r'''
     </p>
 </div>
 ''', flags=re.MULTILINE), unsafe_allow_html=True)
-page = st.radio("Navegación", ["Conciliación Fija", "Gastos Variables", "Pago Cuota Casa", "Historial"], horizontal=True, label_visibility="collapsed")
+page = st.radio("Navegación", ["Gastos Fijos", "Gastos Variables", "Pago Cuota Casa", "Historial"], horizontal=True, label_visibility="collapsed")
 st.markdown("<hr style='margin-top: 5px; margin-bottom: 20px;'>", unsafe_allow_html=True)
 
-if page == "Conciliación Fija":
+if page == "Gastos Fijos":
     meses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"]
     col_left, col_right = st.columns([1, 1.2], gap="large")
     with col_left:
