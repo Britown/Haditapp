@@ -223,47 +223,73 @@ if page == "Gastos Fijos":
     col_left, col_right = st.columns([1, 1.2], gap="large")
     with col_left:
 
-        col_m1, col_m2 = st.columns([1.5, 1])
+        def reset_confirm():
+            st.session_state.periodo_confirmado = False
+            
+        if "periodo_confirmado" not in st.session_state:
+            st.session_state.periodo_confirmado = False
+            
+        col_m1, col_m2, col_m3 = st.columns([1.5, 1, 0.5])
         with col_m1:
-            sel_mes = st.selectbox("Mes de Análisis", meses, index=7, label_visibility="collapsed")
+            sel_mes = st.selectbox("Mes de Análisis", meses, index=7, label_visibility="collapsed", on_change=reset_confirm)
         with col_m2:
-            sel_ano = st.selectbox("Año", [2024, 2025, 2026, 2027], index=2, label_visibility="collapsed")
+            sel_ano = st.selectbox("Año", [2024, 2025, 2026, 2027], index=2, label_visibility="collapsed", on_change=reset_confirm)
+            
         month_str = f"{sel_mes} {sel_ano}"
         st.session_state.current_month_str = month_str
-        
-        st.markdown(re.sub(r'^[ \t]+', '', r"""
-        <div style="margin-bottom: 24px;">
-            <span style="font-size: 11px; font-weight: 700; letter-spacing: 0.05em; color: #86868B; text-transform: uppercase;">Importación Asistida</span>
-            <h2 style="font-size: 24px; font-weight: 700; color: #1D1D1F; margin: 4px 0 0 0; letter-spacing: -0.02em;">Ingesta de Cartolas</h2>
-            <p style="font-size: 13px; color: #86868B; margin: 4px 0 0 0;">Lectura inteligente con categorización semántica inmediata.</p>
-        </div>
-        """, flags=re.MULTILINE), unsafe_allow_html=True)
-    
-        st.markdown("<span style='font-size:11px; font-weight:600; color:#4c4546;'>Cartola PDF</span>", unsafe_allow_html=True)
-        uploaded_files = st.file_uploader("Arrastra tu cartola bancaria", accept_multiple_files=True, label_visibility="collapsed")
-        
-        st.markdown("<span style='font-size:11px; font-weight:600; color:#4c4546; margin-top:10px; display:inline-block;'>O pega el texto aquí</span>", unsafe_allow_html=True)
-        pasted_text = st.text_area("Pega aquí la cartola", height=120, label_visibility="collapsed")
-    
-        procesar = st.button("Procesar Cartola Bancaria", type="primary", use_container_width=True)
-        
 
-        st.markdown("<br>", unsafe_allow_html=True)
-        with st.expander("Ajustes Dinámicos (UF, Dólar, Beneficios)", expanded=False):
-            c1, c2 = st.columns(2)
-            
-            # Obtener indicadores reales desde la API
-            live_uf, live_dolar = fetch_indicators()
-            
-            with c1:
-                valor_uf = st.number_input("Colegio SFJ (UF Base)", value=float(live_uf), step=10.0)
-                dolar_val = st.number_input("Dólar Observado", value=float(live_dolar), step=10.0)
-            with c2:
-                manda_val = st.number_input("Mandarino (CLP)", value=VALORES_BASE_MES["mensualidad_mandarino"], step=1000)
-                beneficio_val = st.number_input("Beneficio Empresa", value=VALORES_BASE_MES["beneficio_empleador_por_hijo"], step=1000)
-                manda_mat_val = VALORES_BASE_MES.get("jardin_mandarino_materiales", 0)
+        live_uf, live_dolar = 38000, 950 # default
         
-            csfj_val = VALORES_BASE_MES.get("uf_colegio", 13.5) * valor_uf
+        with col_m3:
+            if not st.session_state.periodo_confirmado:
+                if st.button("✓", help="Confirmar período", type="primary", use_container_width=True):
+                    st.session_state.periodo_confirmado = True
+                    st.rerun()
+                valor_uf = float(live_uf)
+                dolar_val = float(live_dolar)
+                manda_val = VALORES_BASE_MES["mensualidad_mandarino"]
+                beneficio_val = VALORES_BASE_MES["beneficio_empleador_por_hijo"]
+                manda_mat_val = VALORES_BASE_MES.get("jardin_mandarino_materiales", 0)
+            else:
+                with st.popover("⚙️", help="Ajustes Dinámicos"):
+                    live_uf, live_dolar = fetch_indicators()
+                    valor_uf = st.number_input("Colegio SFJ (UF Base)", value=float(live_uf), step=10.0)
+                    dolar_val = st.number_input("Dólar Observado", value=float(live_dolar), step=10.0)
+                    manda_val = st.number_input("Mandarino (CLP)", value=VALORES_BASE_MES["mensualidad_mandarino"], step=1000)
+                    beneficio_val = st.number_input("Beneficio Empresa", value=VALORES_BASE_MES["beneficio_empleador_por_hijo"], step=1000)
+                    manda_mat_val = VALORES_BASE_MES.get("jardin_mandarino_materiales", 0)
+        
+        procesar = False
+        if st.session_state.periodo_confirmado:
+            st.markdown("""
+            <style>
+            @keyframes fadeIn {
+                from { opacity: 0; transform: translateY(10px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+            div[data-testid="stMarkdownContainer"], div[data-testid="stFileUploader"], div[data-testid="stTextArea"], button[kind="primary"] {
+                animation: fadeIn 0.6s ease-out forwards;
+            }
+            </style>
+            """, unsafe_allow_html=True)
+            
+            st.markdown(re.sub(r'^[ 	]+', '', r"""
+            <div style="margin-bottom: 24px; margin-top: 24px;">
+                <span style="font-size: 11px; font-weight: 700; letter-spacing: 0.05em; color: #86868B; text-transform: uppercase;">Importación Asistida</span>
+                <h2 style="font-size: 24px; font-weight: 700; color: #1D1D1F; margin: 4px 0 0 0; letter-spacing: -0.02em;">Ingesta de Cartolas</h2>
+                <p style="font-size: 13px; color: #86868B; margin: 4px 0 0 0;">Lectura inteligente con categorización semántica inmediata.</p>
+            </div>
+            """, flags=re.MULTILINE), unsafe_allow_html=True)
+        
+            st.markdown("<span style='font-size:11px; font-weight:600; color:#4c4546;'>Cartola PDF</span>", unsafe_allow_html=True)
+            uploaded_files = st.file_uploader("Arrastra tu cartola bancaria", accept_multiple_files=True, label_visibility="collapsed")
+            
+            st.markdown("<span style='font-size:11px; font-weight:600; color:#4c4546; margin-top:10px; display:inline-block;'>O pega el texto aquí</span>", unsafe_allow_html=True)
+            pasted_text = st.text_area("Pega aquí la cartola", height=120, label_visibility="collapsed")
+        
+            procesar = st.button("Procesar Cartola Bancaria", type="primary", use_container_width=True)
+        
+        csfj_val = VALORES_BASE_MES.get("uf_colegio", 13.5) * valor_uf
 
     with col_right:
         if procesar:
