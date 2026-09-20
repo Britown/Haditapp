@@ -700,7 +700,7 @@ elif page == "Pago Cuota Casa":
         live_uf, _ = fetch_indicators()
     
     total_clp = round(live_uf * 23.91)
-    hern_clp = round(total_clp * 0.639)
+    hern_clp = round(total_clp * 0.6377)
     vane_clp = total_clp - hern_clp
     
     import datetime
@@ -730,7 +730,7 @@ elif page == "Pago Cuota Casa":
                         </div>
                         <span style="font-size: 14px; font-weight: 600; color: #1D1D1F;">Hernanja</span>
                     </div>
-                    <span style="background: #F5F5F7; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 600; color: #86868B;">63,9%</span>
+                    <span style="background: #F5F5F7; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 600; color: #86868B;">63,77%</span>
                 </div>
                 <div style="font-size: 24px; font-weight: 700; color: #1D1D1F; margin-top: 8px;">$ {format_clp(hern_clp)}</div>
             </div>
@@ -743,7 +743,7 @@ elif page == "Pago Cuota Casa":
                         </div>
                         <span style="font-size: 14px; font-weight: 600; color: #1D1D1F;">Vane</span>
                     </div>
-                    <span style="background: #F5F5F7; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 600; color: #86868B;">36,1%</span>
+                    <span style="background: #F5F5F7; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 600; color: #86868B;">36,23%</span>
                 </div>
                 <div style="font-size: 24px; font-weight: 700; color: #1D1D1F; margin-top: 8px;">$ {format_clp(vane_clp)}</div>
             </div>
