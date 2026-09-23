@@ -64,7 +64,8 @@ def extract_text_from_pdf(file, password=""):
     except Exception as e:
         err_type = type(e).__name__
         if "password" in str(e).lower() or err_type in ["PDFPasswordIncorrect", "PdfminerException"]:
-            raise Exception("🔐 PDF encriptado. Por favor, ingresa la contraseña en la sección de Ajustes (⚙️).")
+            filename = getattr(file, "name", "Desconocido")
+            raise Exception(f"🔐 El archivo '{filename}' requiere una contraseña válida. Revisa los Ajustes (⚙️).")
         else:
             if not str(e):
                 raise Exception(f"Error procesando PDF ({err_type})")
