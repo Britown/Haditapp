@@ -199,13 +199,17 @@ def process_data(raw_text, dolar_val, csfj_base, manda_base, beneficio, manda_ma
             continue
 
 
-        date_match = re.search(r'\b(\d{2}/\d{2}/\d{4})\b', line)
+        # Try to match dd/mm/yyyy or dd/mm/yy anywhere
+        date_match = re.search(r'\b(\d{2}/\d{2}/(\d{4}|\d{2}))\b', line)
         if date_match:
-            fecha = date_match.group(1)
+            raw_fecha = date_match.group(1)
+            parts = raw_fecha.split("/")
+            if len(parts[2]) == 2:
+                parts[2] = "20" + parts[2]
+            fecha = "/".join(parts)
         else:
             date_match_short = re.search(r'^(\d{2}/\d{2})\b', line)
             if date_match_short:
-                # Si es 03/08 le ponemos el año actual o un placeholder para que no falle
                 fecha = date_match_short.group(1) + "/2026"
             else:
                 fecha = "N/A"

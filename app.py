@@ -250,14 +250,16 @@ if page == "Gastos Fijos":
                 manda_val = VALORES_BASE_MES["mensualidad_mandarino"]
                 beneficio_val = VALORES_BASE_MES["beneficio_empleador_por_hijo"]
                 manda_mat_val = VALORES_BASE_MES.get("jardin_mandarino_materiales", 0)
+                pdf_password = ""
             else:
                 live_uf, live_dolar = fetch_indicators()
                 valor_uf = float(live_uf)
                 dolar_val = float(live_dolar)
                 manda_val = VALORES_BASE_MES["mensualidad_mandarino"]
                 manda_mat_val = VALORES_BASE_MES.get("jardin_mandarino_materiales", 0)
-                with st.popover("⚙️", help="Ajustes Dinámicos"):
+                with st.popover("⚙️", help="Ajustes y Contraseñas"):
                     beneficio_val = st.number_input("Beneficio Empresa", value=VALORES_BASE_MES["beneficio_empleador_por_hijo"], step=1000, help="Monto de la bonificación o subsidio de sala cuna/escolaridad que entrega la empresa. Se restará del costo final a pagar.")
+                    pdf_password = st.text_input("Contraseña PDF (Opcional)", type="password", help="Si tu banco te envía la cartola protegida, ingresa aquí la clave (suele ser tu RUT) para que el sistema pueda leer el archivo.")
         
         procesar = False
         if st.session_state.periodo_confirmado:
@@ -306,7 +308,7 @@ if page == "Gastos Fijos":
                     "Leyendo la letra chica de la cartola..."
                 ]
                 with st.spinner(random.choice(mensajes_procesamiento)):
-                    raw_text = extract_all_text(uploaded_files, pasted_text)
+                    raw_text = extract_all_text(uploaded_files, pasted_text, pdf_password)
                 resultados, fechas, unmatched = process_data(raw_text, dolar_val, csfj_val, manda_val, beneficio_val, manda_mat_val)
                 with open("raw_dump.txt", "w", encoding="utf-8") as fd:
                     fd.write(raw_text)
@@ -319,7 +321,7 @@ if page == "Gastos Fijos":
                 target_month = meses_lista.index(sel_mes) + 1
                 target_year = int(sel_ano)
                 _, last_day = calendar.monthrange(target_year, target_month)
-                start_date = datetime(target_year, target_month, 1) - timedelta(days=5)
+                start_date = datetime(target_year, target_month, 1) - timedelta(days=35)
                 end_date = datetime(target_year, target_month, last_day) + timedelta(days=5)
                 
                 fixed_inside_month = False
