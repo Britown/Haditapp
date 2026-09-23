@@ -62,9 +62,12 @@ def extract_text_from_pdf(file, password=""):
                 page_text = page.extract_text()
                 if page_text: text += page_text + "\n"
     except Exception as e:
-        if "password" in str(e).lower():
-            raise Exception("PDF encriptado. Por favor, ingresa la contraseña en la sección de Ajustes.")
+        err_type = type(e).__name__
+        if "password" in str(e).lower() or err_type == "PDFPasswordIncorrect":
+            raise Exception("🔐 PDF encriptado. Por favor, ingresa la contraseña en la sección de Ajustes (⚙️).")
         else:
+            if not str(e):
+                raise Exception(f"Error procesando PDF ({err_type})")
             raise e
     return text
 
