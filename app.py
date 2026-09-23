@@ -307,8 +307,12 @@ if page == "Gastos Fijos":
                     "Sacando la calculadora científica...",
                     "Leyendo la letra chica de la cartola..."
                 ]
-                with st.spinner(random.choice(mensajes_procesamiento)):
-                    raw_text = extract_all_text(uploaded_files, pasted_text, pdf_password)
+                try:
+                    with st.spinner(random.choice(mensajes_procesamiento)):
+                        raw_text = extract_all_text(uploaded_files, pasted_text, pdf_password)
+                except Exception as e:
+                    st.error(str(e))
+                    st.stop()
                 resultados, fechas, unmatched = process_data(raw_text, dolar_val, csfj_val, manda_val, beneficio_val, manda_mat_val)
                 with open("raw_dump.txt", "w", encoding="utf-8") as fd:
                     fd.write(raw_text)
