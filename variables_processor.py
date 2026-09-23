@@ -52,7 +52,7 @@ def _categorize_with_ai_cached(descriptions_tuple):
         Tienes una lista de descripciones de cobros bancarios brutos. Necesito que hagas 3 cosas para cada uno:
         
         1. Limpiar el nombre ("clean_desc"): Remueve fechas, montos, la palabra "Monto", y frases basura como "Cargo por Compra en", "Transferencia a Rut", etc. Deja solo el nombre real del comercio o persona en formato Título (Title Case).
-        2. Asignar Categoría ("cat"): Debe ser EXACTAMENTE UNA de estas: ["Supermercado", "Farmacia", "Gustitos", "Delivery", "Salud", "Combustible", "Suscripciones", "Entretenimiento", "Seguros", "Babysit", "Librería", "Minimarket", "Pago cuota casa", "Pago deuda Omita", "Gastos Bancarios", "Pago Tarjeta", "Mercadería", "Compras hogar", "Restaurant-café", "Ingresos", "Mercado Pago", "Por Revisar"]
+        2. Asignar Categoría ("cat"): Debe ser EXACTAMENTE UNA de estas: ["Supermercado", "Farmacia", "Gustitos", "Delivery", "Salud", "Combustible", "Suscripciones", "Entretenimiento", "Seguros", "Babysit", "Librería", "Minimarket", "Pago cuota casa", "Pago deuda Omita", "Gastos Bancarios", "Pago Tarjeta", "Mercadería", "Compras hogar", "Restaurant-café", "Ingresos", "Mercado Pago", "Ignorar", "Por Revisar"]
         3. Asignar Responsable ("own"): Debe ser EXACTAMENTE UNA de estas: ["Compartido", "Personal", "Por Revisar"]
         
         Reglas:
@@ -64,6 +64,7 @@ def _categorize_with_ai_cached(descriptions_tuple):
         - Rappi, PedidosYa, Spid -> Delivery / Compartido
         - Spotify, Netflix, Zapping, Prime -> Suscripciones / Personal
         - Transferencias a personas -> Por Revisar / Por Revisar (A menos que sepas qué es)
+        - Transferencias a "Luis Cruces" o "Jardinero" -> Ignorar / Personal (porque ya están contabilizados en gastos fijos)
         
         Devuelve un JSON válido donde las llaves sean las descripciones EXACTAS solicitadas y el valor sea el objeto con 'clean_desc', 'cat' y 'own'.
         Ejemplo:

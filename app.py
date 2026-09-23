@@ -553,7 +553,7 @@ elif page == "Gastos Variables":
                         pass
         except Exception as e:
             print("Error en Gmail:", e)
-        df_identificados = df_vars[(df_vars["Categoría"] != "Ingresos") & (df_vars["Categoría"] != "Por Revisar")].reset_index(drop=True)
+        df_identificados = df_vars[(df_vars["Categoría"] != "Ingresos") & (df_vars["Categoría"] != "Por Revisar") & (df_vars["Categoría"] != "Ignorar")].reset_index(drop=True)
         
         col_config = {
             "Categoría": st.column_config.TextColumn(
