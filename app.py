@@ -283,13 +283,30 @@ if page == "Gastos Fijos":
             </div>
             """, flags=re.MULTILINE), unsafe_allow_html=True)
         
-            st.markdown("<div class='fade-in-title'><span style='font-size:11px; font-weight:600; color:#4c4546;'>Cartola PDF</span></div>", unsafe_allow_html=True)
-            uploaded_files = st.file_uploader("Arrastra tu cartola bancaria", accept_multiple_files=True, label_visibility="collapsed")
-            
+            col_file, col_mail = st.columns([1, 1])
+            with col_file:
+                st.markdown("<div class='fade-in-title'><span style='font-size:11px; font-weight:600; color:#4c4546;'>Cartola PDF (Manual)</span></div>", unsafe_allow_html=True)
+                uploaded_files = st.file_uploader("Arrastra tu cartola", accept_multiple_files=True, label_visibility="collapsed")
+            with col_mail:
+                st.markdown("<div class='fade-in-title'><span style='font-size:11px; font-weight:600; color:#4c4546;'>Automático</span></div>", unsafe_allow_html=True)
+                st.markdown("<div style='height: 4px;'></div>", unsafe_allow_html=True)
+                buscar_email = st.button("📥 Buscar en mi Gmail", use_container_width=True)
+
             st.markdown("<div class='fade-in-title'><span style='font-size:11px; font-weight:600; color:#4c4546; margin-top:10px; display:inline-block;'>O pega el texto aquí</span></div>", unsafe_allow_html=True)
             pasted_text = st.text_area("Pega aquí la cartola", height=120, label_visibility="collapsed")
         
             procesar = st.button("Procesar Cartola Bancaria", type="primary", use_container_width=True)
+            
+            if buscar_email:
+                with st.spinner("Buscando cartolas del mes en tu correo..."):
+                    from gmail_fetcher import fetch_statement_pdfs_from_gmail
+                    fetched_pdfs = fetch_statement_pdfs_from_gmail(sel_mes, int(sel_ano))
+                    if fetched_pdfs:
+                        st.success(f"¡Se extrajeron {len(fetched_pdfs)} cartolas de tu Gmail!")
+                        uploaded_files = fetched_pdfs
+                        procesar = True
+                    else:
+                        st.error("No se encontraron correos del BICE para ese mes. Intenta subir el PDF manualmente.")
         
         csfj_val = VALORES_BASE_MES.get("uf_colegio", 13.5) * valor_uf
 
