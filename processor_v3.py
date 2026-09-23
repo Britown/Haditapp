@@ -62,6 +62,7 @@ def extract_text_from_pdf(file, password=""):
         doc = fitz.open(stream=file_bytes, filetype="pdf")
         
         if doc.needs_pass:
+            print(f"--- DEBUG: pdf_password length = {len(password)} ---")
             if not password:
                 raise Exception("PDFPasswordIncorrect")
             
@@ -81,7 +82,7 @@ def extract_text_from_pdf(file, password=""):
     except Exception as e:
         if "PDFPasswordIncorrect" in str(e):
             filename = getattr(file, "name", "Desconocido")
-            raise Exception(f"🔐 El archivo '{filename}' requiere una contraseña válida. Revisa los Ajustes (⚙️).")
+            raise Exception(f"🔐 El archivo '{filename}' requiere una contraseña válida (intenté con: '{password}'). Revisa los Ajustes (⚙️).")
         else:
             raise Exception(f"Error procesando PDF: {str(e)}")
 def extract_all_text(uploaded_files, pasted_text, pdf_password=""):
