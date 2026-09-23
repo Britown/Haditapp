@@ -55,42 +55,35 @@ def extract_text_from_excel(file, is_csv=False):
         return "" 
 
 def extract_text_from_pdf(file, password=""):
+    import fitz
     text = ""
     try:
-        with pdfplumber.open(file, password=password if password else None) as pdf:
-            for page in pdf.pages:
-                page_text = page.extract_text()
-                if page_text: text += page_text + "\n"
+        file_bytes = file.getvalue()
+        doc = fitz.open(stream=file_bytes, filetype="pdf")
+        
+        if doc.needs_pass:
+            if not password:
+                raise Exception("PDFPasswordIncorrect")
+            
+            # Autenticar primero con la clave del usuario
+            if not doc.authenticate(password):
+                # Como fallback, intentar sin clave o con clave en blanco por si alguna cartola está mal encriptada
+                if not doc.authenticate(""):
+                    raise Exception("PDFPasswordIncorrect")
+        
+        for page in doc:
+            page_text = page.get_text()
+            if page_text:
+                text += page_text + "\n"
+                
+        doc.close()
+        return text
     except Exception as e:
-        err_type = type(e).__name__
-        if "password" in str(e).lower() or err_type in ["PDFPasswordIncorrect", "PdfminerException"]:
+        if "PDFPasswordIncorrect" in str(e):
             filename = getattr(file, "name", "Desconocido")
             raise Exception(f"🔐 El archivo '{filename}' requiere una contraseña válida. Revisa los Ajustes (⚙️).")
         else:
-            if not str(e):
-                raise Exception(f"Error procesando PDF ({err_type})")
-            raise e
-    return text
-
-def clean_amount(monto_str):
-    monto_str = str(monto_str).replace('US$', '').replace('$', '').replace('-', '').strip()
-    if ',' in monto_str and '.' in monto_str:
-        monto_str = monto_str.replace('.', '').replace(',', '.')
-    elif ',' in monto_str:
-        if len(monto_str.split(',')[-1]) <= 2:
-            monto_str = monto_str.replace(',', '.')
-        else:
-            monto_str = monto_str.replace(',', '')
-    elif '.' in monto_str:
-        if len(monto_str.split('.')[-1]) == 3:
-            monto_str = monto_str.replace('.', '')
-        else:
-            pass
-    try:
-        return float(monto_str)
-    except:
-        return 0.0
-
+            raise Exception(f"Error procesando PDF: {str(e)}")
 def extract_all_text(uploaded_files, pasted_text, pdf_password=""):
     raw_text = pasted_text or ""
     if uploaded_files:
