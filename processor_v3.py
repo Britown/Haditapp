@@ -55,36 +55,44 @@ def extract_text_from_excel(file, is_csv=False):
         return "" 
 
 def extract_text_from_pdf(file, password=""):
+    import pdfplumber
     import fitz
+    import io
     text = ""
+    
+    file_bytes = file.getvalue()
+    
+    # Intentar desencriptar con PyMuPDF (fitz) y guardar una copia en memoria sin clave
     try:
-        file_bytes = file.getvalue()
         doc = fitz.open(stream=file_bytes, filetype="pdf")
-        
         if doc.needs_pass:
-            print(f"--- DEBUG: pdf_password length = {len(password)} ---")
             if not password:
                 raise Exception("PDFPasswordIncorrect")
-            
-            # Autenticar primero con la clave del usuario
             if not doc.authenticate(password):
-                # Como fallback, intentar sin clave o con clave en blanco por si alguna cartola está mal encriptada
                 if not doc.authenticate(""):
                     raise Exception("PDFPasswordIncorrect")
-        
-        for page in doc:
-            page_text = page.get_text()
-            if page_text:
-                text += page_text + "\n"
-                
+                    
+        # Guardar el documento desencriptado en un BytesIO
+        decrypted_stream = io.BytesIO()
+        doc.save(decrypted_stream)
         doc.close()
+        
+        # Ahora leer el stream desencriptado con pdfplumber para mantener el layout perfecto
+        with pdfplumber.open(decrypted_stream) as pdf:
+            for page in pdf.pages:
+                page_text = page.extract_text()
+                if page_text:
+                    text += page_text + "
+"
         return text
+        
     except Exception as e:
         if "PDFPasswordIncorrect" in str(e):
             filename = getattr(file, "name", "Desconocido")
             raise Exception(f"🔐 El archivo '{filename}' requiere una contraseña válida (intenté con: '{password}'). Revisa los Ajustes (⚙️).")
         else:
             raise Exception(f"Error procesando PDF: {str(e)}")
+
 def extract_all_text(uploaded_files, pasted_text, pdf_password=""):
     raw_text = pasted_text or ""
     if uploaded_files:
