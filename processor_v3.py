@@ -98,6 +98,19 @@ def extract_all_text(uploaded_files, pasted_text, pdf_password=""):
                 raw_text += "\n" + extract_text_from_excel(f, is_csv=True)
     return raw_text
 
+def clean_amount(monto_str):
+    monto_str = str(monto_str).replace('US$', '').replace('$', '').replace('-', '').strip()
+    if ',' in monto_str and '.' in monto_str:
+        monto_str = monto_str.replace('.', '').replace(',', '.')
+    else:
+        monto_str = monto_str.replace('.', '')
+        if ',' in monto_str:
+            monto_str = monto_str.replace(',', '.')
+    try:
+        return float(monto_str)
+    except:
+        return 0
+
 def process_data(raw_text, dolar_val, csfj_base, manda_base, beneficio, manda_mat_val=220000):
 
     def is_valid_token(t):
