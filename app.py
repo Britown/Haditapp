@@ -259,7 +259,7 @@ if page == "Gastos Fijos":
                 manda_mat_val = VALORES_BASE_MES.get("jardin_mandarino_materiales", 0)
                 with st.popover("⚙️", help="Ajustes y Contraseñas"):
                     beneficio_val = st.number_input("Beneficio Empresa", value=VALORES_BASE_MES["beneficio_empleador_por_hijo"], step=1000, help="Monto de la bonificación o subsidio de sala cuna/escolaridad que entrega la empresa. Se restará del costo final a pagar.")
-                    pdf_password = st.text_input("Contraseña PDF (Opcional)", type="password", help="Si tu banco te envía la cartola protegida, ingresa aquí la clave (suele ser tu RUT) para que el sistema pueda leer el archivo.")
+                    pdf_password = st.text_input("Contraseña PDF (Opcional)", type="password", key="pdf_password_input", help="Si tu banco te envía la cartola protegida, ingresa aquí la clave (suele ser tu RUT) para que el sistema pueda leer el archivo.")
         
         procesar = False
         if st.session_state.periodo_confirmado:
@@ -326,7 +326,7 @@ if page == "Gastos Fijos":
                 ]
                 try:
                     with st.spinner(random.choice(mensajes_procesamiento)):
-                        raw_text = extract_all_text(uploaded_files, pasted_text, pdf_password)
+                        raw_text = extract_all_text(uploaded_files, pasted_text, st.session_state.get("pdf_password_input", ""))
                 except Exception as e:
                     import traceback
                     print(f"--- APP.PY CAUGHT EXCEPTION: {repr(e)} ---")
