@@ -1,11 +1,16 @@
-.venv/
+*.txt
+!requirements.txt
+*.csv
+!reglas_variables.csv
+*.pdf
+patch_*.py
+fix_*.py
+test_*.py
+update_*.py
+debug*.py
+builder*.py
+simulate*.py
 __pycache__/
-*.log
+.venv/
+.env
 .DS_Store
-
-.streamlit/secrets.toml
-
-Firebase key/
-
-Gemini key/
-Key google drive y sheets/
