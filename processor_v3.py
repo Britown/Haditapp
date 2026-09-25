@@ -88,7 +88,7 @@ def extract_text_from_pdf(file, password=""):
     except Exception as e:
         if "PDFPasswordIncorrect" in str(e):
             filename = getattr(file, "name", "Desconocido")
-            raise Exception(f"🔐 El archivo '{filename}' requiere una contraseña válida (intenté con: '{password}'). Revisa los Ajustes (⚙️).")
+            raise Exception(f"🔐 El archivo '{filename}' requiere una contraseña válida. Revisa los Ajustes (⚙️).")
         else:
             raise Exception(f"Error procesando PDF: {str(e)}")
 
