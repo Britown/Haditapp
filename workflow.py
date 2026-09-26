@@ -6,12 +6,14 @@ from money import clp
 
 
 def effective_rules(seeds,saved):
-    result={rule_id(r['match_text']):dict(r) for r in seeds}
+    result={rule_id(r['match_text'],r.get('amount')):dict(r) for r in seeds}
     for rule in saved:result[rule_id(rule['match_text'],rule.get('amount'))]=dict(rule)
     return [r for r in result.values() if r.get('enabled',True)]
 
 
-def apply_rules(records,rules):
+def apply_rules(records,rules,period=None):
+    if period:
+        rules=[r for r in rules if not r.get('valid_until') or period<=r['valid_until']]
     result=deepcopy(records)
     for row in result:
         if row.get('Revisado') or row.get('parent_id'):continue

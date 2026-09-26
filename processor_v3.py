@@ -175,6 +175,9 @@ def parse_amount(line,currency='CLP'):
 
 def reconcile(raw,dolar_val=950,year=None,month=None,rules=None,currency_override='Auto',rate_lookup=None):
     records=[];warnings=[];previous=Counter();rules=seed_rules() if rules is None else rules
+    if year:
+        period=f'{year:04}-{month or 12:02}'
+        rules=[r for r in rules if not r.get('valid_until') or period<=r['valid_until']]
     for source,text in documents(raw):
         # Currency context is preserved per statement, not guessed from the size of charges.
         currency='USD' if re.search(r'internacional|\bTCI\b',source+' '+text[:1200],re.I) else 'CLP'

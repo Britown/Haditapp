@@ -4,7 +4,7 @@ from unittest.mock import patch
 from email.message import EmailMessage
 from processor_v3 import reconcile,summarize
 from rules import validate_rule,seed_rules
-from workflow import effective_rules
+from workflow import effective_rules,apply_rules
 from variables_processor import process_unmatched_to_df
 import gmail_fetcher as g
 
@@ -25,6 +25,14 @@ class Regressions(unittest.TestCase):
         self.assertNotEqual(rules[0]['id'],rules[1]['id'])
         r=reconcile('01/08 COLEGIO FCO JAVIER $500000\n02/08 COLEGIO FCO JAVIER $120000',rules=effective_rules(seed_rules(),rules))
         self.assertEqual([x['Categoría'] for x in r],[x['category'] for x in rules])
+    def test_confirmed_school_and_installment_end(self):
+        raw='SANTIAGO 05/08/26 0608 12345678 COLEGIO FCO.JAVIER HUEC $551.405 $551.405 01/01 $551.405\nSANTIAGO 29/06/26 0309 12345679 COLEGIO FCO.JAVIER HUEC $660.000 $741.780 02/06 $123.630'
+        rows=reconcile(raw,year=2026,rules=effective_rules(seed_rules(),[]))
+        values,_=summarize(rows,212600)
+        self.assertEqual(values['CSFJ (Mensualidad)'],338805)
+        self.assertEqual(values['CSFJ (Jornada Extendida)'],123630)
+        self.assertEqual(reconcile(raw,year=2027)[1]['Tipo'],'Revisar')
+        self.assertEqual(apply_rules(rows,effective_rules(seed_rules(),[]),period='2027-01')[1]['Tipo'],'Revisar')
     def test_variables_keep_saved_classification(self):
         r=reconcile('01/08 COMERCIO $1000')
         r[0].update(Tipo='Variable',Categoría='Aprendida',Responsable='Compartido')

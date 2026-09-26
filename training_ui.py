@@ -21,6 +21,11 @@ def stored_rules():
     return st.session_state.saved_rules,st.session_state.rule_revision
 
 
+def selected_period():
+    value=st.session_state.get('current_month_str','')
+    return value.split()[-1]+'-12' if value else None
+
+
 def active_rules():return effective_rules(seed_rules(),stored_rules()[0])
 
 
@@ -38,7 +43,7 @@ def save_rule(rule):
     revision=database.save_rulebook(database.get_db(),candidate,revision)
     st.session_state.saved_rules=candidate;st.session_state.rule_revision=revision
     if 'records' in st.session_state:
-        st.session_state.records=apply_rules(st.session_state.records,effective_rules(seed_rules(),candidate))
+        st.session_state.records=apply_rules(st.session_state.records,effective_rules(seed_rules(),candidate),period=selected_period())
         refresh_results()
 
 
@@ -80,7 +85,7 @@ def render():
                     candidate=[validate_rule(r) for r in json.loads(edited.to_json(orient='records'))]
                     revision=database.save_rulebook(database.get_db(),candidate,revision)
                     st.session_state.saved_rules=candidate;st.session_state.rule_revision=revision
-                    if rows:st.session_state.records=apply_rules(rows,effective_rules(seed_rules(),candidate));refresh_results()
+                    if rows:st.session_state.records=apply_rules(rows,effective_rules(seed_rules(),candidate),period=selected_period());refresh_results()
                     st.rerun()
                 except Exception as e:st.error(str(e) if isinstance(e,ValueError) else 'No se guardaron los cambios. Revisa la conexión.')
     else:st.info('Aún no hay reglas nuevas guardadas en Firebase.')

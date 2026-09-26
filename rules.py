@@ -68,6 +68,11 @@ DEFAULTS = [
 
 def seed_rules():
     rules = [dict(match_text=k, category=c, kind='Fijo', owner='Compartido', priority=20, clean_name=c) for k,c in DEFAULTS]
+    # Confirmed by the owner: August tuition and extended-day installment plan.
+    rules.extend([
+        dict(match_text='COLEGIO FCO JAVIER',amount=551405,category='CSFJ (Mensualidad)',kind='Fijo',owner='Compartido',priority=100),
+        dict(match_text='COLEGIO FCO JAVIER',amount=123630,category='CSFJ (Jornada Extendida)',kind='Fijo',owner='Compartido',priority=100,valid_until='2026-12'),
+    ])
     path = Path(__file__).with_name('reglas_variables.csv')
     if path.exists():
         with path.open(encoding='utf-8') as f:
