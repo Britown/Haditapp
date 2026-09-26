@@ -173,6 +173,18 @@ def parse_amount(line,currency='CLP'):
     return amount(selected[2]),cur
 
 
+def display_description(line):
+    """Short transfer label; reconciliation keeps the complete original text."""
+    if not re.search(r'\bTransferencia de\b', line, re.I):
+        return line
+    recipient = re.search(r'\ba\s+([A-Za-zÁÉÍÓÚÜÑáéíóúüñ][A-Za-zÁÉÍÓÚÜÑáéíóúüñ \'’-]+?)\s+Rut\b', line, re.I)
+    timestamp = re.search(r'\bel\s+(\d{4}-\d{2}-\d{2})\s+a las\s+(\d{1,2}:\d{2})\s*hrs\.?', line, re.I)
+    if not recipient or not timestamp:
+        return line
+    name = ' '.join(recipient.group(1).split()[:2])
+    return f'Transferencia a {name} el {timestamp.group(1)} a las {timestamp.group(2)} hrs.'
+
+
 def reconcile(raw,dolar_val=950,year=None,month=None,rules=None,currency_override='Auto',rate_lookup=None):
     records=[];warnings=[];previous=Counter();rules=seed_rules() if rules is None else rules
     if year:
@@ -211,7 +223,7 @@ def reconcile(raw,dolar_val=950,year=None,month=None,rules=None,currency_overrid
                 if (dt.month,dt.year)!=(month,year):status=(status+'; ' if status else '')+'Fuera del mes seleccionado: confirmar período'
             if converted is None or date=='N/A':kind='Revisar'
             identifier=hashlib.sha256(f'{fingerprint}:{in_document[fingerprint]}'.encode()).hexdigest()[:24]
-            records.append({'id':identifier,'Fecha':date,'Descripción':line,'Tipo':kind,'Categoría':cat,'Responsable':owner,
+            records.append({'id':identifier,'Fecha':date,'Descripción':display_description(line),'Tipo':kind,'Categoría':cat,'Responsable':owner,
                             'Monto':abs(converted) if credit and converted is not None else converted,
                             'Moneda':cur,'Monto original':float(raw_amount) if raw_amount is not None else None,
                             'Tipo de cambio':float(rate) if rate is not None else None,'Fuente':source,'Estado':status,
