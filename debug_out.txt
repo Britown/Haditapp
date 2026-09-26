@@ -1,3 +1,0 @@
-LEN: 14908
-RES: {'AGUA (Aguas Andinas)': 0, 'LUZ (Enel)': 0, 'GAS (Metrogas)': 0, 'INTERNET (GTD)': 0, 'SEGURO CASA (Consorcio)': 0, 'ZAPPING': 0, 'AMAZON PRIME': 0, 'HBO MAX': 0, 'YOUTUBE PREMIUM': 0, 'SPOTIFY DUO': 0, 'ASEO': 0, 'GASTOS COMUNES (Khipu)': 131741.0, 'PISCINA (Andy)': 27000.0, 'MANDARINO': 259400, 'CSFJ (Mensualidad)': 0, 'CSFJ (Jornada Extendida)': 0, 'CSFJ (Extras/Materiales)': 0, 'CSFJ (Centro de Padres)': 0, 'MANDARINO (Matrícula)': 0, 'CONTRIBUCIONES (SII)': 0}
-FILES: ['cuenta corriente.pdf', 'Tarjeta de credito.pdf']

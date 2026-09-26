@@ -1,197 +1,95 @@
+"""Read-only Gmail import. Reception dates narrow search, not statement identity."""
+import io
 import imaplib
 import email
-from email.header import decode_header
-import toml
-import re
-from bs4 import BeautifulSoup
+from email.header import decode_header,make_header
+from datetime import date,timedelta
+import calendar
+import hashlib
 import streamlit as st
+from processor_v3 import MONTHS
 
-@st.cache_data(ttl=3600)
-def fetch_bice_transfers_from_gmail(month_str=None):
-    """
-    Fetches Bank BICE transfer emails, parses amount, name, and message.
-    Returns a dictionary mapping: monto_int -> list of { nombre, mensaje, fecha_op }
-    """
-    try:
-        secrets = toml.load(".streamlit/secrets.toml")
-        user = secrets.get("gmail", {}).get("email")
-        pwd = secrets.get("gmail", {}).get("app_password")
-        if not user or not pwd:
-            return {}
-    except:
-        return {}
-
-    bice_data = {}
-    try:
-        mail = imaplib.IMAP4_SSL("imap.gmail.com")
-        mail.login(user, pwd)
-        mail.select("inbox")
-        # Search last 150 BICE emails to cover a few months
-        status, messages = mail.search(None, '(FROM "reply@info.bice.cl" SUBJECT "transferencia")')
-        
-        if status == "OK":
-            email_ids = messages[0].split()
-            # We don't want to parse all 300+, just the last 150 to be fast
-            recent_ids = email_ids[-150:]
-            for e_id in recent_ids:
-                res, msg_data = mail.fetch(e_id, '(RFC822)')
-                for response_part in msg_data:
-                    if isinstance(response_part, tuple):
-                        msg = email.message_from_bytes(response_part[1])
-                        
-                        body = ""
-                        if msg.is_multipart():
-                            for part in msg.walk():
-                                if part.get_content_type() == "text/html":
-                                    try:
-                                        body = part.get_payload(decode=True).decode(errors='ignore')
-                                        break
-                                    except:
-                                        pass
-                        else:
-                            try:
-                                body = msg.get_payload(decode=True).decode(errors='ignore')
-                            except:
-                                pass
-                        
-                        if not body: continue
-                        
-                        soup = BeautifulSoup(body, 'html.parser')
-                        text = soup.get_text(separator=' ')
-                        text = re.sub(r'\s+', ' ', text)
-                        if month_str:
-                            meses_map = {
-                                "enero": ["ene", "jan"], "febrero": ["feb", "feb"], "marzo": ["mar", "mar"],
-                                "abril": ["abr", "apr"], "mayo": ["may", "may"], "junio": ["jun", "jun"],
-                                "julio": ["jul", "jul"], "agosto": ["ago", "aug"], "septiembre": ["sep", "sep"],
-                                "octubre": ["oct", "oct"], "noviembre": ["nov", "nov"], "diciembre": ["dic", "dec"]
-                            }
-                            parts = month_str.lower().split()
-                            if len(parts) == 2:
-                                mes, ano = parts[0], parts[1]
-                                if mes in meses_map:
-                                    valid = False
-                                    for short_m in meses_map[mes]:
-                                        if f"{short_m} {ano}" in text.lower():
-                                            valid = True
-                                            break
-                                    if not valid:
-                                        continue
-
-                        
-                        monto_match = re.search(r'Monto \$([\d\.]+)', text)
-                        if not monto_match:
-                            monto_match = re.search(r'\$([\d\.]+)', text)
-                            
-                        if not monto_match: continue
-                        monto_str = monto_match.group(1).replace('.', '')
-                        try:
-                            monto_int = int(monto_str)
-                        except:
-                            continue
-                            
-                        nombre_match = re.search(r'Nombre(.*?)(?:RUT|Banco|Tipo|Número)', text, flags=re.IGNORECASE)
-                        nombre = nombre_match.group(1).strip() if nombre_match else ""
-                        
-                        mensaje_match = re.search(r'Mensaje(.*?)(?:$|Cuenta|Banco|Rut|Tipo|Operación)', text, flags=re.IGNORECASE)
-                        mensaje = mensaje_match.group(1).strip() if mensaje_match else ""
-                        if "Operación Número" in mensaje:
-                            mensaje = mensaje.split("Operación Número")[0].strip()
-                            
-                        # Avoid saving empties if not useful
-                        if not nombre and not mensaje:
-                            continue
-                            
-                        if monto_int not in bice_data:
-                            bice_data[monto_int] = []
-                            
-                        bice_data[monto_int].append({
-                            "nombre": nombre,
-                            "mensaje": mensaje
-                        })
-        mail.logout()
-    except Exception as e:
-        print(f"IMAP Error: {e}")
-        pass
-        
-    return bice_data
-
-import io
-from datetime import datetime
-import email.utils
 
 def get_month_index(month_str):
-    meses = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"]
-    try:
-        return meses.index(month_str.lower()) + 1
-    except:
-        return 1
+    try:return MONTHS.index(month_str.lower())+1
+    except ValueError:raise ValueError('Mes inválido') from None
 
-def fetch_statement_pdfs_from_gmail(month_str, year_int):
-    try:
-        secrets = toml.load(".streamlit/secrets.toml")
-        user = secrets.get("gmail", {}).get("email")
-        pwd = secrets.get("gmail", {}).get("app_password")
-        if not user or not pwd:
-            return []
-    except:
-        return []
 
-    target_m = get_month_index(month_str)
-    receive_m = target_m + 1
-    receive_y = year_int
-    if receive_m > 12:
-        receive_m = 1
-        receive_y += 1
-        
-    pdfs = []
-    
-    searches = [
-        ('bancobice@eeccvirtual.cl', 'Estado de Cuenta Tarjeta de Credito BICE'),
-        ('reply@info.bice.cl', 'Tu Cartola de Cuenta Corriente Banco BICE')
-    ]
-    
+def _credentials():
     try:
-        mail = imaplib.IMAP4_SSL("imap.gmail.com")
-        mail.login(user, pwd)
-        mail.select("inbox")
-        
-        for sender, subject in searches:
-            status, messages = mail.search(None, f'(FROM "{sender}" SUBJECT "{subject}")')
-            if status == "OK" and messages[0]:
-                email_ids = messages[0].split()
-                # Check up to the last 15 emails to find the correct month
-                for e_id in reversed(email_ids[-15:]):
-                    res, msg_data = mail.fetch(e_id, '(RFC822)')
-                    for response_part in msg_data:
-                        if isinstance(response_part, tuple):
-                            msg = email.message_from_bytes(response_part[1])
-                            
-                            # Check date
-                            date_tuple = email.utils.parsedate_tz(msg['Date'])
-                            if date_tuple:
-                                msg_date = datetime.fromtimestamp(email.utils.mktime_tz(date_tuple))
-                                # Aceptar correos que llegaron en el mes actual o el siguiente (para evitar que cartolas del 31 queden fuera)
-                                if (msg_date.month == receive_m and msg_date.year == receive_y) or (msg_date.month == m_idx and msg_date.year == y):
-                                    found_pdf_in_msg = False
-                                    # Extract PDF
-                                    for part in msg.walk():
-                                        if part.get_content_maintype() == 'multipart':
-                                            continue
-                                        if part.get('Content-Disposition') is None:
-                                            continue
-                                        filename = part.get_filename()
-                                        if filename and filename.lower().endswith('.pdf'):
-                                            payload = part.get_payload(decode=True)
-                                            if payload:
-                                                pdf_io = io.BytesIO(payload)
-                                                pdf_io.name = filename
-                                                pdfs.append(pdf_io)
-                                                found_pdf_in_msg = True
-                                    if found_pdf_in_msg:
-                                        break # Found matching email for this sender
-        mail.logout()
-    except Exception as e:
-        print(f"Error fetching PDFs: {e}")
-        
-    return pdfs
+        settings=st.secrets['gmail']
+        user=settings['email'];password=settings['app_password']
+        if not user or not password:raise KeyError()
+        return user,password
+    except Exception:
+        raise ValueError('Configura gmail.email y gmail.app_password en los secretos de la plataforma.') from None
+
+
+def fetch_statement_pdfs_from_gmail(month_str,year_int,pdf_password=""):
+    """Return all unique candidate PDFs for explicit period review in the UI."""
+    m=get_month_index(month_str);start=date(year_int,m,1)-timedelta(days=40)
+    end=date(year_int,m,calendar.monthrange(year_int,m)[1])+timedelta(days=65)
+    user,password=_credentials();mail=None;files=[];seen=set()
+    try:
+        mail=imaplib.IMAP4_SSL('imap.gmail.com',timeout=20);mail.login(user,password)
+        status,folders=mail.list()
+        mailbox='INBOX'
+        if status=='OK':
+            import re
+            for folder in folders:
+                decoded=folder.decode(errors='replace')
+                if '\\All' in decoded:
+                    match=re.search(r'"([^"]+)"\s*$',decoded)
+                    if match:mailbox='"'+match[1]+'"'
+        mail.select(mailbox,readonly=True)
+        for sender in ['bancobice@eeccvirtual.cl','reply@info.bice.cl']:
+            query=f'(FROM "{sender}" SINCE {start.strftime("%d-%b-%Y")} BEFORE {end.strftime("%d-%b-%Y")})'
+            status,data=mail.search(None,query)
+            if status!='OK':raise RuntimeError('Búsqueda de correo rechazada')
+            for eid in data[0].split():
+                status,parts=mail.fetch(eid,'(BODY.PEEK[])')
+                if status!='OK':raise RuntimeError('No se pudo leer un correo')
+                for part in parts:
+                    if not isinstance(part,tuple):continue
+                    message=email.message_from_bytes(part[1])
+                    for attachment in message.walk():
+                        filename=attachment.get_filename()
+                        if filename:filename=str(make_header(decode_header(filename)))
+                        if attachment.get_content_type()!='application/pdf' and not (filename and filename.lower().endswith('.pdf')):continue
+                        payload=attachment.get_payload(decode=True)
+                        if not payload:continue
+                        digest=hashlib.sha256(payload).hexdigest()
+                        if digest in seen:continue
+                        seen.add(digest);file=io.BytesIO(payload);file.name=filename or 'cartola.pdf'
+                        file.received=message.get('Date','');files.append(file)
+        from processor_v3 import extract_text_from_pdf, transaction_lines, date_from_line
+        from collections import Counter
+        selected=[]; unreadable=[]
+        for file in files:
+            try:
+                text=extract_text_from_pdf(file,pdf_password)
+                import re
+                billing=re.search(r'PER[IÍ]ODO\s+FACTURADO\s+DESDE\s+(\d{2}/\d{2}/\d{4})',text,re.I)
+                dates=[date_from_line(line,year_int) for line in transaction_lines(text)]
+                counts=Counter(d[3:] for d in dates if d!='N/A' and len(d)==10)
+                # Use transaction period rather than reception month. For billing cycles
+                # ending early next month, August still has the majority of transactions.
+                detected=billing[1][3:] if billing else (counts.most_common(1)[0][0] if counts else None)
+                if detected==f'{m:02}/{year_int}':selected.append(file)
+            except ValueError:
+                unreadable.append(file.name)
+        if unreadable:
+            raise ValueError('Hay PDF candidatos que no se pudieron leer. Ingresa la contraseña correcta o súbelos manualmente; no se procesó una selección incompleta.')
+        return selected
+    except (ValueError,RuntimeError):raise
+    except Exception:
+        raise RuntimeError('No se pudo consultar Gmail. Revisa la conexión y la contraseña de aplicación.') from None
+    finally:
+        if mail:
+            try:mail.logout()
+            except Exception:pass
+
+
+def fetch_bice_transfers_from_gmail(month_str=None):
+    # Do not attach another person's transfer solely by a shared amount.
+    return {}

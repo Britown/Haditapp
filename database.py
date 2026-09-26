@@ -87,3 +87,67 @@ def get_all_historial(db):
         import streamlit as st
         st.error(f"Error obteniendo historial: {e}")
         return []
+
+
+def load_rulebook(db):
+    """None is a connection failure, never an empty set of learned rules."""
+    if db is None:
+        raise RuntimeError('Configura Firebase para guardar y recuperar el entrenamiento.')
+    snapshot = db.collection('haditapp_config').document('rules').get()
+    data = snapshot.to_dict() if snapshot.exists else {}
+    return data.get('rules', []), data.get('revision', 0)
+
+
+def save_rulebook(db, rules, expected_revision):
+    from rules import validate_rule
+    validated = [validate_rule(r) for r in rules]
+    if len({r['id'] for r in validated}) != len(validated):
+        raise ValueError('Hay reglas duplicadas para el mismo patrón. Edita la existente.')
+    ref = db.collection('haditapp_config').document('rules')
+    transaction = db.transaction()
+
+    @firestore.transactional
+    def update(tx):
+        snap = ref.get(transaction=tx)
+        current = snap.to_dict() if snap.exists else {}
+        revision = current.get('revision', 0)
+        if revision != expected_revision:
+            raise ValueError('Las reglas cambiaron en otra sesión. Recarga antes de guardar.')
+        tx.set(ref, {'rules':validated,'revision':revision+1,'updated_at':firestore.SERVER_TIMESTAMP})
+        return revision+1
+    return update(transaction)
+
+
+def save_reconciliation(db, state):
+    """Atomically persist the editable ledger and legacy history projections."""
+    import json
+    from processor_v3 import summarize
+    from money import clp
+    from config import FACTORES_DIVISION
+    if db is None:
+        raise RuntimeError('No hay conexión con Firebase. No se ha guardado.')
+    safe = json.loads(json.dumps(state, allow_nan=False))
+    rows = safe['records']
+    values, dates = summarize(rows,safe['beneficio'])
+    total=sum(values.values());papa=clp(total*FACTORES_DIVISION['PAPA']);mama=total-papa
+    batch = db.batch()
+    key=safe['period']
+    batch.set(db.collection('conciliaciones').document(key), {**safe,'updated_at':firestore.SERVER_TIMESTAMP})
+    batch.set(db.collection('historial_gastos_fijos').document(key), {
+        'month_year':key,'total_neto':total,'aporte_papa':papa,'aporte_mama':mama,
+        'pct_papa':FACTORES_DIVISION['PAPA']*100,'pct_mama':FACTORES_DIVISION['MAMA']*100,
+        'desglose':values,'fechas_detectadas':dates,'updated_at':firestore.SERVER_TIMESTAMP})
+    variables=[r for r in rows if r['Tipo'] in ['Variable','Ingreso','Revisar']]
+    batch.set(db.collection('historial_gastos_variables').document(key),{
+        'month_year':key,'gastos':variables,
+        'total_compartido':sum(r.get('Monto') or 0 for r in variables if r['Tipo']=='Variable' and r['Responsable']=='Compartido'),
+        'total_personal':sum(r.get('Monto') or 0 for r in variables if r['Tipo']=='Variable' and r['Responsable']=='Personal'),
+        'total_ingresos':sum(r.get('Monto') or 0 for r in variables if r['Tipo']=='Ingreso'),
+        'updated_at':firestore.SERVER_TIMESTAMP})
+    batch.commit()
+    return True
+
+
+def list_reconciliations(db):
+    if db is None: raise RuntimeError('No hay conexión con Firebase.')
+    return [dict(doc.to_dict(),id=doc.id) for doc in db.collection('conciliaciones').order_by('updated_at',direction=firestore.Query.DESCENDING).stream()]
