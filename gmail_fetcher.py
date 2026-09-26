@@ -91,5 +91,48 @@ def fetch_statement_pdfs_from_gmail(month_str,year_int,pdf_password=""):
 
 
 def fetch_bice_transfers_from_gmail(month_str=None):
-    # Do not attach another person's transfer solely by a shared amount.
-    return {}
+    from bice_email import parse_transfer_email
+    from bs4 import BeautifulSoup
+    import re
+    month,year=month_str.split();m=get_month_index(month);year=int(year)
+    start=date(year,m,1)-timedelta(days=3)
+    end=date(year,m,calendar.monthrange(year,m)[1])+timedelta(days=4)
+    user,password=_credentials();mail=None;result=[];seen=set()
+    try:
+        mail=imaplib.IMAP4_SSL('imap.gmail.com',timeout=20);mail.login(user,password)
+        status,folders=mail.list();mailbox='INBOX'
+        if status=='OK':
+            for folder in folders:
+                decoded=folder.decode(errors='replace')
+                if '\\All' in decoded:
+                    match=re.search(r'"([^"]+)"\s*$',decoded)
+                    if match:mailbox='"'+match[1]+'"'
+        mail.select(mailbox,readonly=True)
+        query=f'(FROM "reply@info.bice.cl" SUBJECT "transferencia" SINCE {start.strftime("%d-%b-%Y")} BEFORE {end.strftime("%d-%b-%Y")})'
+        status,data=mail.search(None,query)
+        if status!='OK':raise RuntimeError()
+        for eid in data[0].split():
+            status,parts=mail.fetch(eid,'(BODY.PEEK[])')
+            if status!='OK':raise RuntimeError()
+            for part in parts:
+                if not isinstance(part,tuple):continue
+                msg=email.message_from_bytes(part[1]);digest=msg.get('Message-ID') or hashlib.sha256(part[1]).hexdigest()
+                if digest in seen:continue
+                seen.add(digest);bodies={}
+                for section in msg.walk():
+                    if section.get_content_disposition()=='attachment':continue
+                    mime=section.get_content_type()
+                    if mime in ['text/plain','text/html']:
+                        payload=section.get_payload(decode=True)
+                        if payload:bodies[mime]=payload.decode(section.get_content_charset() or 'utf-8',errors='replace')
+                body=BeautifulSoup(bodies['text/html'],'html.parser').get_text(' ') if 'text/html' in bodies else bodies.get('text/plain','')
+                subject=str(make_header(decode_header(msg.get('Subject',''))))
+                item=parse_transfer_email(body,subject)
+                if item:result.append(item)
+        return result
+    except Exception:
+        raise RuntimeError('No se pudieron consultar los mensajes BICE. Las clasificaciones y montos se mantienen; reintenta la conexión.') from None
+    finally:
+        if mail:
+            try:mail.logout()
+            except Exception:pass

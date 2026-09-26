@@ -600,23 +600,16 @@ elif page == "Gastos Variables":
         df_ingresos = df_vars[df_vars["Categoría"] == "Ingresos"].reset_index(drop=True)
         df_no_identificados = df_vars[df_vars["Categoría"] == "Por Revisar"].reset_index(drop=True).copy()
         
-        # [GMAIL LOGIC] - Solo para los no identificados
+        # Enrich only unclassified transfers, retaining raw text and learned rules.
         try:
-            bice_data = fetch_bice_transfers_from_gmail(st.session_state.get('current_month_str'))
-            if bice_data:
-                for i, row in df_no_identificados.iterrows():
-                    try:
-                        m = int(row["Monto"])
-                        if m in bice_data:
-                            match = bice_data[m][0]
-                            if match["nombre"] or match["mensaje"]:
-                                added = f"✉️ {match['nombre']} ({match['mensaje']})"
-                                # Prepend
-                                df_no_identificados.at[i, "Descripción"] = added + " | " + str(row["Descripción"])
-                    except:
-                        pass
-        except Exception as e:
-            print("Error en Gmail:", e)
+            if 'gmail' in st.secrets and not df_no_identificados.empty:
+                period=st.session_state.get('current_month_str')
+                cache=st.session_state.setdefault('bice_transfer_emails',{})
+                if period not in cache:cache[period]=fetch_bice_transfers_from_gmail(period)
+                from bice_email import enrich_transfers
+                df_no_identificados=pd.DataFrame(enrich_transfers(df_no_identificados.to_dict('records'),cache[period]))
+        except Exception:
+            st.warning('No se pudieron consultar los mensajes BICE. Puedes continuar clasificando; tus datos no se han cambiado.')
         df_identificados = df_vars[(df_vars["Categoría"] != "Ingresos") & (df_vars["Categoría"] != "Por Revisar") & (df_vars["Categoría"] != "Ignorar")].reset_index(drop=True)
         
         col_config = {
