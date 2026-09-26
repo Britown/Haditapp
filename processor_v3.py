@@ -197,6 +197,9 @@ def display_description(line):
     fee = re.search(r'\bCOMISI[ÓO]N\b.*?(?=\s+(?:US\$|\$|\d[\d.,]*(?:\s|$))|$)', text, re.I)
     if fee:
         return fee.group(0).strip()
+    card = re.match(r'^(?:[A-Za-zÁÉÍÓÚÜÑáéíóúüñ .-]+\s+)?\d{2}/\d{2}/(?:\d{4}|\d{2})\s+\d{4}\s+\d{6,}\s+(.+?)\s+(?:US\$|\$)', text)
+    if card:
+        return card.group(1).strip()
     # Only strip recognizable metadata, never bare numbers that may identify a merchant.
     text = re.sub(r'^\d{2}/\d{2}(?:/\d{2,4})?\s+(?:\d{6,}\s+)?', '', text)
     text = re.sub(r'(?<![\w.-])(?:\$\s*\d[\d.,]*|\d{1,3}(?:\.\d{3})*,\d{2})(?![\w.-])', '', text)
