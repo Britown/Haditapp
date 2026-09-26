@@ -150,45 +150,8 @@ st.markdown("""
         text-align: center;
     }
     
-    /* Hide default radio buttons and style as pills */
-    div[data-testid="stRadio"], div[data-testid="stRadioGroup"] {
-        display: flex;
-        justify-content: flex-start;
-        margin-bottom: 20px;
-    }
-    div[data-testid="stRadio"] > div, div[data-testid="stRadioGroup"] > div {
-        display: inline-flex !important;
-        flex-direction: row !important;
-        background: #E8E8ED !important;
-        border-radius: 9999px !important;
-        padding: 4px !important;
-        gap: 4px !important;
-    }
-    div[data-testid="stRadio"] label, div[data-testid="stRadioGroup"] label {
-        padding: 8px 20px !important;
-        border-radius: 9999px !important;
-        background: transparent !important;
-        color: #86868B !important;
-        font-weight: 500 !important;
-        font-size: 14px !important;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        border: none !important;
-    }
-    /* Streamlit hides the radio input, we target the checked state via aria-checked */
-    div[data-testid="stRadio"] label[data-checked="true"], div[data-testid="stRadioGroup"] label[data-selected="true"] {
-        background: #FFFFFF !important;
-        color: #1D1D1F !important;
-        box-shadow: 0 2px 8px -1px rgba(0, 0, 0, 0.04) !important;
-    }
-    div[data-testid="stRadio"] label:hover:not([data-checked="true"]), div[data-testid="stRadioGroup"] label:hover:not([data-selected="true"]) {
-        color: #1D1D1F !important;
-    }
-    /* Hide the circle icon next to radio labels robustly */
-    div[data-testid="stRadio"] .st-emotion-cache-1n76uvr, div[data-testid="stRadio"] .st-emotion-cache-9hdc3e, div[data-testid="stRadio"] .e1326t814, div[data-testid="stRadioGroup"] label[data-testid="stRadioOption"] > div > div:first-child {
-        display: none !important;
-    }
-    
+    [data-testid="stRadioGroup"] { flex-wrap: wrap; gap: 12px; }
+
     /* Expander / Cards */
     section[data-testid="stExpander"], div[data-testid="stVerticalBlock"] > div.element-container > div > section {
         border: 1px solid rgba(0,0,0,0.07) !important;
@@ -247,17 +210,60 @@ st.markdown(re.sub(r'^[ \t]+', '', r'''
     </p>
 </div>
 ''', flags=re.MULTILINE), unsafe_allow_html=True)
-section = st.radio('Navegación', ['Mes actual', 'Historial', 'Reglas'], horizontal=True)
+with st.container(key='primary_navigation'):
+    section = st.radio('Navegación', ['Mes actual', 'Historial', 'Reglas'], horizontal=True, label_visibility='collapsed')
 st.markdown('''<style>
 button[kind="secondary"] { background: white !important; color: #332b45 !important; border: 1px solid #d5d0df !important; box-shadow: none !important; }
+button[kind="primary"] { background: #6d28d9 !important; border-color: #6d28d9 !important; color: white !important; }
+button[kind="primary"]:hover:not(:disabled) { background: #5b21b6 !important; border-color: #5b21b6 !important; }
+button[kind="primary"]:disabled { opacity: 0.45; }
 button p { white-space: normal !important; }
 [data-testid="stCaptionContainer"] { color: #57515f; }
+.st-key-primary_navigation [data-testid="stRadio"],
+.st-key-month_navigation [data-testid="stRadio"] { margin-bottom: 0 !important; }
+.st-key-primary_navigation [data-testid="stRadioGroup"] > div,
+.st-key-month_navigation [data-testid="stRadioGroup"] > div {
+    background: transparent !important; padding: 0 !important; border: none !important;
+    border-radius: 0 !important; box-shadow: none !important;
+}
+.st-key-primary_navigation [data-testid="stRadioOption"] > div > div:first-child,
+.st-key-month_navigation [data-testid="stRadioOption"] > div > div:first-child { display: none; }
+.st-key-primary_navigation [data-testid="stRadioOption"] p,
+.st-key-month_navigation [data-testid="stRadioOption"] p { color: inherit !important; margin: 0; }
+.st-key-primary_navigation [data-testid="stRadioOption"]:focus-within,
+.st-key-month_navigation [data-testid="stRadioOption"]:focus-within { outline: 2px solid #a78bfa; outline-offset: 3px; }
+.st-key-primary_navigation [data-testid="stRadio"] > div,
+.st-key-month_navigation [data-testid="stRadio"] > div {
+    background: transparent !important; padding: 0 !important; gap: 8px !important;
+    border-radius: 0 !important; flex-wrap: wrap !important;
+}
+.st-key-primary_navigation [data-testid="stRadio"] label {
+    color: #6d28d9 !important; border: 1px solid #6d28d9 !important; border-radius: 999px !important; padding: 8px 18px !important; background: transparent !important;
+}
+.st-key-primary_navigation [data-testid="stRadio"] label:has(input:checked),
+.st-key-primary_navigation [data-testid="stRadio"] label[data-checked="true"] {
+    background: #6d28d9 !important; color: white !important; box-shadow: none !important;
+}
+.st-key-month_navigation [data-testid="stRadio"] label {
+    padding: 8px 12px !important; border-radius: 0 !important;
+    border-bottom: 3px solid transparent !important; color: #625b6b !important;
+    background: transparent !important; box-shadow: none !important;
+}
+.st-key-month_navigation [data-testid="stRadio"] label:has(input:checked),
+.st-key-month_navigation [data-testid="stRadio"] label[data-checked="true"] {
+    color: #502090 !important; border-bottom-color: #6d28d9 !important;
+    background: transparent !important; box-shadow: none !important;
+}
+.st-key-primary_navigation input:focus-visible + div,
+.st-key-month_navigation input:focus-visible + div { outline: 2px solid #6d28d9; outline-offset: 3px; }
 @media (max-width: 640px) { h1 { font-size: 28px !important; } [data-testid="stHorizontalBlock"] { flex-wrap: wrap; } }
 </style>''', unsafe_allow_html=True)
-if st.session_state.get('records'):
-    st.caption(st.session_state.get('current_month_str', '') + ' · ' + ('Cambios sin guardar' if st.session_state.get('month_dirty', True) else 'Guardado'))
 if section == 'Mes actual':
-    view = st.radio('Vista del mes', ['Importar y resumen', 'Movimientos', 'Distribución'], horizontal=True)
+    if st.session_state.get('current_month_str'):
+        st.subheader(st.session_state.current_month_str)
+        st.caption(('Cambios sin guardar' if st.session_state.get('month_dirty', True) else 'Guardado') if st.session_state.get('records') else 'Sin importar')
+    with st.container(key='month_navigation'):
+        view = st.radio('Vista del mes', ['Importar y resumen', 'Movimientos', 'Distribución'], horizontal=True, label_visibility='collapsed')
     page = {'Importar y resumen':'Gastos Fijos', 'Movimientos':'Gastos Variables', 'Distribución':'Pago Cuota Casa'}[view]
 else:
     page = 'Entrenar gastos' if section == 'Reglas' else 'Historial'
