@@ -1,7 +1,7 @@
 """UI-independent validation, editing, training and school split operations."""
 from copy import deepcopy
 from decimal import Decimal
-from rules import classify,normalize,rule_id
+from rules import classify,normalize,rule_id,FIXED
 from money import clp
 
 
@@ -87,7 +87,7 @@ def learn_variable_corrections(before, after, saved):
         category=str(row.get('Categoría') or '').strip()
         owner=row.get('Responsable')
         if category in ['', 'Por Revisar'] or owner not in ['Personal','Compartido']:continue
-        kind='Ingreso' if category=='Ingresos' else ('Ignorar' if category=='Ignorar' else 'Variable')
+        kind='Fijo' if category in FIXED else ('Ingreso' if category=='Ingresos' else ('Ignorar' if category=='Ignorar' else 'Variable'))
         # Extract the recipient RUT before removing references and monetary values.
         rut=re.search(r'\btransferencia\s+a\s+Rut\s+([\d.]+-[\dkK])',original,re.I)
         pattern='TRANSFERENCIA A RUT '+rut.group(1) if rut else suggest_pattern(row['Descripción'])

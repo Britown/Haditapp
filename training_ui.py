@@ -35,6 +35,7 @@ def refresh_results():
     st.session_state.resultados_fijos=results;st.session_state.fechas_fijas=dates
     st.session_state.unmatched=[r for r in rows if r['Tipo']!='Fijo']
     st.session_state.pop('edited_variables',None)
+    st.session_state.month_dirty = True
 
 
 def save_rule(rule):
@@ -48,22 +49,37 @@ def save_rule(rule):
 
 
 def render():
-    st.header('Entrenar gastos fijos y variables')
+    st.header('Reglas de clasificación')
+    st.caption('Las reglas se aplican a operaciones futuras. Para una compra puntual, usa Movimientos.')
     saved,revision=stored_rules()
     rows=st.session_state.get('records',[])
     row=st.selectbox('Movimiento de ejemplo',rows,format_func=lambda r:f"{r['Fecha']} · {r['Descripción']} · $ {r['Monto']}") if rows else None
     with st.form('training_'+(row['id'] if row else 'manual')):
         pattern=st.text_input('Comercio o destinatario que se repite',value=suggest_pattern(row['_Original']) if row else '')
-        kind=st.selectbox('Tipo',['Fijo','Variable','Ingreso','Ignorar'])
+        kinds=['Fijo','Variable','Ingreso','Ignorar']
+        kind=st.selectbox('Tipo',kinds,index=kinds.index(row['Tipo']) if row and row['Tipo'] in kinds else 1)
         category=st.text_input('Concepto o categoría',value=row['Categoría'] if row else '')
-        owner=st.selectbox('Responsable',['Compartido','Personal'])
+        owner=st.selectbox('Responsable',['Compartido','Personal'],index=1 if row and row['Responsable']=='Personal' else 0)
         exact=st.checkbox('Usar esta regla solo para este monto',value=bool(row and 'CSFJ' in row['Categoría']),help='Útil cuando el colegio no distingue conceptos en la glosa. Otros montos quedarán para revisión.')
         value=st.number_input('Monto de la regla (CLP)',min_value=0,value=int(abs(row['Monto'] or 0)) if row else 0)
         st.caption('El aprendizaje se guarda en Firebase, se puede editar y se reutiliza el próximo mes. Para desglosar un pago del colegio usa la sección inferior.')
+        proposed=dict(match_text=pattern,kind=kind,category=category,owner=owner,priority=100,enabled=True,amount=value if exact else None)
+        if st.form_submit_button('Ver operaciones afectadas'):
+            try:
+                from rules import match_rule
+                checked=validate_rule(proposed)
+                affected=[r for r in rows if not r.get('Revisado') and match_rule(r['_Original'],[checked],r['Monto'])]
+                st.session_state.rule_preview=proposed
+                st.info(f'{len(affected)} movimientos actuales coinciden. Las correcciones manuales se conservan.')
+                if affected: st.dataframe(pd.DataFrame(affected)[['Fecha','Descripción','Monto']],hide_index=True)
+            except ValueError as e: st.error(str(e))
         if st.form_submit_button('Guardar regla y aplicar'):
             try:
-                save_rule(dict(match_text=pattern,kind=kind,category=category,owner=owner,priority=100,enabled=True,amount=value if exact else None))
-                st.success('Regla guardada y aplicada. Revisa el resultado en Gastos Fijos o Variables.')
+                if st.session_state.get('rule_preview') != proposed:
+                    raise ValueError('Revisa primero las operaciones afectadas con estos valores.')
+                save_rule(proposed)
+                st.session_state.pop('rule_preview',None)
+                st.success('Regla guardada. Revisa los movimientos y guarda los cambios del mes.')
             except Exception as e:st.error(str(e) if isinstance(e,ValueError) else 'No se pudo guardar la regla. Comprueba Firebase; no se aplicó el cambio.')
     if row and 'CSFJ' in row['Categoría'] and not row.get('parent_id'):
         with st.expander('Desglosar pago del colegio',expanded=True):
@@ -78,7 +94,7 @@ def render():
     if saved:
         columns=['match_text','kind','category','owner','amount','priority','enabled']
         with st.form('edit_rules_'+str(revision)):
-            edited=st.data_editor(pd.DataFrame(saved).reindex(columns=columns),hide_index=True,use_container_width=True)
+            edited=st.data_editor(pd.DataFrame(saved).reindex(columns=columns),hide_index=True,use_container_width=True,column_config={'match_text':'Comercio o destinatario','kind':'Tipo','category':'Categoría','owner':'Responsable','amount':'Monto específico','priority':None,'enabled':'Activa'})
             if st.form_submit_button('Guardar cambios de reglas'):
                 try:
                     import json

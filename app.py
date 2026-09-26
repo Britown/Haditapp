@@ -232,7 +232,7 @@ st.markdown("""
 
 st.markdown(re.sub(r'^[ \t]+', '', r'''
 <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 16px; margin-bottom: 24px;">
-    <div style="display: flex; align-items: center; gap: 8px; font-size: 11px; font-weight: 700; letter-spacing: 0.05em; color: #0071E3; text-transform: uppercase;">
+    <div style="display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; letter-spacing: 0.05em; color: #0071E3; text-transform: uppercase;">
         <span style="display: inline-block; width: 6px; height: 6px; border-radius: 50%; background-color: #0071E3;"></span>
         <span>Motor de Conciliación Bi-Familiar</span>
     </div>
@@ -243,40 +243,60 @@ st.markdown(re.sub(r'^[ \t]+', '', r'''
         </h1>
     </div>
     <p style="font-size: 15px; color: #86868B; margin: 8px 0 0 0; max-width: 600px; line-height: 1.4;">
-        Conciliación financiera, mágicamente simple. Asignación transparente, lectura de extractos bancarios y balance en tiempo real.
+        Revisa tus movimientos, organiza los gastos y guarda el cierre de cada mes.
     </p>
 </div>
 ''', flags=re.MULTILINE), unsafe_allow_html=True)
-page = st.radio("Navegación", ["Gastos Fijos", "Gastos Variables", "Pago Cuota Casa", "Historial", "Entrenar gastos"], horizontal=True, label_visibility="collapsed")
+section = st.radio('Navegación', ['Mes actual', 'Historial', 'Reglas'], horizontal=True)
+st.markdown('''<style>
+button[kind="secondary"] { background: white !important; color: #332b45 !important; border: 1px solid #d5d0df !important; box-shadow: none !important; }
+button p { white-space: normal !important; }
+[data-testid="stCaptionContainer"] { color: #57515f; }
+@media (max-width: 640px) { h1 { font-size: 28px !important; } [data-testid="stHorizontalBlock"] { flex-wrap: wrap; } }
+</style>''', unsafe_allow_html=True)
+if st.session_state.get('records'):
+    st.caption(st.session_state.get('current_month_str', '') + ' · ' + ('Cambios sin guardar' if st.session_state.get('month_dirty', True) else 'Guardado'))
+if section == 'Mes actual':
+    view = st.radio('Vista del mes', ['Importar y resumen', 'Movimientos', 'Distribución'], horizontal=True)
+    page = {'Importar y resumen':'Gastos Fijos', 'Movimientos':'Gastos Variables', 'Distribución':'Pago Cuota Casa'}[view]
+else:
+    page = 'Entrenar gastos' if section == 'Reglas' else 'Historial'
 st.markdown("<hr style='margin-top: 5px; margin-bottom: 20px;'>", unsafe_allow_html=True)
 
 if page == "Gastos Fijos":
     meses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"]
-    col_left, col_right = st.columns([1, 1.2], gap="large")
+    col_left = st.container()
+    col_right = st.container()
     with col_left:
 
         def reset_confirm():
             st.session_state.periodo_confirmado = False
-            for key in ['resultados_fijos','unmatched','records','fechas_fijas','edited_variables']:
-                st.session_state.pop(key,None)
 
         if "periodo_confirmado" not in st.session_state:
             st.session_state.periodo_confirmado = False
             
-        col_m1, col_m2, col_m3 = st.columns([1.5, 1, 0.5])
+        col_m1, col_m2, col_m3 = st.columns([1.5, 1, 1.5])
         with col_m1:
-            sel_mes = st.selectbox("Mes de Análisis", meses, index=7, label_visibility="collapsed", on_change=reset_confirm)
+            current = st.session_state.get('current_month_str', 'Agosto 2026').split()
+            sel_mes = st.selectbox("Mes de Análisis", meses, index=meses.index(current[0]), label_visibility="collapsed", on_change=reset_confirm)
         with col_m2:
-            sel_ano = st.selectbox("Año", [2024, 2025, 2026, 2027], index=2, label_visibility="collapsed", on_change=reset_confirm)
+            sel_ano = st.selectbox("Año", [2024, 2025, 2026, 2027], index=[2024,2025,2026,2027].index(int(current[1])), label_visibility="collapsed", on_change=reset_confirm)
             
         month_str = f"{sel_mes} {sel_ano}"
+        previous_month = st.session_state.get('current_month_str')
+        if previous_month != month_str and st.session_state.get('records'):
+            st.warning('Cambiar de mes reemplazará los movimientos de esta sesión. Guarda primero desde Movimientos si quieres conservarlos.')
+            if not st.button('Cambiar de mes y descartar esta sesión'):
+                st.stop()
+            for key in ['records','unmatched','resultados_fijos','fechas_fijas','edited_variables','last_movement_edit']:
+                st.session_state.pop(key,None)
         st.session_state.current_month_str = month_str
 
         live_uf, live_dolar = 38000, 950 # default
         
         with col_m3:
             if not st.session_state.periodo_confirmado:
-                if st.button("✓", help="Confirmar período", type="primary", use_container_width=True):
+                if st.button("Confirmar mes", help="Confirmar período", type="primary", use_container_width=True):
                     st.session_state.periodo_confirmado = True
                     st.rerun()
                 valor_uf = float(live_uf)
@@ -311,25 +331,28 @@ if page == "Gastos Fijos":
             
             st.markdown(re.sub(r'^[ 	]+', '', r"""
             <div class="fade-in-title" style="margin-bottom: 24px; margin-top: 24px;">
-                <span style="font-size: 11px; font-weight: 700; letter-spacing: 0.05em; color: #86868B; text-transform: uppercase;">Importación Asistida</span>
+                <span style="font-size: 13px; font-weight: 700; letter-spacing: 0.05em; color: #86868B; text-transform: uppercase;">Importación Asistida</span>
                 <h2 style="font-size: 24px; font-weight: 700; color: #1D1D1F; margin: 4px 0 0 0; letter-spacing: -0.02em;">Ingreso de Cartolas</h2>
                 <p style="font-size: 13px; color: #86868B; margin: 4px 0 0 0;">Lectura inteligente con categorización semántica inmediata.</p>
             </div>
             """, flags=re.MULTILINE), unsafe_allow_html=True)
         
-            with st.container():
-                st.markdown("<div class='fade-in-title'><span style='font-size:11px; font-weight:600; color:#4c4546;'>Cartola PDF o Excel (Manual)</span></div>", unsafe_allow_html=True)
-                uploaded_files = st.file_uploader("Arrastra tu cartola", accept_multiple_files=True, label_visibility="collapsed")
-            with st.container():
-                st.markdown("<div class='fade-in-title'><span style='font-size:11px; font-weight:600; color:#4c4546;'>Automático</span></div>", unsafe_allow_html=True)
-                buscar_email = st.button("📥 Buscar en mi Gmail", use_container_width=True)
-
-            st.markdown("<div class='fade-in-title'><span style='font-size:11px; font-weight:600; color:#4c4546; margin-top:10px; display:inline-block;'>O pega el texto aquí</span></div>", unsafe_allow_html=True)
-            pasted_text = st.text_area("Pega aquí la cartola", height=120, label_visibility="collapsed")
-        
-            procesar = st.button("Procesar Cartola Bancaria", type="primary", use_container_width=True)
-            
-            if buscar_email:
+            method = st.radio('¿Cómo quieres importar?', ['Desde Gmail', 'Subir archivo', 'Pegar texto'], horizontal=True)
+            uploaded_files, pasted_text, buscar_email = [], '', False
+            if method == 'Subir archivo':
+                uploaded_files = st.file_uploader('Selecciona una cartola PDF, Excel o CSV', type=['pdf','xlsx','xls','csv'], accept_multiple_files=True)
+            elif method == 'Pegar texto':
+                pasted_text = st.text_area('Pega aquí la cartola', height=160)
+            else:
+                st.caption(f'Buscar cartolas BICE correspondientes a {month_str} en tu Gmail conectado.')
+            replace_ok = not st.session_state.get('records') or st.checkbox('Reemplazar los movimientos actuales con esta importación')
+            if method == 'Subir archivo':
+                procesar = st.button('Procesar archivo', type='primary', use_container_width=True, disabled=not replace_ok or not uploaded_files)
+            elif method == 'Pegar texto':
+                procesar = st.button('Procesar texto', type='primary', use_container_width=True, disabled=not replace_ok or not pasted_text.strip())
+            else:
+                buscar_email = st.button('Buscar cartolas en Gmail', type='primary', use_container_width=True, disabled=not replace_ok)
+            if buscar_email and replace_ok:
                 with st.spinner("Buscando cartolas del mes en tu correo..."):
                     from gmail_fetcher import fetch_statement_pdfs_from_gmail
                     try:
@@ -350,17 +373,8 @@ if page == "Gastos Fijos":
             if not uploaded_files and not pasted_text.strip():
                 st.error("Por favor, ingresa al menos una fuente de datos.")
             else:
-                import random
-                mensajes_procesamiento = [
-                    "Despertando a los duendes contables...",
-                    "Traduciendo el lenguaje del banco a español...",
-                    "Buscando los gastos escondidos en el PDF...",
-                    "Inyectando café en el procesador...",
-                    "Sacando la calculadora científica...",
-                    "Leyendo la letra chica de la cartola..."
-                ]
                 try:
-                    with st.spinner(random.choice(mensajes_procesamiento)):
+                    with st.spinner("Leyendo y clasificando movimientos…"):
                         raw_text = extract_all_text(uploaded_files, pasted_text, st.session_state.get("pdf_password_input", ""))
                 except Exception as e:
                     import traceback
@@ -375,6 +389,8 @@ if page == "Gastos Fijos":
                 notices=sorted({r['Estado'] for r in records if r['Estado']})
                 for notice in notices: st.warning(notice)
                 st.session_state.records = records
+                st.session_state.month_dirty = True
+                st.session_state.pop('last_movement_edit', None)
                 st.session_state.beneficio_aplicado = beneficio_val
                 resultados, fechas = summarize(records, beneficio_val)
                 unmatched = [r for r in records if r['Tipo'] != 'Fijo']
@@ -442,7 +458,7 @@ if page == "Gastos Fijos":
                 <section style="background: #FFFFFF; border-radius: 24px; padding: 32px; border: 1px solid rgba(0,0,0,0.07); box-shadow: 0 4px 24px -2px rgba(0,0,0,0.04); margin-bottom: 24px;">
                     <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 1px solid rgba(0,0,0,0.05); padding-bottom: 20px; margin-bottom: 16px;">
                         <div>
-                            <span style="font-size: 11px; font-weight: 700; letter-spacing: 0.05em; color: #86868B; text-transform: uppercase;">Balance Consolidado</span>
+                            <span style="font-size: 13px; font-weight: 700; letter-spacing: 0.05em; color: #86868B; text-transform: uppercase;">Balance Consolidado</span>
                             <h2 style="font-size: 24px; font-weight: 700; color: #1D1D1F; margin: 4px 0 0 0; letter-spacing: -0.02em;">Desglose Detectado</h2>
                             <p style="font-size: 13px; color: #86868B; margin: 4px 0 0 0;">Gastos directos e indexados asignados a la cuenta compartida.</p>
                         </div>
@@ -458,7 +474,7 @@ if page == "Gastos Fijos":
                     original_amount_html = ""
                     if beneficio_val > 0 and (k == "CSFJ (Mensualidad)" or k == "MANDARINO"):
                         pill_html = f'''<div style="background: #e8f5e9; color: #1b5e20; padding: 2px 6px; border-radius: 4px; font-size: 10px; margin-top: 4px; display: inline-block; font-weight: 600; border: 1px solid #c8e6c9;">Beneficio empresa -$ {format_clp(beneficio_val)}</div>'''
-                        original_amount_html = f'''<div style="font-size: 11px; color: #86868B; text-decoration: line-through; margin-top: 2px; text-align: right;">$ {format_clp(v + beneficio_val)}</div>'''
+                        original_amount_html = f'''<div style="font-size: 13px; color: #86868B; text-decoration: line-through; margin-top: 2px; text-align: right;">$ {format_clp(v + beneficio_val)}</div>'''
                     
                     out += f"""
                     <article style="display: flex; justify-content: space-between; align-items: center; padding: 12px 8px; border-bottom: 1px solid rgba(0,0,0,0.03);">
@@ -468,7 +484,7 @@ if page == "Gastos Fijos":
                             </div>
                             <div>
                                 <h3 style="margin: 0; font-size: 14px; font-weight: 600; color: #1D1D1F;">{k}</h3>
-                                <p style="margin: 0; font-size: 11px; color: #86868B;">Detectado aut. • {standardize_date(fechas.get(k, 'N/A'))}</p>
+                                <p style="margin: 0; font-size: 13px; color: #86868B;">Detectado aut. • {standardize_date(fechas.get(k, 'N/A'))}</p>
                                 {pill_html}
                             </div>
                         </div>
@@ -488,7 +504,7 @@ if page == "Gastos Fijos":
                             </div>
                             <div>
                                 <h3 style="margin: 0; font-size: 14px; font-weight: 600; color: #0071E3;">Beneficio Empresa</h3>
-                                <p style="margin: 0; font-size: 11px; color: rgba(0,113,227,0.8);">Reembolso aplicado</p>
+                                <p style="margin: 0; font-size: 13px; color: rgba(0,113,227,0.8);">Reembolso aplicado</p>
                             </div>
                         </div>
                         <span style="font-size: 14px; font-weight: 700; color: #0071E3; letter-spacing: -0.01em;">-$ {format_clp(beneficio_val)}</span>
@@ -503,11 +519,11 @@ if page == "Gastos Fijos":
                     
                     <div style="margin-top: 24px; padding: 24px; border-radius: 16px; background: #FAFAFC; border: 1px solid rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center;">
                         <div>
-                            <span style="font-size: 11px; font-weight: 700; letter-spacing: 0.05em; color: #86868B; text-transform: uppercase;">Consolidado Actual</span>
+                            <span style="font-size: 13px; font-weight: 700; letter-spacing: 0.05em; color: #86868B; text-transform: uppercase;">Consolidado Actual</span>
                             <div style="font-size: 16px; font-weight: 500; color: #1D1D1F; margin-top: 2px;">Total Gastos Fijos Netos</div>
                         </div>
                         <div style="font-size: 26px; font-weight: 800; color: #1D1D1F; letter-spacing: -0.03em; white-space: nowrap;">
-                            $ {format_clp(total)}<span style="font-size: 11px; font-weight: 600; color: #86868B; margin-left: 4px;">CLP</span>
+                            $ {format_clp(total)}<span style="font-size: 13px; font-weight: 600; color: #86868B; margin-left: 4px;">CLP</span>
                         </div>
                     </div>
                     
@@ -527,10 +543,10 @@ if page == "Gastos Fijos":
                             <div style="flex: 1; min-width: 200px; background: rgba(0,113,227,0.05); border: 1px solid rgba(0,113,227,0.15); padding: 16px; border-radius: 16px;">
                                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
                                     <div style="display: flex; align-items: center; gap: 8px;">
-                                        <div style="width: 24px; height: 24px; border-radius: 50%; background: #0071E3; color: white; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700;">P</div>
+                                        <div style="width: 24px; height: 24px; border-radius: 50%; background: #0071E3; color: white; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700;">P</div>
                                         <span style="font-size: 12px; font-weight: 600; color: #1D1D1F;">Cuota Papá</span>
                                     </div>
-                                    <span style="font-size: 11px; font-weight: 700; background: #0071E3; color: white; padding: 2px 8px; border-radius: 9999px;">{papa_pct:.2f}%</span>
+                                    <span style="font-size: 13px; font-weight: 700; background: #0071E3; color: white; padding: 2px 8px; border-radius: 9999px;">{papa_pct:.2f}%</span>
                                 </div>
                                 <div style="font-size: 22px; font-weight: 700; color: #1D1D1F; letter-spacing: -0.02em;">$ {format_clp(papa)}</div>
                                 <div style="font-size: 10px; color: #86868B; margin-top: 4px;">Asignación automática neta</div>
@@ -539,10 +555,10 @@ if page == "Gastos Fijos":
                             <div style="flex: 1; min-width: 200px; background: rgba(124,58,237,0.05); border: 1px solid rgba(124,58,237,0.15); padding: 16px; border-radius: 16px;">
                                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
                                     <div style="display: flex; align-items: center; gap: 8px;">
-                                        <div style="width: 24px; height: 24px; border-radius: 50%; background: #7C3AED; color: white; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700;">M</div>
+                                        <div style="width: 24px; height: 24px; border-radius: 50%; background: #7C3AED; color: white; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700;">M</div>
                                         <span style="font-size: 12px; font-weight: 600; color: #1D1D1F;">Deuda Mamá</span>
                                     </div>
-                                    <span style="font-size: 11px; font-weight: 700; background: #7C3AED; color: white; padding: 2px 8px; border-radius: 9999px;">{mama_pct:.2f}%</span>
+                                    <span style="font-size: 13px; font-weight: 700; background: #7C3AED; color: white; padding: 2px 8px; border-radius: 9999px;">{mama_pct:.2f}%</span>
                                 </div>
                                 <div style="font-size: 22px; font-weight: 700; color: #1D1D1F; letter-spacing: -0.02em;">$ {format_clp(mama)}</div>
                                 <div style="font-size: 10px; color: #86868B; margin-top: 4px;">Por transferir a cuenta origen</div>
@@ -555,7 +571,7 @@ if page == "Gastos Fijos":
                 # --- End Apple Style HTML ---
                 st.markdown(re.sub(r'^[ \t]+', '', out, flags=re.MULTILINE), unsafe_allow_html=True)
 
-                st.toast('✨ ¡Cálculo mágico completado con éxito!', icon='🪄')
+                st.toast('Movimientos importados. Revisa las clasificaciones antes de guardar.')
                 st.session_state.resultados_fijos = resultados
                 
                 
@@ -590,223 +606,26 @@ if page == "Gastos Fijos":
             st.subheader('Desglose guardado en esta sesión')
             st.dataframe(pd.DataFrame([{'Gasto fijo':k,'Monto CLP':v} for k,v in st.session_state.resultados_fijos.items() if v]),hide_index=True,use_container_width=True)
     if 'resultados_fijos' in st.session_state:
-        if st.button('Guardar conciliación e historial'):
+        if st.button('Guardar cambios del mes'):
             try:
                 import json
                 rows=st.session_state.get('records',[])
                 state={'period':st.session_state.current_month_str,'records':rows,'beneficio':st.session_state.get('beneficio_aplicado',0)}
                 database.save_reconciliation(database.get_db(),state)
+                st.session_state.month_dirty = False
+                st.session_state.month_saved_at = datetime.datetime.now().strftime('%H:%M') if hasattr(datetime, 'datetime') else datetime.now().strftime('%H:%M')
                 st.success('Conciliación e historial guardados.')
             except Exception:
                 st.error('No se pudo guardar en Firebase. Tus resultados siguen en esta sesión.')
-        st.info('Los cobros del colegio sin concepto explícito se revisan en Entrenar gastos. Allí también puedes corregir y aprender cualquier gasto fijo.')
+        st.info('Revisa y corrige las operaciones en Movimientos. Usa Reglas solo para clasificaciones que deban repetirse.')
 
 elif page == "Entrenar gastos":
     from training_ui import render
     render()
 
 elif page == "Gastos Variables":
-    st.header("Gastos Variables, Abonos y Entrenamiento")
-    if 'unmatched' in st.session_state and st.session_state.unmatched:
-        import random
-        mensajes_clasificacion = [
-            "Llamando a la IA para que haga el trabajo sucio...",
-            "Aplicando tus reglas maestras de entrenamiento...",
-            "Decidiendo si ese minimarket fue un 'Gustito'...",
-            "Consultando la bola de cristal de los gastos...",
-            "Acomodando los abonos en la sección correcta...",
-            "Alineando los chakras financieros..."
-        ]
-        with st.spinner(random.choice(mensajes_clasificacion)):
-            df_vars = st.session_state.get("edited_variables")
-            if df_vars is None: df_vars = process_unmatched_to_df(st.session_state.unmatched)
-            
-        # Keep unreadable movements visible so users can correct their amounts.
-        df_vars = df_vars.copy()
-        missing_amount = pd.to_numeric(df_vars['Monto'], errors='coerce').isna()
-        if missing_amount.any():
-            df_vars.loc[missing_amount, 'Categoría'] = 'Por Revisar'
-            st.warning(f'{int(missing_amount.sum())} movimientos sin monto legible. Revísalos antes de guardar.')
-
-        # Split DataFrames
-        if "_Original" not in df_vars.columns: df_vars["_Original"] = df_vars["Descripción"]
-        df_ingresos = df_vars[df_vars["Categoría"] == "Ingresos"].reset_index(drop=True)
-        df_no_identificados = df_vars[df_vars["Categoría"] == "Por Revisar"].reset_index(drop=True).copy()
-        
-        # Enrich only unclassified transfers, retaining raw text and learned rules.
-        try:
-            if 'gmail' in st.secrets and not df_no_identificados.empty:
-                period=st.session_state.get('current_month_str')
-                cache=st.session_state.setdefault('bice_transfer_emails',{})
-                if period not in cache:cache[period]=fetch_bice_transfers_from_gmail(period)
-                from bice_email import enrich_transfers
-                df_no_identificados=pd.DataFrame(enrich_transfers(df_no_identificados.to_dict('records'),cache[period]))
-        except Exception:
-            st.warning('No se pudieron consultar los mensajes BICE. Puedes continuar clasificando; tus datos no se han cambiado.')
-        df_identificados = df_vars[(df_vars["Categoría"] != "Ingresos") & (df_vars["Categoría"] != "Por Revisar") & (df_vars["Categoría"] != "Ignorar")].reset_index(drop=True)
-        
-        col_config = {
-            "Categoría": st.column_config.TextColumn(
-                "Categoría (editable)",
-                help="Escribe la categoría que desees",
-                width="medium"
-            ),
-            "Responsable": st.column_config.SelectboxColumn(
-                "Responsabilidad",
-                help="Quién asume este gasto",
-                width="small",
-                options=["Compartido", "Personal", "Por Revisar"]
-            ),
-            "Monto": st.column_config.NumberColumn(
-                "Monto ($)",
-                help="Valor de la transacción",
-                format="$ %d"
-            ),
-            "Descripción": st.column_config.TextColumn(
-                "Descripción",
-                width="large"
-            ),
-            "_Original": None
-        }
-        
-        st.subheader("⚠️ Gastos Pendientes por Entrenar", help="Todo lo que clasifiques y guardes en esta tabla, el sistema intentará aprenderlo como una regla automática para el futuro. Si no estás seguro de algo, déjalo en 'Por Revisar'.")
-        st.markdown("Clasifica estos gastos. El sistema aprenderá automáticamente para la próxima vez.")
-        edited_no_identificados = st.data_editor(
-            df_no_identificados,
-            column_config=col_config,
-            hide_index=True,
-            use_container_width=True,
-            key="editor_no_id"
-        )
-        if not edited_no_identificados.empty:
-            st.markdown(f"<p style='text-align:right; font-weight:600; font-size:15px; color:#1D1D1F;'>Total Pendientes: $ {format_clp(edited_no_identificados['Monto'].sum())}</p>", unsafe_allow_html=True)
-        
-        st.subheader("✅ Gastos Identificados (Compartidos)")
-        st.markdown("Gastos que el sistema reconoce como responsabilidad Compartida.")
-        df_identificados_comp = df_identificados[df_identificados["Responsable"] == "Compartido"].reset_index(drop=True)
-        edited_comp = st.data_editor(
-            df_identificados_comp,
-            column_config=col_config,
-            hide_index=True,
-            use_container_width=True,
-            key="editor_id_comp"
-        )
-        if not edited_comp.empty:
-            st.markdown(f"<p style='text-align:right; font-weight:600; font-size:15px; color:#1D1D1F;'>Total Compartidos: $ {format_clp(edited_comp['Monto'].sum())}</p>", unsafe_allow_html=True)
-            
-        st.subheader("✅ Gastos Identificados (Personales / Otros)")
-        st.markdown("Gastos que el sistema reconoce como responsabilidad Personal u otra.")
-        df_identificados_pers = df_identificados[df_identificados["Responsable"] != "Compartido"].reset_index(drop=True)
-        edited_pers = st.data_editor(
-            df_identificados_pers,
-            column_config=col_config,
-            hide_index=True,
-            use_container_width=True,
-            key="editor_id_pers"
-        )
-        if not edited_pers.empty:
-            st.markdown(f"<p style='text-align:right; font-weight:600; font-size:15px; color:#1D1D1F;'>Total Personales: $ {format_clp(edited_pers['Monto'].sum())}</p>", unsafe_allow_html=True)
-            
-        import pandas as pd
-        edited_identificados = pd.concat([edited_comp, edited_pers], ignore_index=True)
-        
-        st.subheader("💰 Abonos / Ingresos")
-        st.markdown("Transferencias recibidas o abonos detectados.")
-        edited_ingresos = st.data_editor(
-            df_ingresos,
-            column_config=col_config,
-            hide_index=True,
-            use_container_width=True,
-            key="editor_ingresos"
-        )
-        if not edited_ingresos.empty:
-            st.markdown(f"<p style='text-align:right; font-weight:600; font-size:15px; color:#1D1D1F;'>Total Ingresos: $ {format_clp(edited_ingresos['Monto'].sum())}</p>", unsafe_allow_html=True)
-        
-        # Combine back into a single dataframe for saving
-        import pandas as pd
-        edited_df = pd.concat([edited_no_identificados, edited_identificados, edited_ingresos, df_vars[df_vars['Categoría']=='Ignorar']], ignore_index=True)
-        edited_df['Tipo'] = edited_df['Categoría'].map(lambda c: 'Ingreso' if c=='Ingresos' else ('Ignorar' if c=='Ignorar' else ('Revisar' if c=='Por Revisar' else 'Variable')))
-        # Keep _Original in edited_df for training logic
-        edited_df_clean = edited_df.drop(columns=["_Original"]) if "_Original" in edited_df.columns else edited_df
-        
-        col1, col2 = st.columns(2)
-        with col1:
-            if st.button("💾 Guardar correcciones y aprender"):
-                month_to_save = st.session_state.get('current_month_str', 'Desconocido')
-                db = database.get_db()
-                if db:
-                    try:
-                        saved, revision = stored_rules()
-                        baseline = process_unmatched_to_df(st.session_state.unmatched)
-                        candidate, learned, skipped = learn_variable_corrections(baseline.to_dict('records'), edited_df.to_dict('records'), saved)
-                        revision = database.save_rulebook(db, candidate, revision, variables=(month_to_save, edited_df_clean))
-                    except Exception as e:
-                        st.error(str(e) if isinstance(e, ValueError) else "No se pudo guardar. Tus cambios siguen en la tabla; reintenta la conexión.")
-                        st.stop()
-                    st.session_state.saved_rules = candidate
-                    st.session_state.rule_revision = revision
-                    
-                    st.session_state.edited_variables = edited_df.copy()
-                    reviewed={r.get('_Original',r['Descripción']):r for r in edited_df.to_dict('records')}
-                    for record in st.session_state.get('records',[]):
-                        changed=reviewed.get(record['_Original'])
-                        if changed:
-                            record.update({k:changed[k] for k in ['Descripción','Monto','Categoría','Responsable']})
-                            record['Tipo']='Ingreso' if changed['Categoría']=='Ingresos' else ('Ignorar' if changed['Categoría']=='Ignorar' else ('Revisar' if changed['Categoría']=='Por Revisar' else 'Variable'))
-                            record['Revisado']=True
-                    st.success(f"{learned} reglas aprendidas para próximas cartolas.")
-                    if skipped: st.warning(f"{skipped} correcciones se guardaron solo para este mes porque no se pudo identificar un comercio o destinatario seguro.")
-
-                    st.success(f"¡Gastos Variables de {month_to_save} guardados en Firebase!")
-
-        with col2:
-            import io
-            excel_buffer = io.BytesIO()
-            with pd.ExcelWriter(excel_buffer, engine='openpyxl') as writer:
-                # 3 sheets exactly as requested
-                def drop_orig(df):
-                    return df.drop(columns=["_Original"]) if "_Original" in df.columns else df
-                    
-                drop_orig(edited_identificados).to_excel(writer, index=False, sheet_name="Gastos")
-                drop_orig(edited_ingresos).to_excel(writer, index=False, sheet_name="Abonos")
-                drop_orig(edited_no_identificados).to_excel(writer, index=False, sheet_name="Gastos no identificados")
-                
-            st.download_button(
-                label="📊 Exportar a Excel",
-                data=excel_buffer.getvalue(),
-                file_name=f"Gastos_Variables_{st.session_state.get('current_month_str', 'Mes')}.xlsx",
-                mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-            )
-
-        st.markdown("<br><hr><br>", unsafe_allow_html=True)
-        st.markdown("<h3 style='text-align: center; color: #1D1D1F;'>Exportar a Archivo Maestro</h3>", unsafe_allow_html=True)
-        
-        col_space1, col_exp, col_space2 = st.columns([1, 2, 1])
-        with col_exp:
-            gcp_secrets = st.secrets.get("gcp_service_account", {})
-            if "private_key" in gcp_secrets:
-                if "master_sheet_url" not in gcp_secrets:
-                    st.warning("Falta agregar `master_sheet_url` en tus secretos de Streamlit (debajo de private_key).")
-                else:
-                    if st.button("Subir mes a Google Sheets", type="primary", use_container_width=True):
-                        with st.spinner("Conectando con tu archivo maestro... (esto puede tomar unos segundos)"):
-                            new_url = export_to_sheets(
-                                st.session_state.resultados_fijos, 
-                                edited_identificados, 
-                                edited_no_identificados, 
-                                edited_ingresos
-                            )
-                            if new_url:
-                                st.success(f"¡Listo! Pestañas del mes agregadas exitosamente.")
-                                st.markdown(f"**[Haz clic aquí para ir a tu Archivo Maestro]({new_url})**", unsafe_allow_html=True)
-                                
-                    st.markdown("<p style='font-size: 11px; color: #86868B; text-align: center;'>Se agregarán 4 pestañas nuevas a tu archivo maestro existente.</p>", unsafe_allow_html=True)
-            else:
-                st.info("Falta configurar las credenciales de Google. Agrega `gcp_service_account` a tus secretos de Streamlit.")
-
-
-    else:
-        st.info("No hay gastos variables para mostrar. Primero procesa una cartola en 'Conciliación Fija'.")
+    from month_ui import render
+    render()
 
 elif page == "Pago Cuota Casa":
     st.header("Pago Cuota Casa")
@@ -825,7 +644,7 @@ elif page == "Pago Cuota Casa":
     <div style="background: #FAFAFC; padding: 24px; border-radius: 16px; border: 1px solid rgba(0,0,0,0.05); margin-bottom: 24px; margin-top: 16px;">
         <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 24px;">
             <div>
-                <span style="font-size: 11px; font-weight: 700; letter-spacing: 0.05em; color: #86868B; text-transform: uppercase;">Monto Total Cuota</span>
+                <span style="font-size: 13px; font-weight: 700; letter-spacing: 0.05em; color: #86868B; text-transform: uppercase;">Monto Total Cuota</span>
                 <h2 style="font-size: 32px; font-weight: 700; color: #1D1D1F; margin: 4px 0 0 0; letter-spacing: -0.02em;">$ {format_clp(total_clp)}</h2>
             </div>
             <div style="text-align: right;">
@@ -845,7 +664,7 @@ elif page == "Pago Cuota Casa":
                         </div>
                         <span style="font-size: 14px; font-weight: 600; color: #1D1D1F;">Hernanja</span>
                     </div>
-                    <span style="background: #F5F5F7; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 600; color: #86868B;">63,77%</span>
+                    <span style="background: #F5F5F7; padding: 2px 8px; border-radius: 12px; font-size: 13px; font-weight: 600; color: #86868B;">63,77%</span>
                 </div>
                 <div style="font-size: 24px; font-weight: 700; color: #1D1D1F; margin-top: 8px;">$ {format_clp(hern_clp)}</div>
             </div>
@@ -858,7 +677,7 @@ elif page == "Pago Cuota Casa":
                         </div>
                         <span style="font-size: 14px; font-weight: 600; color: #1D1D1F;">Vane</span>
                     </div>
-                    <span style="background: #F5F5F7; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 600; color: #86868B;">36,23%</span>
+                    <span style="background: #F5F5F7; padding: 2px 8px; border-radius: 12px; font-size: 13px; font-weight: 600; color: #86868B;">36,23%</span>
                 </div>
                 <div style="font-size: 24px; font-weight: 700; color: #1D1D1F; margin-top: 8px;">$ {format_clp(vane_clp)}</div>
             </div>
@@ -901,11 +720,11 @@ elif page == "Historial":
                     html = f'''
                     <div style="display: flex; flex-wrap: wrap; gap: 16px; margin-bottom: 24px; padding: 16px; background: #FAFAFC; border-radius: 16px; border: 1px solid rgba(0,0,0,0.05);">
                         <div style="flex: 1; min-width: 200px; padding: 12px; background: white; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
-                            <div style="font-size: 11px; font-weight: 700; color: #86868B; text-transform: uppercase;">Aporte Papá ({papa_pct:.1f}%)</div>
+                            <div style="font-size: 13px; font-weight: 700; color: #86868B; text-transform: uppercase;">Aporte Papá ({papa_pct:.1f}%)</div>
                             <div style="font-size: 20px; font-weight: 700; color: #0071E3; margin-top: 4px;">$ {format_clp(papa)}</div>
                         </div>
                         <div style="flex: 1; min-width: 200px; padding: 12px; background: white; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
-                            <div style="font-size: 11px; font-weight: 700; color: #86868B; text-transform: uppercase;">Aporte Mamá ({mama_pct:.1f}%)</div>
+                            <div style="font-size: 13px; font-weight: 700; color: #86868B; text-transform: uppercase;">Aporte Mamá ({mama_pct:.1f}%)</div>
                             <div style="font-size: 20px; font-weight: 700; color: #7C3AED; margin-top: 4px;">$ {format_clp(mama)}</div>
                         </div>
                     </div>
@@ -920,7 +739,7 @@ elif page == "Historial":
                                 </div>
                                 <div>
                                     <h3 style="margin: 0; font-size: 14px; font-weight: 600; color: #1D1D1F;">{k}</h3>
-                                    <p style="margin: 0; font-size: 11px; color: #86868B;">Fecha: {standardize_date(fechas.get(k, 'N/A'))}</p>
+                                    <p style="margin: 0; font-size: 13px; color: #86868B;">Fecha: {standardize_date(fechas.get(k, 'N/A'))}</p>
                                 </div>
                             </div>
                             <span style="font-size: 14px; font-weight: 600; color: #1D1D1F;">$ {format_clp(v)}</span>

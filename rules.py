@@ -125,6 +125,8 @@ def classify(description, is_credit=False, rules=None, value=None):
     text = normalize(description)
     rules = seed_rules() if rules is None else rules
     matched = match_rule(description, rules, value)
+    if matched and matched['kind'] == 'Variable' and matched['category'] in FIXED:
+        matched = dict(matched, kind='Fijo')
     # Explicit saved overrides win; bank credit/debit direction wins over legacy seeds.
     if matched and int(matched.get('priority',0)) >= 100:
         return matched['kind'], matched['category'], matched['owner']

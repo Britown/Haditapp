@@ -1,6 +1,6 @@
 """Compatibility API using the shared deterministic rule engine."""
 import pandas as pd
-from rules import seed_rules, classify, suggest_pattern
+from rules import seed_rules, classify, suggest_pattern, FIXED
 COLUMNS=['Fecha','Descripción','Categoría','Responsable','Monto','_Original','Tipo']
 
 def load_rules():return seed_rules()
@@ -18,6 +18,8 @@ def process_unmatched_to_df(unmatched_list):
     for item in unmatched_list:
         desc=item.get('_Original',item['Descripción'])
         kind,cat,owner=(item['Tipo'],item['Categoría'],item['Responsable']) if 'Tipo' in item else classify(desc,rules=load_rules())
+        if kind == 'Fijo' or cat in FIXED:
+            continue
         rows.append({'Fecha':item['Fecha'],'Descripción':item['Descripción'],'Monto':item['Monto'],
                      'Categoría':cat,'Responsable':owner,'_Original':desc,'Tipo':kind})
     return pd.DataFrame(rows,columns=COLUMNS)
