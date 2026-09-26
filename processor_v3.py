@@ -177,6 +177,11 @@ def display_description(line):
     """Remove statement metadata for display only; keep the original for matching."""
     text = re.sub(r'\s+', ' ', str(line)).strip()
     text = re.sub(r'\bCargo\s+por\s+', '', text, flags=re.I)
+    international = re.match(r'^\d{4}\s+\d{10,}\s+\d{2}/\d{2}/(?:\d{4}|\d{2})\s+(.+)$', text)
+    if international:
+        merchant = re.split(r'\s+(?:US\$|\$|\d[\d.]*,\d{2}\b)', international.group(1), maxsplit=1)[0]
+        merchant = re.sub(r'\s+\d{7,}\s+[A-Z]{2}\s*$', '', merchant).strip()
+        return merchant
     timestamp = re.search(r'\bel\s+((?:\d{4}-\d{2}-\d{2}|\d{2}/\d{2}/\d{4}))\s+a las\s+(\d{1,2}:\d{2})(\s*hrs\.?)?', text, re.I)
     if re.search(r'\btransferencia\b', text, re.I):
         recipient = re.search(r"\ba\s+([A-Za-zÁÉÍÓÚÜÑáéíóúüñ][A-Za-zÁÉÍÓÚÜÑáéíóúüñ '’-]+?)\s+Rut\b", text, re.I)
