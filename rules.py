@@ -91,6 +91,7 @@ def seed_rules():
                 kind = 'Ingreso' if cat == 'Ingresos' else ('Ignorar' if cat == 'Ignorar' else 'Variable')
                 rules.append(dict(match_text=normalize(r['match_text']),category=cat,owner=owner,kind=kind,
                                   priority=int(r.get('priority') or 1),clean_name=r.get('clean_name','')))
+    rules.append(dict(match_text='A TIARE GONZALEZ',category='Verdulería',kind='Variable',owner='Compartido',priority=200))
     return rules
 
 
