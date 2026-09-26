@@ -12,7 +12,7 @@ from decimal import Decimal
 import pandas as pd
 import pdfplumber
 from money import amount, clp, exchange
-from rules import FIXED, classify, seed_rules
+from rules import FIXED, classify, seed_rules, normalize, match_rule
 
 DATE = re.compile(r'(?<!\d)(\d{1,2}/\d{1,2}(?:/(?:\d{4}|\d{2}))?)(?!\d)')
 START = re.compile(r'^\s*(?:(?:NaN|SANTIAGO|LAS CONDES|PROVIDENCIA)\s+)?(?:\d{4}\s+)?(?:\d{10,}\s+)?(?:\d{1,2}/\d{1,2}(?:/\d{2,4})?|\d{4}-\d{2}-\d{2}|\d{1,2}\s+[a-záéíóú]{3,10}\s+\d{4})\b',re.I)
@@ -54,6 +54,27 @@ def extract_text_from_excel(file,is_csv=False):
     frames = [pd.read_csv(file,sep=None,engine='python',header=None)] if is_csv else list(pd.read_excel(file,sheet_name=None,header=None).values())
     lines=[]
     for df in frames:
+        headers = None
+        for row in df.itertuples(index=False,name=None):
+            labels = {normalize(value): i for i, value in enumerate(row) if not pd.isna(value)}
+            if all(key in labels for key in ('FECHA', 'CATEGORIA', 'DESCRIPCION', 'MONTO')):
+                headers = labels
+                break
+        if headers is not None:
+            # Keep explicit bank columns separate from dates, taxes and FX notes in the description.
+            for row in df.itertuples(index=False,name=None):
+                category = normalize(row[headers['CATEGORIA']])
+                if category not in ('CARGOS', 'ABONOS', 'CARGO', 'ABONO'):
+                    continue
+                values = {}
+                for key in ('FECHA', 'DESCRIPCION', 'MONTO'):
+                    value = row[headers[key]]
+                    if pd.isna(value): value = ''
+                    if isinstance(value, (datetime, pd.Timestamp)): value = value.strftime('%d/%m/%Y')
+                    values[key] = str(value)
+                values['credit'] = category in ('ABONO', 'ABONOS')
+                lines.append('@@HADITAPP_ROW ' + json.dumps(values, ensure_ascii=False))
+            continue
         for row in df.itertuples(index=False,name=None):
             cells=[]
             for value in row:
@@ -121,6 +142,13 @@ def transaction_lines(text):
     for line in text.splitlines():
         line=line.strip()
         if not line:continue
+        if line.startswith('@@HADITAPP_ROW '):
+            if current: yield StatementLine(current,currency); current=None
+            fields = json.loads(line.split(' ', 1)[1])
+            item = StatementLine(' '.join((fields['FECHA'], 'Abonos' if fields['credit'] else 'Cargos', fields['DESCRIPCION'], fields['MONTO'])), 'CLP')
+            item.fields = fields
+            yield item
+            continue
         if re.search(r'ESTADO DE CUENTA (?:INTERNACIONAL|NACIONAL)',line,re.I):
             if current:yield StatementLine(current,currency);current=None
             currency='USD' if 'INTERNACIONAL' in line.upper() else 'CLP'
@@ -146,6 +174,8 @@ def transaction_lines(text):
 
 
 def parse_amount(line,currency='CLP'):
+    if hasattr(line, 'fields'):
+        return amount(line.fields['MONTO']), 'CLP'
     working=re.split(r'\s+\d{2}/\d{2}/\d{4}\s+a las',line,maxsplit=1,flags=re.I)[0]
     working=re.sub(r'\b\d{4}-\d{2}-\d{2}\b',' ',working)
     working=DATE.sub(' ',working)
@@ -234,7 +264,8 @@ def reconcile(raw,dolar_val=950,year=None,month=None,rules=None,currency_overrid
         if currency_override!='Auto':currency=currency_override
         in_document=Counter()
         for index,line in enumerate(transaction_lines(text)):
-            date=date_from_line(line,year,month)
+            fields = getattr(line, 'fields', None)
+            date=date_from_line(fields['FECHA'] if fields is not None else line,year,month)
             status='';raw_amount=None;converted=None;rate=None;fallback=False
             try:
                 raw_amount,cur=parse_amount(line,getattr(line,'currency',None) or currency)
@@ -252,6 +283,7 @@ def reconcile(raw,dolar_val=950,year=None,month=None,rules=None,currency_overrid
             in_document[fingerprint]+=1
             if in_document[fingerprint]<=previous[fingerprint]:continue
             credit=bool(re.search(r'\bABONO(?:S)?\b|\bREMUNERACION|\bSUELDO\b',line,re.I)) and not bool(re.search(r'\bCARGO\b',line,re.I))
+            if fields is not None: credit = fields['credit']
             kind,cat,owner=classify(line,credit,rules,converted)
             if kind=='Revisar' and 'CHEQUE DE CANJE' in line.upper() and converted==472000:
                 kind,cat,owner='Fijo','MANDARINO','Compartido'
@@ -261,7 +293,11 @@ def reconcile(raw,dolar_val=950,year=None,month=None,rules=None,currency_overrid
                 if (dt.month,dt.year)!=(month,year):status=(status+'; ' if status else '')+'Fuera del mes seleccionado: confirmar período'
             if converted is None or date=='N/A':kind='Revisar'
             identifier=hashlib.sha256(f'{fingerprint}:{in_document[fingerprint]}'.encode()).hexdigest()[:24]
-            records.append({'id':identifier,'Fecha':date,'Descripción':display_description(line),'Tipo':kind,'Categoría':cat,'Responsable':owner,
+            matched_rule = match_rule(line, rules, converted)
+            description = (matched_rule or {}).get('display_name') or display_description(line)
+            if (matched_rule or {}).get('description_suffix'):
+                description += ' — ' + matched_rule['description_suffix']
+            records.append({'id':identifier,'Fecha':date,'Descripción':description,'Tipo':kind,'Categoría':cat,'Responsable':owner,
                             'Monto':abs(converted) if credit and converted is not None else converted,
                             'Moneda':cur,'Monto original':float(raw_amount) if raw_amount is not None else None,
                             'Tipo de cambio':float(rate) if rate is not None else None,'Fuente':source,'Estado':status,

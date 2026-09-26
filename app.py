@@ -614,8 +614,12 @@ elif page == "Gastos Variables":
             df_vars = st.session_state.get("edited_variables")
             if df_vars is None: df_vars = process_unmatched_to_df(st.session_state.unmatched)
             
-        # Hide extraction fragments without an amount from variable expense tables.
-        df_vars = df_vars.loc[pd.to_numeric(df_vars['Monto'], errors='coerce').notna()].copy()
+        # Keep unreadable movements visible so users can correct their amounts.
+        df_vars = df_vars.copy()
+        missing_amount = pd.to_numeric(df_vars['Monto'], errors='coerce').isna()
+        if missing_amount.any():
+            df_vars.loc[missing_amount, 'Categoría'] = 'Por Revisar'
+            st.warning(f'{int(missing_amount.sum())} movimientos sin monto legible. Revísalos antes de guardar.')
 
         # Split DataFrames
         if "_Original" not in df_vars.columns: df_vars["_Original"] = df_vars["Descripción"]
@@ -919,5 +923,4 @@ elif page == "Historial":
                     st.markdown(re.sub(r'^[ 	]+', '', html, flags=re.MULTILINE), unsafe_allow_html=True)
         else:
             st.info("No hay historial guardado.")
-
 

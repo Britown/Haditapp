@@ -63,6 +63,7 @@ DEFAULTS = [
  ('HBO', 'HBO MAX'), ('MERPAGO MAX', 'HBO MAX'), ('MP MAX', 'HBO MAX'),
  ('YOUTUBE', 'YOUTUBE PREMIUM'), ('SPOTIFY', 'SPOTIFY DUO'),
  ('MARISEL', 'ASEO'), ('CAROLINA MENDOZA', 'ASEO'), ('CRISTINA CAISALUISA', 'ASEO'),
+ ('A CAROLA MILLALEN', 'ASEO'),
  ('ANDY', 'PISCINA (Andy)'), ('17.766.248-8', 'PISCINA (Andy)'), ('LUIS MIGUEL CRUCES', 'JARDINERO'),
  ('KHIPU', 'GASTOS COMUNES (Khipu)'), ('MANDARINO', 'MANDARINO'),
  ('MANDARINO MATRICULA', 'MANDARINO (Matrícula)'),
@@ -98,6 +99,9 @@ def seed_rules():
         rules.append(dict(match_text=pattern,category='Gastos bancarios',kind='Variable',owner='Personal',priority=200))
     rules.append(dict(match_text='TUU 369 BARBER ST',category='Barbería',kind='Variable',owner='Personal',priority=200))
     rules.append(dict(match_text='A TIARE GONZALEZ',category='Verdulería',kind='Variable',owner='Compartido',priority=200))
+    rules.append(dict(match_text='COLINA DEPORTES EL 19 09 2026',amount=11000,category='Entretenimiento',kind='Variable',owner='Personal',priority=200,display_name='Fonda Colina — Entretenimiento'))
+    rules.append(dict(match_text='DONDE COLOMBA EL 19 09 2026 A LAS 15 34 54',amount=14000,category='Gustitos',kind='Variable',owner='Personal',priority=200,description_suffix='2x anticuchos'))
+    rules.append(dict(match_text='PARDESHI TADKA CO EL 10 09 2026 A LAS 13 51 01',amount=11000,category='Almuerzo trabajo',kind='Variable',owner='Personal',priority=200))
     return rules
 
 
