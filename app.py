@@ -2,6 +2,7 @@ from pathlib import Path
 logo_b64 = Path(__file__).with_name("logo_base64.txt").read_text().strip()
 import re
 import streamlit as st
+import pandas as pd
 import datetime
 from variables_processor import process_unmatched_to_df
 from gmail_fetcher import fetch_bice_transfers_from_gmail
@@ -613,6 +614,9 @@ elif page == "Gastos Variables":
             df_vars = st.session_state.get("edited_variables")
             if df_vars is None: df_vars = process_unmatched_to_df(st.session_state.unmatched)
             
+        # Hide extraction fragments without an amount from variable expense tables.
+        df_vars = df_vars.loc[pd.to_numeric(df_vars['Monto'], errors='coerce').notna()].copy()
+
         # Split DataFrames
         if "_Original" not in df_vars.columns: df_vars["_Original"] = df_vars["Descripción"]
         df_ingresos = df_vars[df_vars["Categoría"] == "Ingresos"].reset_index(drop=True)
