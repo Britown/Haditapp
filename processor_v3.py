@@ -106,21 +106,37 @@ def extract_all_text(uploaded_files, pasted_text, pdf_password=""):
     return raw_text
 
 def clean_amount(monto_str):
+    import re
+    is_usd = "US$" in str(monto_str)
+    
     monto_str = str(monto_str).replace('US$', '').replace('$', '').replace('-', '').strip()
+    
     if ',' in monto_str and '.' in monto_str:
-        monto_str = monto_str.replace('.', '').replace(',', '.')
-    else:
-        monto_str = monto_str.replace('.', '')
-        if ',' in monto_str:
-            monto_str = monto_str.replace(',', '.')
+        last_dot = monto_str.rfind('.')
+        last_comma = monto_str.rfind(',')
+        if last_dot > last_comma:
+            monto_str = monto_str.replace(',', '')
+        else:
+            monto_str = monto_str.replace('.', '').replace(',', '.')
+    elif ',' in monto_str:
+        monto_str = monto_str.replace(',', '.')
+    elif '.' in monto_str:
+        if is_usd or re.search(r'\.\d{2}$', monto_str):
+            pass 
+        else:
+            monto_str = monto_str.replace('.', '')
+            
     try:
         return float(monto_str)
     except:
         return 0
 
-def process_data(raw_text, dolar_val, csfj_base, manda_base, beneficio, manda_mat_val=220000):
+def process_data(raw_text, dolar_val, csfj_base, manda_base, beneficio, manda_mat_val=220000, year=2026):
 
     def is_valid_token(t):
+        # Rechazar folios puros (6 a 9 digitos sin separadores)
+        if len(t) >= 6 and '.' not in t and ',' not in t:
+            return False
         clean = t.replace('$', '').replace('.', '').replace(',', '')
         return clean.isdigit()
 
@@ -143,6 +159,8 @@ def process_data(raw_text, dolar_val, csfj_base, manda_base, beneficio, manda_ma
                 break
                 
         valid_tokens = [v for v in valid_tokens if v > 0]
+        # Rechazar folios de BICE que llegan como 11.XXX.XXX o 10.XXX.XXX 
+        valid_tokens = [v for v in valid_tokens if not (10000000 <= v <= 12999999)]
         
         is_usd_candidate = any(x in cat.upper() for x in ["AMAZON", "HBO", "MAX", "YOUTUBE", "SPOTIFY"])
         
@@ -170,15 +188,17 @@ def process_data(raw_text, dolar_val, csfj_base, manda_base, beneficio, manda_ma
     stitched_lines = []
     for line in raw_text.split('\n'):
         if not line.strip(): continue
-        if re.search(r'^\s*\d{2}/\d{2}/\d{4}\s+a las', line, re.IGNORECASE) or re.search(r'^\s+(Monto|[\d\.\,]+$)', line) or re.search(r'^\s+[a-zA-Z]', line) or re.search(r'^\s*\d{2}/\d{2}/\d{4}', line):
-            if stitched_lines:
-                stitched_lines[-1] += " " + line.strip()
-            else:
-                stitched_lines.append(line.strip())
-        elif re.match(r'^\d{2}/\d{2}\s', line.strip()):
+        
+        # Si la linea empieza con una fecha (dd/mm o dd/mm/yy o dd/mm/yyyy), es SIEMPRE una nueva transaccion.
+        if re.match(r'^\s*\d{2}/\d{2}(?:/\d{2,4})?\s', line):
             stitched_lines.append(line.strip())
         else:
-            stitched_lines.append(line.strip())
+            # Si no empieza con fecha, se anexa a la linea anterior (ej: descripcion larga que salto de linea).
+            # Agregamos " - " para no fusionar montos u otras columnas accidentalmente
+            if stitched_lines:
+                stitched_lines[-1] += " - " + line.strip()
+            else:
+                stitched_lines.append(line.strip())
     lines = stitched_lines
 
     resultados = {
@@ -228,7 +248,7 @@ def process_data(raw_text, dolar_val, csfj_base, manda_base, beneficio, manda_ma
         else:
             date_match_short = re.search(r'^(\d{2}/\d{2})\b', line)
             if date_match_short:
-                fecha = date_match_short.group(1) + "/2026"
+                fecha = date_match_short.group(1) + f"/{year}"
             else:
                 fecha = "N/A"
             
@@ -266,13 +286,9 @@ def process_data(raw_text, dolar_val, csfj_base, manda_base, beneficio, manda_ma
                 
         # Piscina
         elif "ANDY" in line_upper or "17.766.248-8" in line or ("27000" in line.replace('.', '') and "TRANSFERENCIA" in line_upper):
-            for a in amounts:
-                val = clean_amount(a)
-                if val >= 15000 and val < 5000000:
-                    resultados["PISCINA (Andy)"] += val
-                    break
-            if resultados["PISCINA (Andy)"] == 0 and ("27000" in line.replace('.', '')):
-                resultados["PISCINA (Andy)"] = 27000
+            res = get_best_amount(amounts, "PISCINA", fecha, line_for_amounts)
+            if res > 0: resultados["PISCINA (Andy)"] += res
+            elif "27000" in line.replace('.', ''): resultados["PISCINA (Andy)"] = 27000
                 
         # Mandarino
         elif "MANDARINO" in line_upper:
@@ -313,15 +329,20 @@ def process_data(raw_text, dolar_val, csfj_base, manda_base, beneficio, manda_ma
             val = get_best_amount(amounts, "CONTRIBUCIONES (SII)", fecha, line_for_amounts)
             if val > 10000: resultados["CONTRIBUCIONES (SII)"] = val
             
-        elif "COLEGIO FCO.JAVIE" in line_upper:
+        elif "COLEGIO FCO.JAVIE" in line_upper or "CENTRO PADRES" in line_upper:
             line_val = get_best_amount(amounts, "CSFJ (Mensualidad)", fecha, line_for_amounts)
             if line_val > 0:
-                if "CENTRO DE PADRES" in line_upper or "CPADRES" in line_upper:
+                if "CENTRO DE PADRES" in line_upper or "CPADRES" in line_upper or "CENTRO PADRES" in line_upper:
                     resultados["CSFJ (Centro de Padres)"] += line_val
+                elif "MENSUALIDAD" in line_upper:
+                    resultados["CSFJ (Mensualidad)"] += line_val
+                elif "JORNADA" in line_upper:
+                    resultados["CSFJ (Jornada Extendida)"] += line_val
+                elif "MATERIALES" in line_upper:
+                    resultados["CSFJ (Extras/Materiales)"] += line_val
                 elif line_val >= csfj_base - 2000:
                     resultados["CSFJ (Mensualidad)"] = line_val if line_val < csfj_base + 2000 else csfj_base
                     if line_val > csfj_base + 2000:
-                        # La diferencia (aprox 40k) suele ser materiales/seguro, no jornada extendida
                         resultados["CSFJ (Extras/Materiales)"] += (line_val - csfj_base)
                 else:
                     if line_val >= 30000 and line_val <= 70000:

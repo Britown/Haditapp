@@ -171,7 +171,9 @@ def fetch_statement_pdfs_from_gmail(month_str, year_int):
                             date_tuple = email.utils.parsedate_tz(msg['Date'])
                             if date_tuple:
                                 msg_date = datetime.fromtimestamp(email.utils.mktime_tz(date_tuple))
-                                if msg_date.month == receive_m and msg_date.year == receive_y:
+                                # Aceptar correos que llegaron en el mes actual o el siguiente (para evitar que cartolas del 31 queden fuera)
+                                if (msg_date.month == receive_m and msg_date.year == receive_y) or (msg_date.month == m_idx and msg_date.year == y):
+                                    found_pdf_in_msg = False
                                     # Extract PDF
                                     for part in msg.walk():
                                         if part.get_content_maintype() == 'multipart':
@@ -185,8 +187,9 @@ def fetch_statement_pdfs_from_gmail(month_str, year_int):
                                                 pdf_io = io.BytesIO(payload)
                                                 pdf_io.name = filename
                                                 pdfs.append(pdf_io)
-                                                break # Found PDF
-                                    break # Found matching email for this sender
+                                                found_pdf_in_msg = True
+                                    if found_pdf_in_msg:
+                                        break # Found matching email for this sender
         mail.logout()
     except Exception as e:
         print(f"Error fetching PDFs: {e}")

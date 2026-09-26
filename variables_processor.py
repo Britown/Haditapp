@@ -151,7 +151,7 @@ def process_unmatched_to_df(unmatched_list):
         cat_rule, owner_rule, clean_name_rule = classify_variable(raw_desc, item["Monto"])
         
         if cat_rule == "Gastos fijos":
-            continue
+            cat_rule = "Fijo No Mapeado"
             
         res = ai_results.get(raw_desc, {})
         
@@ -176,4 +176,4 @@ def process_unmatched_to_df(unmatched_list):
             "_Original": raw_desc
         })
         
-    return pd.DataFrame(processed)
+    return pd.DataFrame(processed, columns=["Fecha", "Descripción", "Categoría", "Responsable", "Monto", "_Original"])

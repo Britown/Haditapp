@@ -225,6 +225,9 @@ if page == "Gastos Fijos":
 
         def reset_confirm():
             st.session_state.periodo_confirmado = False
+            # Limpiar datos para evitar desincronizacion entre el mes guardado y el periodo en pantalla
+            if 'resultados_fijos' in st.session_state: del st.session_state.resultados_fijos
+            if 'unmatched' in st.session_state: del st.session_state.unmatched
             
         if "periodo_confirmado" not in st.session_state:
             st.session_state.periodo_confirmado = False
@@ -333,7 +336,7 @@ if page == "Gastos Fijos":
                     traceback.print_exc()
                     st.error(f"Error ({type(e).__name__}): {str(e) or 'Ocurrió un error (el mensaje original está vacío)'}")
                     st.stop()
-                resultados, fechas, unmatched = process_data(raw_text, dolar_val, csfj_val, manda_val, beneficio_val, manda_mat_val)
+                resultados, fechas, unmatched = process_data(raw_text, dolar_val, csfj_val, manda_val, beneficio_val, manda_mat_val, sel_ano)
                 with open("raw_dump.txt", "w", encoding="utf-8") as fd:
                     fd.write(raw_text)
                 st.session_state.unmatched = unmatched
@@ -672,25 +675,45 @@ elif page == "Gastos Variables":
                     
                     # Entrenamiento automático
                     try:
+                        from variables_processor import clean_fallback
                         df_rules = pd.read_csv("reglas_variables.csv")
-                        existing = set(df_rules['match_text'].astype(str).str.upper())
-                        new_rules = []
+                        rules_dict = {str(row['match_text']).upper().strip(): idx for idx, row in df_rules.iterrows()}
+                        
+                        changes_made = False
+                        
                         for _, row in edited_df.iterrows():
                             desc, cat, resp = row['Descripción'], row['Categoría'], row['Responsable']
                             orig = row.get('_Original', desc)
+                            
                             if cat not in ["Por Revisar", "Sin Categorizar"] and resp != "Por Revisar":
-                                if orig.upper() not in existing:
-                                    # If user changed description, save it as clean_name
-                                    clean_val = desc if desc != orig else ""
-                                    new_rules.append({
-                                        "match_text": orig, "category": cat, "owner": resp, 
+                                clean_match = clean_fallback(orig).upper().strip()
+                                # Prevenir guardar strings vacios o de 2 letras que pisarian todo
+                                if len(clean_match) < 3: 
+                                    continue
+                                
+                                clean_val = desc if desc != orig else ""
+                                
+                                if clean_match in rules_dict:
+                                    idx = rules_dict[clean_match]
+                                    if df_rules.at[idx, 'category'] != cat or df_rules.at[idx, 'owner'] != resp:
+                                        df_rules.at[idx, 'category'] = cat
+                                        df_rules.at[idx, 'owner'] = resp
+                                        if clean_val: df_rules.at[idx, 'clean_name'] = clean_val
+                                        changes_made = True
+                                else:
+                                    new_row = {
+                                        "match_text": clean_match, "category": cat, "owner": resp, 
                                         "priority": 1, "notes": "Entrenamiento manual", "clean_name": clean_val
-                                    })
-                                    existing.add(orig.upper())
-                        if new_rules:
-                            pd.concat([df_rules, pd.DataFrame(new_rules)], ignore_index=True).to_csv("reglas_variables.csv", index=False)
-                            st.toast(f"🧠 Se han aprendido {len(new_rules)} nuevas reglas.")
-                        st.rerun()
+                                    }
+                                    df_rules = pd.concat([df_rules, pd.DataFrame([new_row])], ignore_index=True)
+                                    rules_dict[clean_match] = len(df_rules) - 1
+                                    changes_made = True
+                                    
+                        if changes_made:
+                            df_rules.to_csv("reglas_variables.csv", index=False)
+                            st.toast(f"🧠 Reglas de categorización actualizadas exitosamente.")
+                        
+                        # st.rerun() provocaba flickering e interrupciones en el flujo original, mejor quitarlo y confiar en el estado guardado.
                     except Exception as e:
                         print("Error guardando reglas:", e)
                         
