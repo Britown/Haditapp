@@ -128,6 +128,12 @@ def transaction_lines(text):
         if SUMMARY.search(line) or re.search(r'^(?:[IVX]+\. |COMPROBANTE|COMISIONES,|[1234]\. ?(?:PRODUCTOS|CARGOS)|DEUDA TOTAL)',line,re.I):
             if current:yield StatementLine(current,currency);current=None
             continue
+        # Payment coupons repeat due dates and amounts without a transaction description.
+        coupon = re.sub(r'\b\d{1,2}/\d{1,2}(?:/\d{2,4})?\b|\b\d{4}-\d{2}-\d{2}\b', '', line)
+        coupon = re.sub(r'US\$|CLP|USD|[\d\s$.,/+-]', '', coupon, flags=re.I)
+        if START.search(line) and not coupon:
+            if current:yield StatementLine(current,currency);current=None
+            continue
         if START.search(line) and not re.match(r'^\d{2}/\d{2}/\d{4}\s+a las',line,re.I):
             if current:yield StatementLine(current,currency)
             current=None if re.search(r'SALDO (?:INICIAL|FINAL|ANTERIOR)',line,re.I) else line

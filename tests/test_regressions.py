@@ -90,3 +90,10 @@ class Regressions(unittest.TestCase):
         later='05/09 Cargo por Compra en TUU*369 BARBER ST El 05/09/2026 a las 10:00:00, Monto 30.000'
         self.assertEqual(classify(later,rules=rules),('Variable','Barbería','Personal'))
         self.assertEqual(classify(later),('Variable','Barbería','Personal'))
+
+    def test_due_date_coupons_are_not_expenses(self):
+        text='01/08 ENEL $10000\nPagar Hasta Monto Facturado Pagar Hasta Monto Facturado\n21/09/2026 US$44,53 21/09/2026 US$44,53\n21/09/2026 21/09/2026\n$1.312.831 $1.312.831\nSANTIAGO 29/06/26 0309 12345679 COLEGIO FCO.JAVIER HUEC $660.000 $741.780 02/06 $123.630'
+        rows=reconcile(text,year=2026)
+        self.assertEqual(len(rows),2)
+        self.assertEqual([r['Monto'] for r in rows],[10000,123630])
+        self.assertEqual(rows[1]['Categoría'],'CSFJ (Jornada Extendida)')
