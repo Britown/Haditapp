@@ -176,6 +176,8 @@ def parse_amount(line,currency='CLP'):
 def display_description(line):
     """Remove statement metadata for display only; keep the original for matching."""
     text = re.sub(r'\s+', ' ', str(line)).strip()
+    if re.search(r'\bONECLICK\s+RECURRENTE\s+PCS\s*SANTIAGO\b', text, re.I):
+        return 'Entel plan celular'
     text = re.sub(r'\bCargo\s+por\s+', '', text, flags=re.I)
     international = re.match(r'^\d{4}\s+\d{10,}\s+\d{2}/\d{2}/(?:\d{4}|\d{2})\s+(.+)$', text)
     if international:
