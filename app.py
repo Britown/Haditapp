@@ -219,6 +219,15 @@ button[kind="primary"]:hover:not(:disabled) { background: #5b21b6 !important; bo
 button[kind="primary"]:disabled { opacity: 0.45; }
 button p { white-space: normal !important; }
 [data-testid="stCaptionContainer"] { color: #57515f; }
+.st-key-import_form { width: 100%; max-width: 780px; margin-right: auto; }
+.st-key-import_form [data-testid="stButton"] button[kind="primary"] {
+    width: fit-content !important; min-height: 44px; padding: 10px 20px !important;
+    border-radius: 10px !important; box-shadow: none !important;
+}
+@media (max-width: 640px) {
+    .st-key-import_form [data-testid="stButton"],
+    .st-key-import_form [data-testid="stButton"] button[kind="primary"] { width: 100% !important; }
+}
 .st-key-primary_navigation [data-testid="stRadio"],
 .st-key-month_navigation [data-testid="stRadio"] { margin-bottom: 0 !important; }
 .st-key-primary_navigation [data-testid="stRadioGroup"] > div,
@@ -271,7 +280,7 @@ st.markdown("<hr style='margin-top: 5px; margin-bottom: 20px;'>", unsafe_allow_h
 
 if page == "Gastos Fijos":
     meses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"]
-    col_left = st.container()
+    col_left = st.container(key='import_form')
     col_right = st.container()
     with col_left:
 
@@ -353,11 +362,11 @@ if page == "Gastos Fijos":
                 st.caption(f'Buscar cartolas BICE correspondientes a {month_str} en tu Gmail conectado.')
             replace_ok = not st.session_state.get('records') or st.checkbox('Reemplazar los movimientos actuales con esta importación')
             if method == 'Subir archivo':
-                procesar = st.button('Procesar archivo', type='primary', use_container_width=True, disabled=not replace_ok or not uploaded_files)
+                procesar = st.button('Procesar archivo', type='primary', disabled=not replace_ok or not uploaded_files)
             elif method == 'Pegar texto':
-                procesar = st.button('Procesar texto', type='primary', use_container_width=True, disabled=not replace_ok or not pasted_text.strip())
+                procesar = st.button('Procesar texto', type='primary', disabled=not replace_ok or not pasted_text.strip())
             else:
-                buscar_email = st.button('Buscar cartolas en Gmail', type='primary', use_container_width=True, disabled=not replace_ok)
+                buscar_email = st.button('Buscar cartolas en Gmail', type='primary', disabled=not replace_ok)
             if buscar_email and replace_ok:
                 with st.spinner("Buscando cartolas del mes en tu correo..."):
                     from gmail_fetcher import fetch_statement_pdfs_from_gmail
