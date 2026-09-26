@@ -98,7 +98,7 @@ def load_rulebook(db):
     return data.get('rules', []), data.get('revision', 0)
 
 
-def save_rulebook(db, rules, expected_revision):
+def save_rulebook(db, rules, expected_revision, variables=None):
     from rules import validate_rule
     validated = [validate_rule(r) for r in rules]
     if len({r['id'] for r in validated}) != len(validated):
@@ -114,6 +114,16 @@ def save_rulebook(db, rules, expected_revision):
         if revision != expected_revision:
             raise ValueError('Las reglas cambiaron en otra sesión. Recarga antes de guardar.')
         tx.set(ref, {'rules':validated,'revision':revision+1,'updated_at':firestore.SERVER_TIMESTAMP})
+        if variables is not None:
+            month, frame = variables
+            import json
+            expenses=frame[~frame['Categoría'].isin(['Ingresos','Ignorar'])]
+            tx.set(db.collection('historial_gastos_variables').document(month), {
+                'month_year':month, 'gastos':json.loads(frame.to_json(orient='records')),
+                'total_compartido':float(expenses.loc[expenses['Responsable']=='Compartido','Monto'].sum()),
+                'total_personal':float(expenses.loc[expenses['Responsable']=='Personal','Monto'].sum()),
+                'total_ingresos':float(frame.loc[frame['Categoría']=='Ingresos','Monto'].sum()),
+                'updated_at':firestore.SERVER_TIMESTAMP})
         return revision+1
     return update(transaction)
 

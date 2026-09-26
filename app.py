@@ -8,7 +8,8 @@ from gmail_fetcher import fetch_bice_transfers_from_gmail
 import database
 from config import VALORES_BASE_MES, FACTORES_DIVISION
 from processor_v3 import extract_all_text, process_data, reconcile, summarize
-from training_ui import active_rules, refresh_results
+from training_ui import active_rules, refresh_results, stored_rules
+from workflow import learn_variable_corrections
 from utils import format_clp, standardize_date, fetch_indicators
 from sheets_exporter import export_to_sheets
 import streamlit.components.v1 as components
@@ -697,18 +698,27 @@ elif page == "Gastos Variables":
         
         # Combine back into a single dataframe for saving
         import pandas as pd
-        edited_df = pd.concat([edited_no_identificados, edited_identificados, edited_ingresos], ignore_index=True)
+        edited_df = pd.concat([edited_no_identificados, edited_identificados, edited_ingresos, df_vars[df_vars['Categoría']=='Ignorar']], ignore_index=True)
+        edited_df['Tipo'] = edited_df['Categoría'].map(lambda c: 'Ingreso' if c=='Ingresos' else ('Ignorar' if c=='Ignorar' else ('Revisar' if c=='Por Revisar' else 'Variable')))
         # Keep _Original in edited_df for training logic
         edited_df_clean = edited_df.drop(columns=["_Original"]) if "_Original" in edited_df.columns else edited_df
         
         col1, col2 = st.columns(2)
         with col1:
-            if st.button("💾 Guardar correcciones"):
+            if st.button("💾 Guardar correcciones y aprender"):
                 month_to_save = st.session_state.get('current_month_str', 'Desconocido')
                 db = database.get_db()
                 if db:
-                    saved_ok = database.save_gastos_variables(db, month_to_save, edited_df_clean)
-                    if not saved_ok: st.stop()
+                    try:
+                        saved, revision = stored_rules()
+                        baseline = process_unmatched_to_df(st.session_state.unmatched)
+                        candidate, learned, skipped = learn_variable_corrections(baseline.to_dict('records'), edited_df.to_dict('records'), saved)
+                        revision = database.save_rulebook(db, candidate, revision, variables=(month_to_save, edited_df_clean))
+                    except Exception as e:
+                        st.error(str(e) if isinstance(e, ValueError) else "No se pudo guardar. Tus cambios siguen en la tabla; reintenta la conexión.")
+                        st.stop()
+                    st.session_state.saved_rules = candidate
+                    st.session_state.rule_revision = revision
                     
                     st.session_state.edited_variables = edited_df.copy()
                     reviewed={r.get('_Original',r['Descripción']):r for r in edited_df.to_dict('records')}
@@ -718,7 +728,8 @@ elif page == "Gastos Variables":
                             record.update({k:changed[k] for k in ['Descripción','Monto','Categoría','Responsable']})
                             record['Tipo']='Ingreso' if changed['Categoría']=='Ingresos' else ('Ignorar' if changed['Categoría']=='Ignorar' else ('Revisar' if changed['Categoría']=='Por Revisar' else 'Variable'))
                             record['Revisado']=True
-                    st.info("Para reutilizar una corrección en futuros meses, guárdala como regla en Entrenar gastos.")
+                    st.success(f"{learned} reglas aprendidas para próximas cartolas.")
+                    if skipped: st.warning(f"{skipped} correcciones se guardaron solo para este mes porque no se pudo identificar un comercio o destinatario seguro.")
 
                     st.success(f"¡Gastos Variables de {month_to_save} guardados en Firebase!")
 

@@ -45,3 +45,29 @@ class PersistenceTests(unittest.TestCase):
             self.assertEqual(database.save_rulebook(db,[rule],0),1)
             self.assertEqual(database.load_rulebook(db)[0],[rule])
             with self.assertRaises(ValueError):database.save_rulebook(db,[rule],0)
+
+
+class AtomicVariableSaveTests(unittest.TestCase):
+    def test_rules_and_month_saved_in_same_transaction(self):
+        import pandas as pd
+        from rules import validate_rule
+        class Snap:
+            exists=False
+        class Ref:
+            def __init__(self,path):self.path=path
+            def get(self,**kw):return Snap()
+        class Collection:
+            def __init__(self,name):self.name=name
+            def document(self,name):return Ref(self.name+'/'+name)
+        class DB:
+            def __init__(self):self.writes=[]
+            def collection(self,name):return Collection(name)
+            def transaction(self):return self
+            def set(self,ref,data):self.writes.append((ref.path,data))
+        db=DB()
+        rule=validate_rule(dict(match_text='COMERCIO NUEVO',kind='Variable',category='Comida',owner='Compartido'))
+        frame=pd.DataFrame([{'Categoría':'Comida','Responsable':'Compartido','Monto':1000}])
+        with patch.object(database.firestore,'transactional',side_effect=lambda f:f):
+            self.assertEqual(database.save_rulebook(db,[rule],0,variables=('Agosto 2026',frame)),1)
+        self.assertEqual([p for p,d in db.writes],['haditapp_config/rules','historial_gastos_variables/Agosto 2026'])
+        self.assertEqual(db.writes[1][1]['total_compartido'],1000)

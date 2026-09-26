@@ -63,3 +63,20 @@ class Regressions(unittest.TestCase):
         for text in ['Cargo por transferencia a Luis Miguel Cruces',
                      'Transferencia de EMISOR desde Banco BICE a Luis Miguel - Cruces Rut 11.111.111-1']:
             self.assertEqual(classify(text,rules=rules)[1].upper(),'JARDINERO')
+
+    def test_variable_edits_train_without_learning_predictions(self):
+        from workflow import learn_variable_corrections
+        old=dict(Descripción='Compra en COMERCIO NUEVO El 01/08/2026 a las 10:00',_Original='01/08 Cargo por Compra en COMERCIO NUEVO El 01/08/2026 a las 10:00, Monto 1000',Categoría='Por Revisar',Responsable='Por Revisar',Monto=1000)
+        edited=dict(old,Categoría='Alimentación',Responsable='Compartido')
+        rules,count,skipped=learn_variable_corrections([old],[edited],[])
+        self.assertEqual((count,skipped),(1,0))
+        self.assertEqual(classify('02/09 Compra en COMERCIO NUEVO $2000',rules=rules)[1],'Alimentación')
+        self.assertEqual(learn_variable_corrections([edited],[edited],[])[1],0)
+
+    def test_variable_training_keeps_transfer_recipient_rut(self):
+        from workflow import learn_variable_corrections
+        old=dict(Descripción='Transferencia a Rut 11.111.111-1 el 01/08/2026 a las 10:00',_Original='01/08 Cargo por transferencia a Rut 11.111.111-1 1000,00',Categoría='Por Revisar',Responsable='Por Revisar',Monto=1000)
+        rules,count,_=learn_variable_corrections([old],[dict(old,Categoría='Servicio',Responsable='Personal')],[])
+        self.assertEqual(count,1)
+        self.assertEqual(classify('02/09 Cargo por transferencia a Rut 11.111.111-1 2000,00',rules=rules)[1],'Servicio')
+        self.assertNotEqual(classify('02/09 Cargo por transferencia a Rut 22.222.222-2 2000,00',rules=rules)[1],'Servicio')

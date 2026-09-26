@@ -72,3 +72,40 @@ def split_school(records,identifier,allocations):
             row['Pago original CLP']=original['Monto'];row['Monto original']=None
             children.append(row)
     return [r for r in records if r['id']!=identifier]+children
+
+
+def learn_variable_corrections(before, after, saved):
+    """Learn only explicit category/owner edits, never machine predictions."""
+    import re
+    from rules import validate_rule, suggest_pattern
+    previous={r.get('_Original',r['Descripción']):r for r in before}
+    learned={}; skipped=0
+    for row in after:
+        original=row.get('_Original',row['Descripción'])
+        old=previous.get(original)
+        if not old or all(row.get(k)==old.get(k) for k in ['Categoría','Responsable']):continue
+        category=str(row.get('Categoría') or '').strip()
+        owner=row.get('Responsable')
+        if category in ['', 'Por Revisar'] or owner not in ['Personal','Compartido']:continue
+        kind='Ingreso' if category=='Ingresos' else ('Ignorar' if category=='Ignorar' else 'Variable')
+        # Extract the recipient RUT before removing references and monetary values.
+        rut=re.search(r'\btransferencia\s+a\s+Rut\s+([\d.]+-[\dkK])',original,re.I)
+        pattern='TRANSFERENCIA A RUT '+rut.group(1) if rut else suggest_pattern(row['Descripción'])
+        if len(normalize(pattern).split())<2 and normalize(pattern) in ['TRANSFERENCIA','COMPRA','PAGO','ABONO','RUT']:
+            skipped+=1;continue
+        try:
+            rule=validate_rule(dict(match_text=pattern,category=category,owner=owner,kind=kind,priority=100,enabled=True,
+                                    amount=row.get('Monto') if category.startswith('CSFJ') else None))
+        except ValueError:
+            skipped+=1;continue
+        # Friendly display aliases need their original merchant for future matching.
+        if normalize(rule['match_text']) not in normalize(original):
+            pattern=suggest_pattern(original)
+            try:rule=validate_rule(dict(rule,match_text=pattern))
+            except ValueError:skipped+=1;continue
+        if rule['id'] in learned and any(learned[rule['id']][k]!=rule[k] for k in ['category','owner','kind']):
+            raise ValueError('Hay clasificaciones distintas para el mismo comercio. Usa Entrenar gastos para distinguirlas por monto.')
+        learned[rule['id']]=rule
+    merged={rule_id(r['match_text'],r.get('amount')):r for r in saved}
+    merged.update(learned)
+    return list(merged.values()),len(learned),skipped
