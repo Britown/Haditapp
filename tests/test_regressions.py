@@ -80,3 +80,13 @@ class Regressions(unittest.TestCase):
         self.assertEqual(count,1)
         self.assertEqual(classify('02/09 Cargo por transferencia a Rut 11.111.111-1 2000,00',rules=rules)[1],'Servicio')
         self.assertNotEqual(classify('02/09 Cargo por transferencia a Rut 22.222.222-2 2000,00',rules=rules)[1],'Servicio')
+
+    def test_learning_preserves_digits_in_merchant(self):
+        from workflow import learn_variable_corrections
+        old=dict(Descripción='Compra en TUU*369 BARBER ST El 04/08/2026 a las 13:56:07',_Original='04/08 Cargo por Compra en TUU*369 BARBER ST El 04/08/2026 a las 13:56:07, Monto 25.000',Categoría='Por Revisar',Responsable='Por Revisar',Monto=25000)
+        rules,count,_=learn_variable_corrections([old],[dict(old,Categoría='Barbería',Responsable='Personal')],[])
+        self.assertEqual(count,1)
+        self.assertEqual(rules[0]['match_text'],'TUU 369 BARBER ST')
+        later='05/09 Cargo por Compra en TUU*369 BARBER ST El 05/09/2026 a las 10:00:00, Monto 30.000'
+        self.assertEqual(classify(later,rules=rules),('Variable','Barbería','Personal'))
+        self.assertEqual(classify(later),('Variable','Barbería','Personal'))

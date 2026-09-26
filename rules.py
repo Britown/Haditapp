@@ -20,6 +20,9 @@ def normalize(text):
 
 def suggest_pattern(description):
     text = str(description)
+    merchant = re.search(r'\bCompra\s+en\s+(.+?)(?=\s+El\s+(?:\d{2}/\d{2}/\d{4}|\d{4}-\d{2}-\d{2})\b)', text, re.I)
+    if merchant:
+        return normalize(merchant.group(1))
     # Use the recipient rather than the sender when the bank gives both.
     recipient = re.search(r'\bdesde\b.*?\ba\s+(.+?)(?:\s+Rut\b|\s+a Cuenta\b|$)', text, re.I)
     if recipient:
@@ -91,6 +94,7 @@ def seed_rules():
                 kind = 'Ingreso' if cat == 'Ingresos' else ('Ignorar' if cat == 'Ignorar' else 'Variable')
                 rules.append(dict(match_text=normalize(r['match_text']),category=cat,owner=owner,kind=kind,
                                   priority=int(r.get('priority') or 1),clean_name=r.get('clean_name','')))
+    rules.append(dict(match_text='TUU 369 BARBER ST',category='Barbería',kind='Variable',owner='Personal',priority=200))
     rules.append(dict(match_text='A TIARE GONZALEZ',category='Verdulería',kind='Variable',owner='Compartido',priority=200))
     return rules
 
