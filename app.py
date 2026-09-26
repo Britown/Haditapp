@@ -94,6 +94,24 @@ st.markdown("""
         display: block;
     }
     
+    [data-testid="stFileUploaderDropzone"] {
+        box-sizing: border-box !important;
+        min-width: 0 !important;
+        max-width: 100% !important;
+        padding: 12px !important;
+        flex-wrap: wrap !important;
+    }
+    [data-testid="stFileUploaderDropzone"] button > * {
+        display: none !important;
+    }
+    [data-testid="stFileUploaderDropzone"] button {
+        box-sizing: border-box !important;
+        width: 100% !important;
+        min-width: 0 !important;
+        max-width: 100% !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+    }
     /* Browse files button */
     [data-testid="stFileUploaderDropzone"] button {
         font-size: 0px !important;
@@ -103,7 +121,7 @@ st.markdown("""
         background: #FFFFFF !important;
     }
     [data-testid="stFileUploaderDropzone"] button::after {
-        content: "Explorar archivos";
+        content: "Subir";
         font-size: 12px !important;
         font-weight: 500 !important;
         color: #1D1D1F !important;
