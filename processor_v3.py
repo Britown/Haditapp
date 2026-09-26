@@ -176,6 +176,7 @@ def parse_amount(line,currency='CLP'):
 def display_description(line):
     """Remove statement metadata for display only; keep the original for matching."""
     text = re.sub(r'\s+', ' ', str(line)).strip()
+    text = re.sub(r'\bCargo\s+por\s+', '', text, flags=re.I)
     timestamp = re.search(r'\bel\s+((?:\d{4}-\d{2}-\d{2}|\d{2}/\d{2}/\d{4}))\s+a las\s+(\d{1,2}:\d{2})(\s*hrs\.?)?', text, re.I)
     if re.search(r'\btransferencia\b', text, re.I):
         recipient = re.search(r"\ba\s+([A-Za-zÁÉÍÓÚÜÑáéíóúüñ][A-Za-zÁÉÍÓÚÜÑáéíóúüñ '’-]+?)\s+Rut\b", text, re.I)
@@ -193,7 +194,8 @@ def display_description(line):
         merchant = purchase.group(1).strip()
         # Bank exports may insert the amount between "a" and "las".
         clock = re.search(r'\blas\s+(\d{1,2}:\d{2}(?::\d{2})?)\b', text[purchase.end():], re.I)
-        return f'Compra en {merchant}' + (f' a las {clock.group(1)}' if clock else '')
+        date = re.search(r'\bEl\s+(\d{2}/\d{2}/\d{4}|\d{4}-\d{2}-\d{2})\b', text[purchase.end():], re.I)
+        return f'Compra en {merchant} El {date.group(1)}' + (f' a las {clock.group(1)}' if clock else '')
     fee = re.search(r'\bCOMISI[ÓO]N\b.*?(?=\s+(?:US\$|\$|\d[\d.,]*(?:\s|$))|$)', text, re.I)
     if fee:
         return fee.group(0).strip()
@@ -203,7 +205,9 @@ def display_description(line):
     # Only strip recognizable metadata, never bare numbers that may identify a merchant.
     text = re.sub(r'^\d{2}/\d{2}(?:/\d{2,4})?\s+(?:\d{6,}\s+)?', '', text)
     text = re.sub(r'(?<![\w.-])(?:\$\s*\d[\d.,]*|\d{1,3}(?:\.\d{3})*,\d{2})(?![\w.-])', '', text)
-    return re.sub(r'\s+', ' ', text).strip()
+    text = re.sub(r'[,.;]*\s*\bMonto\s*:?\s*(?:US\$|\$)?\s*[\d.,]+', '', text, flags=re.I)
+    text = re.sub(r'[,.;]*\s*\bMonto\s*:?\s*$', '', text, flags=re.I)
+    return re.sub(r'\s+', ' ', text).strip(' ,.;')
 
 
 def reconcile(raw,dolar_val=950,year=None,month=None,rules=None,currency_override='Auto',rate_lookup=None):
