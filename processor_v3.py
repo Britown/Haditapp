@@ -174,15 +174,24 @@ def parse_amount(line,currency='CLP'):
 
 
 def display_description(line):
-    """Short transfer label; reconciliation keeps the complete original text."""
-    if not re.search(r'\bTransferencia de\b', line, re.I):
-        return line
-    recipient = re.search(r'\ba\s+([A-Za-zÁÉÍÓÚÜÑáéíóúüñ][A-Za-zÁÉÍÓÚÜÑáéíóúüñ \'’-]+?)\s+Rut\b', line, re.I)
-    timestamp = re.search(r'\bel\s+(\d{4}-\d{2}-\d{2})\s+a las\s+(\d{1,2}:\d{2})\s*hrs\.?', line, re.I)
-    if not recipient or not timestamp:
-        return line
-    name = ' '.join(recipient.group(1).split()[:2])
-    return f'Transferencia a {name} el {timestamp.group(1)} a las {timestamp.group(2)} hrs.'
+    """Remove statement metadata for display only; keep the original for matching."""
+    text = re.sub(r'\s+', ' ', str(line)).strip()
+    timestamp = re.search(r'\bel\s+((?:\d{4}-\d{2}-\d{2}|\d{2}/\d{2}/\d{4}))\s+a las\s+(\d{1,2}:\d{2})(\s*hrs\.?)?', text, re.I)
+    if re.search(r'\btransferencia\b', text, re.I):
+        recipient = re.search(r"\ba\s+([A-Za-zÁÉÍÓÚÜÑáéíóúüñ][A-Za-zÁÉÍÓÚÜÑáéíóúüñ '’-]+?)\s+Rut\b", text, re.I)
+        rut = re.search(r'\btransferencia\s+a\s+(Rut\s+[\d.]+-[\dkK])', text, re.I)
+        if recipient or rut:
+            name = ' '.join(recipient.group(1).split()[:2]) if recipient else rut.group(1)
+            label = f'Transferencia a {name}'
+            if timestamp:
+                label += f' el {timestamp.group(1)} a las {timestamp.group(2)}'
+                if timestamp.group(3):
+                    label += ' hrs.'
+            return label
+    # Only strip recognizable metadata, never bare numbers that may identify a merchant.
+    text = re.sub(r'^\d{2}/\d{2}(?:/\d{2,4})?\s+(?:\d{6,}\s+)?', '', text)
+    text = re.sub(r'(?<![\w.-])(?:\$\s*\d[\d.,]*|\d{1,3}(?:\.\d{3})*,\d{2})(?![\w.-])', '', text)
+    return re.sub(r'\s+', ' ', text).strip()
 
 
 def reconcile(raw,dolar_val=950,year=None,month=None,rules=None,currency_override='Auto',rate_lookup=None):
