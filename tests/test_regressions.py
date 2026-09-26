@@ -97,3 +97,11 @@ class Regressions(unittest.TestCase):
         self.assertEqual(len(rows),2)
         self.assertEqual([r['Monto'] for r in rows],[10000,123630])
         self.assertEqual(rows[1]['Categoría'],'CSFJ (Jornada Extendida)')
+
+    def test_confirmed_personal_bank_expenses_exclude_mercado_pago(self):
+        for text in ['15/08/2026 MONTO CANCELADO -908366',
+                     '18/08/2026 IMPUESTO DECRETO LEY 3475 TASA 0,066 % $53',
+                     '1508 15/08/26 MONTO CANCELADO CL -47,50 -47,50',
+                     '17/08 abono/pago de tarjeta de crédito terminada en 9893, por US$']:
+            self.assertEqual(classify(text),('Variable','Gastos bancarios','Personal'))
+        self.assertNotEqual(classify('12/08/2025 MP *MERCADO LIB TASA INT. 0,00% $26175')[1],'Gastos bancarios')

@@ -94,6 +94,8 @@ def seed_rules():
                 kind = 'Ingreso' if cat == 'Ingresos' else ('Ignorar' if cat == 'Ignorar' else 'Variable')
                 rules.append(dict(match_text=normalize(r['match_text']),category=cat,owner=owner,kind=kind,
                                   priority=int(r.get('priority') or 1),clean_name=r.get('clean_name','')))
+    for pattern in ['MONTO CANCELADO','IMPUESTO DECRETO LEY 3475','ABONO PAGO DE TARJETA DE CREDITO']:
+        rules.append(dict(match_text=pattern,category='Gastos bancarios',kind='Variable',owner='Personal',priority=200))
     rules.append(dict(match_text='TUU 369 BARBER ST',category='Barbería',kind='Variable',owner='Personal',priority=200))
     rules.append(dict(match_text='A TIARE GONZALEZ',category='Verdulería',kind='Variable',owner='Compartido',priority=200))
     return rules
