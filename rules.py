@@ -102,6 +102,10 @@ def seed_rules():
     rules.append(dict(match_text='COLINA DEPORTES EL 19 09 2026',amount=11000,category='Entretenimiento',kind='Variable',owner='Personal',priority=200,display_name='Fonda Colina — Entretenimiento'))
     rules.append(dict(match_text='DONDE COLOMBA EL 19 09 2026 A LAS 15 34 54',amount=14000,category='Gustitos',kind='Variable',owner='Personal',priority=200,description_suffix='2x anticuchos'))
     rules.append(dict(match_text='PARDESHI TADKA CO EL 10 09 2026 A LAS 13 51 01',amount=11000,category='Almuerzo trabajo',kind='Variable',owner='Personal',priority=200))
+    rules.append(dict(match_text='MERPAGO BIGPOP EL 19 09 2026 A LAS 18 15 18',amount=16000,category='Gustitos',kind='Variable',owner='Compartido',priority=200,description_suffix='Cabritas de fonda'))
+    rules.append(dict(match_text='A MARIBEL MAIRA',match_context='EL 2026 09 19 A LAS 18 22',amount=7000,category='Gustitos',kind='Variable',owner='Compartido',priority=200,description_suffix='Cuchuflí fonda'))
+    rules.append(dict(match_text='A AIDA VILLARROEL',match_context='EL 2026 09 19 A LAS 17 58',amount=5000,category='Entretenimiento',kind='Variable',owner='Personal',priority=200,description_suffix='Juegos de fonda'))
+    rules.append(dict(match_text='MERCADOPAGO PANYA EL 11 09 2026 A LAS 12 14 27',amount=48576,category='Por Revisar',kind='Revisar',owner='Por Revisar',priority=200,display_name='MERCADOPAGO*PANYA — posible Pan y Azúcar'))
     return rules
 
 
@@ -112,6 +116,7 @@ def match_rule(description, rules, value=None):
     candidates = [r for r in rules if r.get('enabled',True) and normalize(r.get('match_text',''))
                   and (normalize(r.get('category','')) != 'JARDINERO' or gardener_transfer)
                   and f" {normalize(r['match_text'])} " in f' {text} '
+                  and (not r.get('match_context') or f" {normalize(r['match_context'])} " in f' {text} ')
                   and (r.get('amount') is None or value is not None and float(r['amount'])==float(value))]
     return max(candidates, key=lambda r:(int(r.get('priority',0)),len(normalize(r['match_text']))),default=None)
 

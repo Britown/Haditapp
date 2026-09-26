@@ -100,7 +100,16 @@ st.markdown("""
         min-width: 0 !important;
         max-width: 100% !important;
         padding: 12px !important;
-        flex-wrap: wrap !important;
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 12px !important;
+    }
+    [data-testid="stFileUploaderDropzoneInstructions"],
+    [data-testid="stFileUploaderDropzoneInstructions"] > div {
+        min-width: 0 !important;
+        max-width: 100% !important;
+        white-space: normal !important;
+        overflow-wrap: anywhere;
     }
     [data-testid="stFileUploaderDropzone"] button > * {
         display: none !important;
@@ -308,13 +317,11 @@ if page == "Gastos Fijos":
             </div>
             """, flags=re.MULTILINE), unsafe_allow_html=True)
         
-            col_file, col_mail = st.columns([1, 1])
-            with col_file:
-                st.markdown("<div class='fade-in-title'><span style='font-size:11px; font-weight:600; color:#4c4546;'>Cartola PDF (Manual)</span></div>", unsafe_allow_html=True)
+            with st.container():
+                st.markdown("<div class='fade-in-title'><span style='font-size:11px; font-weight:600; color:#4c4546;'>Cartola PDF o Excel (Manual)</span></div>", unsafe_allow_html=True)
                 uploaded_files = st.file_uploader("Arrastra tu cartola", accept_multiple_files=True, label_visibility="collapsed")
-            with col_mail:
+            with st.container():
                 st.markdown("<div class='fade-in-title'><span style='font-size:11px; font-weight:600; color:#4c4546;'>Automático</span></div>", unsafe_allow_html=True)
-                st.markdown("<div style='height: 4px;'></div>", unsafe_allow_html=True)
                 buscar_email = st.button("📥 Buscar en mi Gmail", use_container_width=True)
 
             st.markdown("<div class='fade-in-title'><span style='font-size:11px; font-weight:600; color:#4c4546; margin-top:10px; display:inline-block;'>O pega el texto aquí</span></div>", unsafe_allow_html=True)
@@ -923,4 +930,3 @@ elif page == "Historial":
                     st.markdown(re.sub(r'^[ 	]+', '', html, flags=re.MULTILINE), unsafe_allow_html=True)
         else:
             st.info("No hay historial guardado.")
-
