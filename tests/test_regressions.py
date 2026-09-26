@@ -3,7 +3,7 @@ import unittest
 from unittest.mock import patch
 from email.message import EmailMessage
 from processor_v3 import reconcile,summarize
-from rules import validate_rule,seed_rules
+from rules import validate_rule,seed_rules,classify
 from workflow import effective_rules,apply_rules
 from variables_processor import process_unmatched_to_df
 import gmail_fetcher as g
@@ -51,3 +51,15 @@ class Regressions(unittest.TestCase):
             def logout(self):pass
         with patch.object(g,'_credentials',return_value=('dummy','dummy')),patch.object(g.imaplib,'IMAP4_SSL',Mail),patch('processor_v3.extract_text_from_pdf',return_value='01/08/2026 ENEL $10000'):
             self.assertEqual(len(g.fetch_statement_pdfs_from_gmail('Agosto',2026)),2)
+
+    def test_gardener_requires_recipient_not_sender_or_generic_rule(self):
+        broad=dict(match_text='TRANSFERENCIA',category='Jardinero',kind='Fijo',owner='Compartido',priority=100)
+        rules=seed_rules()+[broad]
+        for text in ['Cargo por transferencia a OTRO DESTINATARIO',
+                     'Transferencia de Luis Miguel Cruces desde Banco BICE a OTRA PERSONA Rut 11.111.111-1',
+                     'Compra en LUIS MIGUEL CRUCES',
+                     'Cargo por transferencia a Rut 11.111.111-1']:
+            self.assertNotEqual(classify(text,rules=rules)[1].upper(),'JARDINERO')
+        for text in ['Cargo por transferencia a Luis Miguel Cruces',
+                     'Transferencia de EMISOR desde Banco BICE a Luis Miguel - Cruces Rut 11.111.111-1']:
+            self.assertEqual(classify(text,rules=rules)[1].upper(),'JARDINERO')

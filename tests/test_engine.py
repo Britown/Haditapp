@@ -40,7 +40,7 @@ class EngineTests(unittest.TestCase):
     def test_split_rejects_difference(self):
         rows=self.parse('01/08 COLEGIO FCO.JAVIER $10000')
         with self.assertRaises(ValueError):split_school(rows,rows[0]['id'],{'CSFJ (Mensualidad)':9000})
-    def test_learned_fixed_not_lost(self):self.assertEqual(self.parse('01/08 LUIS MIGUEL CRUCES 45.000,00')[0]['Categoría'],'JARDINERO')
+    def test_learned_fixed_not_lost(self):self.assertEqual(self.parse('01/08 Cargo por transferencia a LUIS MIGUEL CRUCES 45.000,00')[0]['Categoría'],'JARDINERO')
     def test_unknown_visible(self):self.assertEqual(self.parse('01/08 TIENDA NUEVA $12000')[0]['Tipo'],'Revisar')
     def test_invalid_amount_visible(self):self.assertIsNone(self.parse('01/08 TIENDA NUEVA monto ilegible')[0]['Monto'])
     def test_unknown_currency_visible(self):self.assertIsNone(self.parse('01/08 TIENDA NUEVA EUR 20,00')[0]['Monto'])

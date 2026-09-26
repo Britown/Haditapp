@@ -96,7 +96,10 @@ def seed_rules():
 
 def match_rule(description, rules, value=None):
     text = normalize(description)
+    gardener_transfer = bool(re.search(r'\bTRANSFERENCIA\b', text) and
+                             re.search(r'\bA LUIS MIGUEL CRUCES\b', text))
     candidates = [r for r in rules if r.get('enabled',True) and normalize(r.get('match_text',''))
+                  and (normalize(r.get('category','')) != 'JARDINERO' or gardener_transfer)
                   and f" {normalize(r['match_text'])} " in f' {text} '
                   and (r.get('amount') is None or value is not None and float(r['amount'])==float(value))]
     return max(candidates, key=lambda r:(int(r.get('priority',0)),len(normalize(r['match_text']))),default=None)
