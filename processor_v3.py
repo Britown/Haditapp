@@ -188,6 +188,12 @@ def display_description(line):
                 if timestamp.group(3):
                     label += ' hrs.'
             return label
+    purchase = re.search(r'\b(?:Cargo\s+por\s+)?Compra\s+en\s+(.+?)(?=\s+El\s+(?:\d{2}/\d{2}/\d{4}|\d{4}-\d{2}-\d{2})\b)', text, re.I)
+    if purchase:
+        merchant = purchase.group(1).strip()
+        # Bank exports may insert the amount between "a" and "las".
+        clock = re.search(r'\blas\s+(\d{1,2}:\d{2}(?::\d{2})?)\b', text[purchase.end():], re.I)
+        return f'Compra en {merchant}' + (f' a las {clock.group(1)}' if clock else '')
     # Only strip recognizable metadata, never bare numbers that may identify a merchant.
     text = re.sub(r'^\d{2}/\d{2}(?:/\d{2,4})?\s+(?:\d{6,}\s+)?', '', text)
     text = re.sub(r'(?<![\w.-])(?:\$\s*\d[\d.,]*|\d{1,3}(?:\.\d{3})*,\d{2})(?![\w.-])', '', text)
