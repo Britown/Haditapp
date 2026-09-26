@@ -194,6 +194,9 @@ def display_description(line):
         # Bank exports may insert the amount between "a" and "las".
         clock = re.search(r'\blas\s+(\d{1,2}:\d{2}(?::\d{2})?)\b', text[purchase.end():], re.I)
         return f'Compra en {merchant}' + (f' a las {clock.group(1)}' if clock else '')
+    fee = re.search(r'\bCOMISI[ÓO]N\b.*?(?=\s+(?:US\$|\$|\d[\d.,]*(?:\s|$))|$)', text, re.I)
+    if fee:
+        return fee.group(0).strip()
     # Only strip recognizable metadata, never bare numbers that may identify a merchant.
     text = re.sub(r'^\d{2}/\d{2}(?:/\d{2,4})?\s+(?:\d{6,}\s+)?', '', text)
     text = re.sub(r'(?<![\w.-])(?:\$\s*\d[\d.,]*|\d{1,3}(?:\.\d{3})*,\d{2})(?![\w.-])', '', text)
