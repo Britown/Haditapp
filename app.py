@@ -292,10 +292,15 @@ if page == "Gastos Fijos":
             
         col_m1, col_m2, col_m3 = st.columns([1.5, 1, 1.5])
         with col_m1:
-            current = st.session_state.get('current_month_str', 'Agosto 2026').split()
+            from zoneinfo import ZoneInfo
+            today = datetime.datetime.now(ZoneInfo('America/Santiago')).date()
+            previous = today.replace(day=1) - datetime.timedelta(days=1)
+            default_period = f'{meses[previous.month - 1]} {previous.year}'
+            current = st.session_state.get('current_month_str', default_period).split()
+            years = list(range(2024, max(today.year + 1, int(current[1])) + 1))
             sel_mes = st.selectbox("Mes de Análisis", meses, index=meses.index(current[0]), label_visibility="collapsed", on_change=reset_confirm)
         with col_m2:
-            sel_ano = st.selectbox("Año", [2024, 2025, 2026, 2027], index=[2024,2025,2026,2027].index(int(current[1])), label_visibility="collapsed", on_change=reset_confirm)
+            sel_ano = st.selectbox("Año", years, index=years.index(int(current[1])), label_visibility="collapsed", on_change=reset_confirm)
             
         month_str = f"{sel_mes} {sel_ano}"
         previous_month = st.session_state.get('current_month_str')
